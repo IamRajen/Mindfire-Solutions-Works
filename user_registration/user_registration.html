@@ -38,6 +38,10 @@
         table,tr,td,th{
             padding: 5px;
         }
+        input{
+            background-color: rgb(212, 209, 195);
+            
+        }
 
 
     </style>
@@ -64,7 +68,7 @@
                 <table>
                     <tr>
                         <th>First Name :</th>
-                        <td ><input  type="text" name="first_name" ></td>
+                        <td ><input  type="text" name="first_name" required></td>
                     </tr>
                     <tr>
                         <th>Middle Name :</th>
@@ -77,31 +81,41 @@
                     </tr>
                     <tr>
                         <th>E-Mail Id:</th>
-                        <td ><input type="text"  name="email_id" ></td>
+                        <td ><input type="text"  name="email_id" required></td>
                     </tr>
                     <tr>
                         <th>Gender:</th>
-                        <td><input type="radio" name="gender" value="Male" checked>Male <input type="radio" name="gender" value="Female" >Female</td>
+                        <td><input type="radio" name="gender" value="Male" checked required>Male 
+                            <input type="radio" name="gender" value="Female" >Female
+                        </td>
                     </tr>
                     <tr>
                         <th>D.O.B:</th>
-                        <td ><input type="date" name="dob" ></td>
+                        <td ><input type="date" name="dob" required></td>
                     </tr>
                     <tr>
                         <th>Password:</th>
-                        <td ><input type="password" name="password" ></td>
+                        <td ><input type="password" name="password" required></td>
                     </tr>
                     <tr>
                         <th>Re-enter Password:</th>
-                        <td ><input type="password" name="re-entered_password" ></td>
+                        <td ><input type="password" name="re-entered_password" required></td>
                     </tr>
                     <tr>
                         <th>Hobbies:</th>
-                        <td><input type="text" name="hobbie" ></td>
+                        <td>
+                            <select name="hobbies" multiple>
+                                <option value="null">--select--</option>
+                                <option value="cricket">Cricket</option>
+                                <option value="football">Football</option>
+                                <option value="reading_book">Reading Book</option>
+                                <option value="coding">Coding</option>
+                            </select>
+                        </td>
                     </tr>
                     <tr>
                         <th>Permanent Address:</th>
-                        <td ><input type="text" name="address" ></td>
+                        <td ><input type="text" name="address" required></td>
                     </tr>
                     <tr>
                         <th>Country: </th>
@@ -119,7 +133,7 @@
                     <tr>
                         <th>State: </th>
                         <td>
-                        <select name="States">
+                        <select name="States" required>
                             <option value="null">--select--</option>
                             <option value="Orissa">Orissa</option>
                             <option value="West Bengal">West Bengal</option>
@@ -132,7 +146,7 @@
                     <tr>
                         <th>District: </th>
                         <td>
-                        <select name="district">
+                        <select name="district" required>
                             <option value="null">--select--</option>
                             <option value="kolkata">kolkata</option>
                             <option value="Bhubaneshwar">Bhubaneshwar</option>
