@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <title>Registration Form</title>
+    <head>
+        <link rel="stylesheet" type="text/css" href="registration_form.css">
+        <meta name="viewport"  content="width=device-width, initial-scale=1.0"></meta>
+        
+    </head>
+    
+
+    <body style="background-image: url(city1.jpg);">
+        <div class="nav">
+
+            <img src="logo1.jpg"  class="logo" >
+            <p class="company_name">infinity</p>
+            <ul>
+
+                <li >
+                    <a  >Home</a>
+                    <div >Work in progress</div>
+                </li>
+                <li ><a>About us</a></li>
+                <li ><a>Gallery</a></li>
+                <li ><a>LogIn</a></li>
+                <li ><a>SignUp</a></li>
+            </ul>
+        </div>
+
+
+
+
+        <div align=center class="container" >
+
+
+            <form id="form" method="GET">
+                <div class="form_div_normal_fields" >
+                    
+                    <input type="text" name="first_name" placeholder="First Name" class="input" required>
+                </div>
+                <div class="form_div_normal_fields">    
+                    <input type="text" name="last_name" placeholder="Last Name" class="input" required>
+                </div>
+                <div class="form_div_normal_fields">
+                
+                    <input type="text" name="email_id" placeholder="E-mail Address" class="input" required>
+                </div>
+                <div class="form_div_normal_fields">
+                
+                   <input type="text" name="password1" placeholder="Password" class="input" required>
+                </div>
+                <div class="form_div_normal_fields">
+                
+                    <input type="text" name="password2" placeholder="Re-Password" class="input"  required>
+                </div>
+                <div  class="form_div_normal_fields">
+                    
+                    <input  type="tel" name="phone_number1" placeholder="Phone Number" class="input" required>
+                </div>
+                <div  class="form_div_normal_fields">
+                    <input  type="tel" name="phone_number2" placeholder="Alternative Phone Number" class="input" >
+                </div>
+                <div  class="form_div_textarea_fields">
+                    <textarea size="4" type="text" name="address1" placeholder="Full Address" class="textarea"  required></textarea>
+                </div>
+                <div  class="form_div_textarea_fields">
+                    <textarea size="4" type="text" name="address2" placeholder="Alternative Address" class="textarea"></textarea>
+                </div>
+
+
+
+                <div  class="form_div_normal_fields"  required>
+                    <select class="select" name="Country">
+                        <option value="">-----Country------</option>
+                        <option value="india">India</option>
+                    </select>
+                </div>
+
+                <div  class="form_div_normal_fields"  required>                    
+                    <select class="select" name="state">
+                        <option value="">------State-----</option>
+                        <option value="odissa">Odissa</option>
+                        <option value="WB">West Bengal</option>
+                        <option value="UP">Utter Pradesh</option>
+                        <option value="MP">Madhya Pradesh</option>
+                    </select>
+                </div>
+
+
+                <div  class="form_div_normal_fields" required>
+                
+                        <!-- <p style="display: inline; float: left; height: 100%; margin: 10px; width: 40%;text-align: left;">City: <span style="color: red;">*</span> </p> -->
+                    <input type="text" name="city" placeholder="City" class="input">
+                </div>
+
+
+                <div  class="form_div_normal_fields">
+                    
+                    <div style= " width: 70%;  display: inline; padding: 0;">
+                        <input type="checkbox" name="subscription" >
+                        <p id ="news">Subscribe NEWS Letter </p>
+                    </div>
+                    
+                </div>
+                <br>
+                <div  class="form_div_normal_fields">
+                
+                    <input type="submit" name="submit" value="SUBMIT" class="button">
+                </div>
+
+
+            </form>
+
+
+                    
+        </div>
+                    
+        <div id="footer_div">
+            <p id="footer">A Product developed by Rajendra.</p>
+        </div>
+    </body>
+</html>

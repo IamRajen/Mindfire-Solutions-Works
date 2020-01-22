@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+    <title>Registration Form</title>
+    <head>
+        <meta name="viewport"  content="width=device-width, initial-scale=1.0"></meta>
+        <style>
+            li a{
+                color: #eee;
+            }
+            li a:hover {
+                background-color: #eee;
+                color: #000;
+            }
+
+            p{
+                color: #fff;
+                font-size: 17px;
+            }
+            input{
+                background-color: #eee;
+            }
+            input:focus
+            {
+                outline: none;
+            }
+        </style>
+    </head>
+    
+
+    <body style="width: 100%; height: 100%; margin: 0; background-image: url('city1.jpg');background-repeat: no-repeat; background-size: cover; background-blend-mode: lighten;background-attachment: fixed;">
+        <div style="height: 8%; width: 100%; top: 0; position: fixed; overflow: hidden; background-color: rgb(0, 0, 0); margin: 0; padding: 0px;" >
+
+            <img src="logo1.jpg" style="height: 100%; width: auto;float: left; margin: 0; " >
+            <p style="font-size: 25dp; margin: 0; padding:16px 15px; color: #eee; float: left; display: inline;">infinity</p>
+            <ul style="float: right; overflow: hidden; height: 100%; list-style-type: none;margin: 0px 5px;padding-top: 1px; ">
+
+                <li style="float: left;" ><a style="display: block;padding: 16px 15px; text-decoration: none; text-align: center;" >Home</a></li>
+                <li style="float: left;"><a style="display: block; padding: 16px 15px; text-decoration: none; text-align: center;">About us</a></listyle="float: left;>
+                <li style="float: left;"><a style="display: block;padding: 16px 15px; text-decoration: none; text-align: center;">Gallery</a></li>
+                <li style="float: left;"><a style="display: block;padding: 16px 15px; text-decoration: none; text-align: center;">LogIn</a></li>
+                <li style="float: left;"><a style="display: block; padding: 16px 15px; text-decoration: none; text-align: center;">SignUp</a></li>
+            </ul>
+        </div>
+        <div align=center style="margin: 0; height: 82%px; width: 100%; margin-top: 5%;" >
+
+            <!-- <fieldset style="width: 40%; height: 90%;"> -->
+                <form style="width: 40%; height: 90%; margin: 10px;">
+                    <div style=" width: 100%; height: 10%; margin: 5px; ">
+                    
+                        <!-- <p style="display: inline; float: left;  height: 100%; margin: 10px; width: 40%;text-align: left;">First Name:<span style="color: red;">*</span>  </p> -->
+                        <input type="text" name="first_name" placeholder="First Name" style=" width: 70%; padding: 10px; border-radius: 5px; margin: 5px; border: none;">
+                    </div>
+
+                    <div style=" width: 100%; height: 10%; margin: 5px; ">
+                    
+                        <!-- <p style="display: inline; float: left;height: 100%; margin: 10px; width: 40%;text-align: left;">Last Name:<span style="color: red;">*</span>  </p> -->
+                        <input type="text" name="last_name" placeholder="Last Name" style="width: 70%; padding: 10px; margin: 5px; border-radius: 5px; margin: 5px; border: none;">
+                    </div>
+                    <div style=" width: 100%; height: 10%; margin: 5px; ">
+                    
+                        <!-- <p style="display: inline; float: left; height: 100%; margin: 10px; width: 40%;text-align: left;">E-mail Id:<span style="color: red;">*</span>  </p> -->
+                        <input type="text" name="email_id" placeholder="E-mail Address" style="width: 70%; padding: 10px; margin: 5px; border-radius: 5px; margin: 5px; border: none;">
+                    </div>
+                    <div style=" width: 100%; height: 10%; margin: 5px; ">
+                    
+                        <!-- <p style="display: inline; float: left;  height: 100%; margin: 10px; width: 40%;text-align: left;">Password:<span style="color: red;">*</span>  </p> -->
+                        <input type="text" name="password1" placeholder="Password" style="width: 70%; padding: 10px; margin: 5px; border-radius: 5px; margin: 5px; border: none;">
+                    </div>
+                    <div style=" width: 100%; height: 10%; margin: 5px; ">
+                    
+                        <!-- <p style="display: inline; float: left;  height: 100%; margin: 10px; width: 40%;text-align: left;">Re-enter Password: <span style="color: red;">*</span> </p> -->
+                        <input type="text" name="password2" placeholder="Re-Password" style="width: 70%; padding: 10px; margin: 5px;border-radius: 5px; margin: 5px; border: none;">
+                    </div>
+
+                    <!-- <div style=" width: 100%; height: 10%; margin: 5px; ">
+                    
+                        <p style="display: inline; float: left;  height: 100%; margin: 10px; width: 40%;text-align: left;">Gender:<span style="color: red;">*</span>  </p>
+                        <input type="radio" name="gender"  style="width: 70%; padding: 10px; margin: 5px; border-radius: 5px; margin: 5px; border: none;">
+                    </div> -->
+                    <div style=" width: 100%; height: 10%; margin: 5px; ">
+                    
+                        <!-- <p style="display: inline; float: left; height: 100%; margin: 10px; width: 40%;text-align: left;">Phone Number:<span style="color: red;">*</span>  </p> -->
+                        <input  type="tel" name="phone_number1" placeholder="Phone Number" style=" width: 70%; padding: 10px; margin: 5px; border-radius: 5px; margin: 5px; border: none;">
+                    </div>
+                    <div style=" width: 100%; height: 10%; margin: 5px; ">
+                    
+                        <!-- <p style="display: inline; float: left; height: 100%; margin: 10px; width: 40%;text-align: left;">Alternative Phone Number:<span style="color: red;">*</span>  </p> -->
+                        <input  type="tel" name="phone_number2" placeholder="Alternative Phone Number" style=" width: 70%; padding: 10px; margin: 5px; border-radius: 5px; margin: 5px; border: none;">
+                    </div>
+                    <div style=" width: 100%; height: 20%; margin: 5px; ">
+                    
+                        <!-- <p style="display: inline; float: left;  height: 100%; margin: 10px; width: 40%;text-align: left;">Full Address:<span style="color: red;">*</span> </p> -->
+                        <textarea size="4" type="text" name="address1" placeholder="Full Address" style="background-color: #eee; width: 70%; padding: 10px; margin: 5px; border-radius: 5px; margin: 5px; border: none;"></textarea>
+                    </div>
+                    <div style=" width: 100%; height: 20%; margin: 5px; ">
+                    
+                        <!-- <p style="display: inline; float: left;  height: 100%; margin: 10px; width: 40%;text-align: left;">Alternative Address: </p> -->
+                        <textarea size="4" type="text" name="address2" placeholder="Alternative Address" style="background-color: #eee; width: 70%; padding: 10px; margin: 5px; border-radius: 5px; margin: 5px; border: none;"></textarea>
+                    </div>
+
+
+
+                    <div style=" width: 100%; height: 10%; margin: 5px; ">
+                    
+                        <!-- <p style="display: inline; float: left; height: 100%; margin: 10px; width: 40%;text-align: left;">Country:<span style="color: red;">*</span>  </p> -->
+                        <select style="padding: 10px; width: 73%; border-radius: 5px; margin: 0;background-color: #eee; " name="Country">
+                            <option value="">-----Country------</option>
+                            <option value="india">India</option>
+                        </select>
+                    </div>
+
+                    <div style=" width: 100%; height: 10%; margin: 5px; ">
+                    
+                        <!-- <p style="display: inline; float: left; height: 100%; margin: 10px; width: 40%;text-align: left;">State: <span style="color: red;">*</span> </p> -->
+                        <select style=" width: 73%; padding: 10px; margin: 5px; border-radius: 5px; margin: 5px; border: none;background-color: #eee;" name="state">
+                            <option value="">------State-----</option>
+                            <option value="odissa">Odissa</option>
+                            <option value="WB">West Bengal</option>
+                            <option value="UP">Utter Pradesh</option>
+                            <option value="MP">Madhya Pradesh</option>
+                        </select>
+                    </div>
+
+
+                    <div style=" width: 100%; height: 10%; margin: 5px;">
+                    
+                        <!-- <p style="display: inline; float: left; height: 100%; margin: 10px; width: 40%;text-align: left;">City: <span style="color: red;">*</span> </p> -->
+                        <input type="text" name="city" placeholder="City" style="background-color: #eee; width: 70%; padding: 10px; margin: 5px; border-radius: 5px; margin: 5px; border: none;">
+                    </div>
+
+
+                    <div style=" width: 100%; height: 10%; margin: 10px; ">
+                    
+                        <div style= " width: 70%;  display: inline; padding: 0;">
+                            <input type="checkbox" style=" margin: 5px; padding: 0;" name="subscription" >
+                            <p style="display: inline; margin: 0;">Subscribe NEWS Letter:<span style="color: red;">*</span>  </p>
+                        </div>
+                        
+                    </div>
+                    <br>
+                    <div style="width: 100%; height: 10%; margin: 5px;">
+                    
+                        <input type="submit" name="submit" value="SUBMIT" style="border: none; border-radius: 10%; width: 100px; height: 40px; font-size: 15px; font-family: Georgia, 'Times New Roman', Times, serif; background-color: rgb(135, 136, 136); color: rgb(14, 14, 14);">
+                    </div>
+                </form>
+                        
+            <!-- </fieldset> -->
+        </div>
+                    
+        <div style="height: 10%; width: 100%;  background-color: rgb(29, 18, 18);" >
+
+               <p style="color: rgb(194, 191, 191); text-align: center; font-size:10px ; padding: 0; margin: 0;" >A Product developed by Rajendra.
+               </p>
+        </div>
+    </body>
+</html>
