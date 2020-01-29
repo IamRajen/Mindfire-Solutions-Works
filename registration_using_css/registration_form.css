@@ -2,14 +2,10 @@ body{
     width: 100%; 
     height: 100%;
     margin: 0; 
-    background-repeat: no-repeat;
-    background-position: center; 
+    background-repeat: no-repeat; 
     background-size: cover; 
-}
-
-::-webkit-input-placeholder:after {
-    content: "*";
-    color: red;
+    background-blend-mode: lighten;
+    background-attachment: fixed;
 }
 
 .nav{
@@ -84,11 +80,10 @@ ul{
 }
 li a{
     color: #eee;
-    
 }
 li a:hover {
-    background-color: #fff;
-    text-shadow: 3px 3px 3px black, 0 0 100px blue, 0 0 5px darkblue;
+    background-color: #eee;
+    color: #000;
 }
 
 
