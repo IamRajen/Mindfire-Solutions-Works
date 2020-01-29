@@ -8,7 +8,7 @@
     </head>
     
 
-    <body style="background-image: url(city1.jpg);">
+    <body>
         <div class="nav">
 
             <img src="logo1.jpg"  class="logo" >
@@ -16,8 +16,7 @@
             <ul>
 
                 <li >
-                    <a  >Home</a>
-                    <div >Work in progress</div>
+                    <a>Home</a>
                 </li>
                 <li ><a>About us</a></li>
                 <li ><a>Gallery</a></li>
@@ -31,76 +30,107 @@
 
         <div align=center class="container" >
 
+            <h2><u>Registration Form</u></h2>
 
             <form id="form" method="GET">
+
                 <div class="form_div_normal_fields" >
-                    
-                    <input type="text" name="first_name" placeholder="First Name" class="input" required>
+                    <div class="form_div_small_fields">
+                        <level class="level level_small">First Name<span>*</span></level>
+                        <input type="text" name="first_name" placeholder="First Name" class="input small_input" required>
+                    </div>
+                    <div class="form_div_small_fields">
+                        <level class="level level_small">Middle Name</level>
+                        <input type="text" name="middle_name" placeholder="Middle Name" class="input small_input" required>
+                    </div>
+                    <div class="form_div_small_fields">
+                        <level class="level level_small">Last Name<span>*</span></level>
+                        <input type="text" name="last_name" placeholder="Last Name" class="input small_input" required>
+                    </div>
                 </div>
-                <div class="form_div_normal_fields">    
-                    <input type="text" name="last_name" placeholder="Last Name" class="input" required>
+
+                <div class="form_div_normal_fields">
+                    <div class="form_div_large_fields">
+                        <level class="level level_large">Email ID<span>*</span></level>
+                        <input type="text" name="email_id" placeholder="E-mail Address" class="input large_input" required>
+                    </div>
+                </div>
+
+                <div class="form_div_normal_fields">
+                    <div class="form_div_medium_fields">
+                        <level class="level level_medium">Password<span>*</span></level>
+                        <input type="text" name="password1" placeholder="Password" class="input medium_input" required>
+                    </div> 
+                    <div class="form_div_medium_fields">
+                        <level class="level">Re-Entered Password<span>*</span></level>
+                        <input type="text" name="password2" placeholder="Re-Password" class="input medium_input"  required>
+                    </div>   
                 </div>
                 <div class="form_div_normal_fields">
-                
-                    <input type="text" name="email_id" placeholder="E-mail Address" class="input" required>
+                    <div class="form_div_medium_fields">
+                        <level class="level level_medium">Phone Number<span>*</span></level>
+                        <input  type="tel" name="phone_number1" placeholder="Phone Number" class="input medium_input" required>
+                    </div> 
+                    <div class="form_div_medium_fields">
+                        <level class="level">Alternative Number</level>
+                        <input  type="tel" name="phone_number2" placeholder="Alternative Phone Number" class="input medium_input" >
+                    </div>   
                 </div>
-                <div class="form_div_normal_fields">
-                
-                   <input type="text" name="password1" placeholder="Password" class="input" required>
-                </div>
-                <div class="form_div_normal_fields">
-                
-                    <input type="text" name="password2" placeholder="Re-Password" class="input"  required>
-                </div>
-                <div  class="form_div_normal_fields">
-                    
-                    <input  type="tel" name="phone_number1" placeholder="Phone Number" class="input" required>
-                </div>
-                <div  class="form_div_normal_fields">
-                    <input  type="tel" name="phone_number2" placeholder="Alternative Phone Number" class="input" >
-                </div>
+
                 <div  class="form_div_textarea_fields">
-                    <textarea size="4" type="text" name="address1" placeholder="Full Address" class="textarea"  required></textarea>
+                    <div class="form_div_large_fields">
+                        <level class="level level_large">Full Address<span>*</span></level>
+                        <textarea size="4" type="text" name="address1" placeholder="Full Address" class="textarea medium_input"  required></textarea>
+                    </div>
+                    <!-- <textarea size="4" type="text" name="address1" placeholder="Full Address" class="textarea"  required></textarea> -->
                 </div>
+
                 <div  class="form_div_textarea_fields">
-                    <textarea size="4" type="text" name="address2" placeholder="Alternative Address" class="textarea"></textarea>
+                    <div class="form_div_large_fields">
+                        <level class="level level_large">Alternative Address</level>
+                        <textarea size="4" type="text" name="address2" placeholder="Alternative Address" class="textarea medium_input"  required></textarea>
+                    </div>
                 </div>
 
-
-
-                <div  class="form_div_normal_fields"  required>
-                    <select class="select" name="Country">
-                        <option value="">-----Country------</option>
-                        <option value="india">India</option>
-                    </select>
+                <div class="form_div_normal_fields">
+                    <div class="form_div_medium_fields">
+                        <level class="level">Country<span>*</span></level>
+                        <select class="select" name="Country">
+                            <option value="">-----Country------</option>
+                            <option value="india">India</option>
+                        </select>
+                    </div> 
+                    <div class="form_div_medium_fields">
+                        <level class="level">State<span>*</span></level>
+                        <select class="select" name="state">
+                            <option value="">------State-----</option>
+                            <option value="odissa">Odissa</option>
+                            <option value="WB">West Bengal</option>
+                            <option value="UP">Utter Pradesh</option>
+                            <option value="MP">Madhya Pradesh</option>
+                        </select>
+                    </div>   
                 </div>
 
-                <div  class="form_div_normal_fields"  required>                    
-                    <select class="select" name="state">
-                        <option value="">------State-----</option>
-                        <option value="odissa">Odissa</option>
-                        <option value="WB">West Bengal</option>
-                        <option value="UP">Utter Pradesh</option>
-                        <option value="MP">Madhya Pradesh</option>
-                    </select>
+                <div class="form_div_normal_fields">
+                    <div class="form_div_medium_fields">
+                        <level class="level">City<span>*</span></level>
+                        <input type="text" name="city" placeholder="City" class="input medium_input">
+                    </div> 
+                    <div class="form_div_medium_fields">
+                        <input type="checkbox" name="subscription" >
+                        <p id ="news" class="medium_input">Subscribe NEWS Letter </p>
+                    </div>   
                 </div>
 
-
-                <div  class="form_div_normal_fields" required>
-                
-                        <!-- <p style="display: inline; float: left; height: 100%; margin: 10px; width: 40%;text-align: left;">City: <span style="color: red;">*</span> </p> -->
-                    <input type="text" name="city" placeholder="City" class="input">
-                </div>
-
-
+<!-- 
                 <div  class="form_div_normal_fields">
-                    
                     <div style= " width: 70%;  display: inline; padding: 0;">
                         <input type="checkbox" name="subscription" >
                         <p id ="news">Subscribe NEWS Letter </p>
                     </div>
                     
-                </div>
+                </div> -->
                 <br>
                 <div  class="form_div_normal_fields">
                 
