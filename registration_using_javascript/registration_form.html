@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <title id="title">Registration Form</title>
+    <head>
+        <link rel="stylesheet" type="text/css" href="registration_css.css">
+        <meta name="viewport"  content="width=device-width, initial-scale=1.0"></meta>
+        <script src="registration_validation.js"></script>
+    </head>
+    
+
+    <body onload="reload_captcha()">
+        <div class="nav">
+
+            <img  class="logo" >
+            <p class="company_name">infinity</p>
+            <ul>
+
+                <li ><a>Home</a>
+                </li>
+                <li ><a>About us</a></li>
+                <li ><a>Gallery</a></li>
+                <li ><a>LogIn</a></li>
+                <li ><a>SignUp</a></li>
+            </ul>
+        </div>
+
+
+        <div align=center class="container" >
+
+
+            <form id="form" method="GET" onsubmit="return validate_form()">
+                <div class="form_div_normal_fields" >
+                    
+                    <input id="first_name" type="text" name="first_name" placeholder="First Name" class="input" onfocusout="checkFields(this)">
+                    <p class="desc">First Name should be atleast of 2 letters Required<span style="color: red;">*</span></p>
+                </div>
+                <div class="form_div_normal_fields">    
+                    <input id="last_name" type="text" name="last_name" placeholder="Last Name" class="input" onfocusout="checkFields(this)" >
+                    <p class="desc">Last Name should be atleast of 2 letters Required<span style="color: red;">*</span></p>
+                </div>
+                <div class="form_div_normal_fields">
+                
+                    <input id="email_id" type="text" name="email_id" placeholder="E-mail Address" class="input" onfocusout="checkFields(this)" >
+                    <p class="desc">username@domain.com Required<span style="color: red;">*</span></p>
+                </div>
+                <div class="form_div_normal_fields">
+                
+                   <input id="password1" type="text" name="password1" placeholder="Password" class="input" onfocusout="checkFields(this)" >
+                   <p class="desc">minimum 6 letters Required<span style="color: red;">*</span></p>
+                </div>
+                <div class="form_div_normal_fields">
+                
+                    <input id="password2" type="text" name="password2" placeholder="Re-Password" class="input" onfocusout="checkFields(this)"  >
+                    <p class="desc"></p>
+                </div>
+                <div  class="form_div_normal_fields">
+                    
+                    <input id="phone_number"  type="tel" name="phone_number1" placeholder="Phone Number" class="input" onfocusout="checkFields(this)" >
+                    <p class="desc">Required<span style="color: red;">*</span></p>
+                </div>
+                <div  class="form_div_normal_fields">
+                    <input id="alt_phone_number"  type="tel" name="phone_number2" placeholder="Alternative Phone Number" class="input" >
+                </div>
+                <div  class="form_div_textarea_fields">
+                    <textarea id="address" size="4" type="text" name="address1" placeholder="Full Address" class="textarea" onfocusout="checkFields(this)"  ></textarea>
+                    <p class="desc">Required<span style="color: red;">*</span></p>
+                </div>
+                <div  class="form_div_textarea_fields last_item" >
+                    <textarea id="alt_address" size="4" type="text" name="address2" placeholder="Alternative Address" class="textarea"></textarea>
+                </div>
+
+
+        
+
+                <div  class="form_div_normal_fields"  >
+                    <select id="country" class="select" name="Country" onfocusout="checkFields(this)">
+                        <option value="">-----Country------</option>
+                        <option value="india">India</option>
+                    </select>
+                </div>
+
+                <div  class="form_div_normal_fields last_item" >
+                    
+                    <div style= " width: 70%;  display: inline; padding: 0;">
+                        <input id="subscription" type="checkbox" name="subscription" >
+                        <p id ="news" style="color: brown;">Subscribe NEWS Letter </p>
+                    </div>
+                    
+                </div>
+
+                <div  class="form_div_normal_fields">
+                    
+                    <p id="captcha"></p>
+                    <img id="refresh_icon" src="refresh.png" onclick="reload_captcha()">
+                    <input type="text" id="captcha_output">
+                </div>
+                <br>
+                <div  class="form_div_normal_fields">
+                
+                    <input type="submit" name="submit" value="SUBMIT" class="button">
+                </div>
+
+
+            </form>
+
+
+                    
+        </div>
+    </body>
+</html>
