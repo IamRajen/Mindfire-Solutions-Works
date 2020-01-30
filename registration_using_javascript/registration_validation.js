@@ -6,72 +6,122 @@ class InputField {
     }
     getId()
     {
-        return  `${ this.id }`; 
+        return this.id; 
     }
+    geterror_msg()
+    {
+        return this.error_msg;
+    }
+    getis_valid()
+    {
+        return this.is_valid;
+    }
+    
+    setErrorMsg(msg)
+    {
+        this.error_msg = msg;
+    }
+    setIsValid(value)
+    {
+        this.is_valid = value;
+    }
+
 }
-var inputFieldIds;
+var inputFieldIds = new Array();
+
 var name_pattern = /^[A-Za-z]+$/;
 var email_pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 // var password_pattern = /^[a-zA-Z]+?[@#$.].(A-Z)+$/
 var phone_pattern = "";
-var ans;
-var user = {
-    firstName:"",
-    middleName:"",
-    lastName:"",
-    emailId:"",
-    gender:"",
-    password:"",
-    phoneNumber:"",
-    altPhoneNumber:"",
-    permanentAddress:"",
-    currentAddress:"",
-    currentCountry:"",
-    currentState:"",
-    currentCity:"",
-    subscription:""
-};
 
+var ans;
 
 function validate_form()
 {
-    // return false;
-
-
-    var return_statement = false;
-
-    
-    for (let i = 0 ; i < inputFieldIds.length; i++)
+    if(validation_failed())
     {
-        alert(inputFieldIds[i].getId());
-        // if(!inputFieldIds[i].is_valid)
-        // {
-        //     console.log(inputFieldIds[i].value);
-        //     setErrorBorder(document.forms['form'][inputFieldIds[i].id],"");
-        //     return_statement = false;
-        // 
-        // else return false;
+        return false;
     }
-    
-    return false;
+    else{
+        return true;
+    }
 
 }
 
-function setErrorBorder(element,error_message)
+function validation_failed()
 {
-    // alert("hello");
-    element.style.borderWidth = "2px";
-    element.style.borderColor = "red";
-    element.id.is_valid = false;
+    let return_statement = true;
+    var s="";
+    if(document.forms['form']['gender'].value==null)
+    {
+        inputFieldIds[4].setIsValid(false);
+        inputFieldIds[4].setErrorMsg("Please Select your Gender");
+    }
+    else {
+        inputFieldIds[4].setIsValid(true);
+    }
+    if(document.forms['form']['current_country'].value==null)
+    {
+        inputFieldIds[11].setIsValid(false);
+        inputFieldIds[11].setErrorMsg("Please Select your current Country");
+    }
+    else {
+        inputFieldIds[11].setIsValid(true);
+    }
+    if(document.forms['form']['current_state'].value==null)
+    {
+        inputFieldIds[12].setIsValid(false);
+        inputFieldIds[12].setErrorMsg("Please Select your current State");
+    }
+    else {
+        inputFieldIds[12].setIsValid(true);
+    }
+    if(document.forms['form']['current_city'].value.trim() =="")
+    {
+        inputFieldIds[13].setIsValid(false);
+        inputFieldIds[13].setErrorMsg("Please your current City");
+    }
+    else {
+        inputFieldIds[13].setIsValid(true);
+    }
+    if(document.forms['form']['answer_captcha'].value!= ans)
+    {
+        inputFieldIds[15].setIsValid(false);
+        inputFieldIds[15].setErrorMsg("Invalid Captcha");
+    }
+    else {
+        inputFieldIds[15].setIsValid(true);
+    }
+    
+    
 
+    
+
+    for (let i = 0 ; i < inputFieldIds.length; i++)
+    {
+        if(!inputFieldIds[i].getis_valid() && inputFieldIds[i].geterror_msg()!=""){
+            s += inputFieldIds[i].getId()+" "+inputFieldIds[i].geterror_msg()+"\n";
+            return_statement = false;
+        }
+    }
+    if(s=="")
+        alert("Successfully Registered. Click OK to proceed");
+    if(return_statement)
+    { return false;}
+    else {return true;}
+}
+
+function setErrorBorder(element,error_msg)
+{
+    element.style.borderWidth = "2px";
+    element.style.borderColor = "red";   
 }
 
 function setSuccessBorder(element)
 {
-    // alert("hello");
     element.style.borderWidth = "2px";
     element.style.borderColor = "green";
-    element.id.is_valid = true;
+
 }
 
 
@@ -82,20 +132,64 @@ function check_name(element)
         if(element.value.length==0)
         {
             setSuccessBorder(element);
+            inputFieldIds[1].setErrorMsg("hello");
+            inputFieldIds[1].setIsValid(true);
         }
     }
-    if(element.value.length==1 || element.value.length>15)
+    if(element.value.length == 1 || element.value.length > 15)
     {
-        setErrorBorder(element,"Name must be between 2 to 15 characters long.");
+        setErrorBorder(element,"");
+        if(element.id == "middle_name")
+        {
+            inputFieldIds[1].setErrorMsg("Name must be between 2 to 15 characters long.");
+            inputFieldIds[1].setIsValid(false);
+        }
+        else if(element.id == "first_name") {
+            inputFieldIds[0].setErrorMsg("Name must be between 2 to 15 characters long.");
+            inputFieldIds[0].setIsValid(false);
+        }
+        else if(element.id == "last_name")
+        {
+            inputFieldIds[2].setErrorMsg("Name must be between 2 to 15 characters long.");
+            inputFieldIds[2].setIsValid(false);
+        }
     }
     else if(element.value.length>1 && element.value.length<=15)
     {
-        if(element.value.match(name_pattern)==null)
+        if(element.value.match(name_pattern) == null)
         {
-            setErrorBorder(element,"Must contains only alphabets.");
+            setErrorBorder(element,"");
+            if(element.id == "middle_name")
+            {
+                inputFieldIds[1].setErrorMsg("Must contains only alphabets.");
+                inputFieldIds[1].setIsValid(false);
+            }
+            else if(element.id == "first_name"){
+                inputFieldIds[0].setErrorMsg("Must contains only alphabets.");
+                inputFieldIds[0].setIsValid(false);
+            }
+            else if(element.id == "last_name"){
+                inputFieldIds[2].setErrorMsg("Must contains only alphabets.");
+                inputFieldIds[2].setIsValid(false);
+            }
         }
-        else {
+        else 
+        {
             setSuccessBorder(element);
+            if(element.id == "middle_name")
+            {
+                inputFieldIds[1].setErrorMsg("");
+                inputFieldIds[1].setIsValid(true);
+            }
+            else if(element.id == "first_name"){
+                inputFieldIds[0].setErrorMsg("");
+                inputFieldIds[0].setIsValid(true);
+            }
+            else if(element.id == "last_name")
+            {
+                inputFieldIds[2].setErrorMsg("");
+                inputFieldIds[2].setIsValid(true);
+            }
 
         }
     }
@@ -106,10 +200,14 @@ function check_email(element)
 {
     if(element.value.match(email_pattern)==null)
     {
-        setErrorBorder(element,"Invalid Email Address.");
+        setErrorBorder(element,"");
+        inputFieldIds[3].setErrorMsg("Invalid Email Address.");
+        inputFieldIds[3].setIsValid(false);
     }
     else{
         setSuccessBorder(element);
+        inputFieldIds[3].setErrorMsg("");
+        inputFieldIds[3].setIsValid(true);
     }
 }
 
@@ -117,66 +215,123 @@ function check_email(element)
 
 function check_password(element)
 {
-    if (element == document.forms["form"]["password1"])
+    if (element == "password1")
     {
         if(element.value.length<6)
         {
             setErrorBorder(element,"Password must contain atleast 6 characters");
+            inputFieldIds[5].setErrorMsg("Password must contain atleast 6 characters");
+            inputFieldIds[5].setIsValid(false);
         }
         else {
             setSuccessBorder(element);
+            inputFieldIds[5].setErrorMsg("");
+            inputFieldIds[5].setIsValid(true);
         }
     }
     else if(element.value != document.forms["form"]["password1"].value)
     {
         setErrorBorder(element,"Password not matched");
-
+        inputFieldIds[6].setErrorMsg("Password not matched");
+        inputFieldIds[6].setIsValid(false);
     }
     else if(element.value == document.forms["form"]["password1"].value && element.value.length>5)
     {
         setSuccessBorder(element);
+        inputFieldIds[6].setErrorMsg("");
+        inputFieldIds[6].setIsValid(true);
     }
-    else{
-        setErrorBorder(element,"Invalid Password")
-    }
+    // else{
+    //     setErrorBorder(element,"Invalid Password");
+    //     if(element.id == "password1"){
+    //         inputFieldIds[5].setErrorMsg("Invalid Password");
+    //         inputFieldIds[5].setIsValid(false);
+    //     }
+    //     // else 
+    //     // {
+    //     //     inputFieldIds[6].setErrorMsg("Invalid Password");
+    //     //     inputFieldIds[6].setIsValid(false);
+    //     // }
+    // }
 
 }
 
 function check_phone_number(element)
 {
-    if(element.value.length!=9 || element.value.match(phone_pattern)==null)
+    if(element.value.length!=10 || element.value.match(phone_pattern)==null)
     {
         setErrorBorder(element,"Invalid Phone Number.");
+        if(element.id == "phone_number"){
+            inputFieldIds[7].setErrorMsg("Invalid Phone Number");
+            inputFieldIds[7].setIsValid(false);
+        }
+        else 
+        {
+            inputFieldIds[8].setErrorMsg("Invalid Phone Number");
+            inputFieldIds[8].setIsValid(false);
+        }
+
     }
     else if(element == document.forms['form']['alt_phone_number'] && element.value == document.forms['form']['phone_number'].value)
     {
-        setErrorBorder(element,"Same Number Entered. You can keep this Blank");
+        setErrorBorder(element,"");
+        inputFieldIds[8].setErrorMsg("Same Number Entered. You can keep this Blank");
+        inputFieldIds[8].setIsValid(false);
     }
     else 
     {
         setSuccessBorder(element);
+        if(element.id == "phone_number"){
+            inputFieldIds[7].setErrorMsg("");
+            inputFieldIds[7].setIsValid(true);
+        }
+        else 
+        {
+            inputFieldIds[8].setErrorMsg("");
+            inputFieldIds[8].setIsValid(true);
+        }
     }
 }
+
 
 function check_address(element)
 {
     if(element == document.forms['form']['permanent_address'] && element.value.length==0)
     {
         setSuccessBorder(element);
+        inputFieldIds[10].setErrorMsg("");
+        inputFieldIds[10].setIsValid(true);
 
     }
     if(element.value.length < 10 || element.value.length > 100)
     {
-        setErrorBorder(element,"Address must have length between 10 to 100");
-        return;
+        setErrorBorder(element,"");
+        if(element.id == "current_address"){
+            inputFieldIds[9].setErrorMsg("Address must have length between 10 to 100");
+            inputFieldIds[9].setIsValid(false);
+        }
+        else 
+        {
+            inputFieldIds[10].setErrorMsg("Address must have length between 10 to 100");
+            inputFieldIds[10].setIsValid(false);
+        }
     }
     else {
         setSuccessBorder(element);
+        if(element.id == "current_address"){
+            inputFieldIds[9].setErrorMsg("");
+            inputFieldIds[9].setIsValid(true);
+        }
+        else 
+        {
+            inputFieldIds[10].setErrorMsg("");
+            inputFieldIds[10].setIsValid(true);
+        }
     }
 }
 
 
-
+//on load() body called function Activiies..!!
 
 function reload_captcha(){
 
@@ -204,7 +359,6 @@ function reload_captcha(){
     {
         symbol="+";
     }
-    // var equal="  =";
     context.font = "60px Arial";
     context.fillText(operand1,10,80);
     context.fillText(symbol,80,80);
@@ -223,24 +377,22 @@ function reload_captcha(){
         
     }
 
-    inputFieldIds = ["first_name","middle_name","last_name"];
-
-    var first_name = new InputField(document.forms['form']['first_name'].id , "", false);
-    var middle_name = new InputField(document.forms['form']['middle_name'].id,"",false);
-    var last_name = new InputField(document.forms['form']['last_name'].id,"",false);
-    var email_id = new InputField(document.forms['form']['email_id'].id,"",false);
-    var gender = new InputField(document.forms['form']['gender'].id,"",false);
-    var password1 = new InputField(document.forms['form']['password1'].id,"",false);
-    var password2 = new InputField(document.forms['form']['password2'].id,"",false);
-    var phone_number = new InputField(document.forms['form']['phone_number'].id,"",false);
-    var alt_phone_number = new InputField(document.forms['form']['alt_phone_number'].id,"",true);
-    var current_address = new InputField(document.forms['form']['current_address'].id,"",false);
-    var permanent_address = new InputField(document.forms['form']['permanent_address'].id,"",true);
-    var current_country = new InputField(document.forms['form']['current_country'].id,"",false);
-    var current_state = new InputField(document.forms['form']['current_state'].id,"",false);
-    var current_city = new InputField(document.forms['form']['current_city'].id,"",false);
-    var subscription = new InputField(document.forms['form']['subscription'].id,"",true);
-    var answer_captcha = new InputField(document.forms['form']['answer_captcha'].id,"",false);
+    inputFieldIds[0] = new InputField(document.forms['form']['first_name'].id,"", false);
+    inputFieldIds[1] = new InputField(document.forms['form']['middle_name'].id,"",false);
+    inputFieldIds[2] = new InputField(document.forms['form']['last_name'].id,"",false);
+    inputFieldIds[3] = new InputField(document.forms['form']['email_id'].id,"",false);
+    inputFieldIds[4] = new InputField(document.forms['form']['gender'].id,"",false);
+    inputFieldIds[5] = new InputField(document.forms['form']['password1'].id,"",false);
+    inputFieldIds[6] = new InputField(document.forms['form']['password2'].id,"",false);
+    inputFieldIds[7] = new InputField(document.forms['form']['phone_number'].id,"",false);
+    inputFieldIds[8] = new InputField(document.forms['form']['alt_phone_number'].id,"",true);
+    inputFieldIds[9] = new InputField(document.forms['form']['current_address'].id,"",false);
+    inputFieldIds[10] = new InputField(document.forms['form']['permanent_address'].id,"",true);
+    inputFieldIds[11] = new InputField(document.forms['form']['current_country'].id,"",false);
+    inputFieldIds[12] = new InputField(document.forms['form']['current_state'].id,"",false);
+    inputFieldIds[13] = new InputField(document.forms['form']['current_city'].id,"",false);
+    inputFieldIds[14] = new InputField(document.forms['form']['subscription'].id,"",true);
+    inputFieldIds[15] = new InputField(document.forms['form']['answer_captcha'].id,"",false);
 
 
 }
