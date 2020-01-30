@@ -102,26 +102,30 @@ input:focus ,textarea:focus, select:focus
     width: 100%; 
     height: auto; 
     margin: 5px;
+    /* background-color: blueviolet; */
 }
 
 .form_div_small_fields{
-    height: auto;
+    height: 100%;
     width: 20%;
     padding: 0;
     display: inline-block;
     margin: 5px;
+    /* background-color: aqua; */
 }
 .form_div_large_fields{
     height: auto;
     width: 70%;
     display: inline-block;
     margin: 2px;
+    /* background-color: brown; */
 }
 .form_div_medium_fields{
     height: auto;
     width: 31%;
     display: inline-block;
     margin: 2px;
+    
 }
 .form_div_textarea_fields{
     width: 100%;
@@ -169,6 +173,10 @@ p{
 {
     margin-left: 8px;
 }
+.extra_small_input{
+    width: 30%;
+    margin-bottom: 20px;
+}
 
 .level{
     float: left;
@@ -182,8 +190,9 @@ p{
     height: auto;
     padding: 10px;
     border-radius: 10px; 
+    border: solid;
     border-width: 1px;
-    border-color: rgb(40, 42, 43);
+    border-color: black;
     box-shadow: 3px 3px 3px 1px #888888;
 }
 
@@ -193,8 +202,9 @@ p{
     padding: 10px; 
     margin: 0px; 
     border-radius: 10px; 
+    border: solid;
     border-width: 1px;
-    border-color: rgb(40, 42, 43);
+    border-color: rgb(0, 0, 0);
     box-shadow: 3px 3px 3px 1px #888888;
 }
 .news{
@@ -228,9 +238,72 @@ p{
     background-color: rgb(29, 18, 18);
 }
 
+.form_div_extra_small_fields
+{
+    height: auto;
+    width: 18%;
+    padding: 0;
+    display: inline-block;
+    margin: 5px;
+}
+
+.gender_border{
+   
+    width: 63%;
+    display: inline-block;
+    border: solid;
+    margin-left: 2px;
+    /* padding: 10px; */
+    border-radius: 10px; 
+    border-width: 1px;
+    border-color: rgb(0, 0, 0);
+    box-shadow: 3px 3px 3px 1px #888888;
+
+}
+
+.gender_level{
+    margin: auto;
+    font-family: 'Courier New', Courier, monospace;
+    color: rgb(0, 0, 0);
+    font-size: 15px;
+}
+
 /* javascript code css */
 
 img{
-    width: 20%;
-    height: 20%;
+    width: 10%;
+    height: 10%;
+}
+
+.margin_auto{
+    display: inline-block;
+    text-align: center;
+}
+
+/* #canvas
+{
+    width: 70%;
+    float: left;
+    background-color: rgba(192, 188, 182, 0.644);
+} */
+
+.canvas_input
+{ 
+    height: 17%;
+    width: 17%;
+    padding: 10px;
+    border-radius: 10px; 
+    border-width: 1px;
+    background-color: rgba(54, 54, 54, 0.288);
+    color: #fff;
+    display: inline;
+    /* border-color: black;
+    box-shadow: 3px 3px 3px 1px #888888; */
+}
+.form_div_captcha{
+    height: auto;
+    width: 65%;
+    display: inline-block;
+    margin: 2px;
+    background-color: blueviolet;
 }

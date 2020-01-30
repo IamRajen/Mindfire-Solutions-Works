@@ -56,14 +56,31 @@
                     </div>
                 </div>
 
+                <div class="form_div_normal_fields gender_border" >
+                    <div class="form_div_extra_small_fields ">
+                        <level class="gender_level">Gender<span>*</span></level>
+                    </div>
+                    <div class="form_div_extra_small_fields ">
+                        <div class="radio"><input id="male" type="radio" name="gender" value="male">Male</div>
+                    </div>
+                    <div class="form_div_extra_small_fields">
+                        
+                        <div class="radio"><input id="female" type="radio" name="gender"  value="female">Female</div>
+                        
+                    </div>
+                    <div class="form_div_extra_small_fields ">
+                        <div class="radio"><input id="other" type="radio" name="gender" value="other" >Others</div>
+                    </div>
+                </div>
+
                 <div class="form_div_normal_fields">
                     <div class="form_div_medium_fields">
                         <level class="level level_medium">Password<span>*</span></level>
-                        <input id="password1" type="text" name="password1" placeholder="Password" class="input medium_input" >
+                        <input id="password1" type="password" name="password1" placeholder="Password" class="input medium_input" >
                     </div> 
                     <div class="form_div_medium_fields">
                         <level class="level">Re-Entered Password<span>*</span></level>
-                        <input id="password2" type="text" name="password2" placeholder="Re-Password" class="input medium_input"  >
+                        <input id="password2" type="password" name="password2" placeholder="Re-Password" class="input medium_input"  >
                     </div>   
                 </div>
                 <div class="form_div_normal_fields">
@@ -123,17 +140,21 @@
                 </div>
 
                 <div class="form_div_normal_fields" >
-                    <div class="form_div_small_fields">
-                        <level class="level level_small">Captcha<span>*</span></level>
-                        <p id="captcha" style="background-color: cadetblue; padding: 5px; margin-left: 10px;">25+33</p>
-                    </div>
-                    <div class="form_div_small_fields">
-                        <img src="photos\refresh.png" onclick="reload_captcha()">
-                    </div>
-                    <div class="form_div_small_fields">
-                        <input id="answer_captcha" type="text" name="captcha_output" placeholder="Answer.." class="input small_input" >
+                    <div class="form_div_large_fields">
+                        <!-- <level class="level level_small">Captcha</level> -->
+                        <canvas id="canvas" class="canvas_input "></canvas>
+                        <img  src="photos\refresh.png" onclick="reload_captcha()">
+                        
                     </div>
                 </div>
+
+                <div class="form_div_normal_fields">
+                    <div class="form_div_large_fields">
+                        <level style="margin-top: 15px;" class="level level_large">Captcha Output<span>*</span></level>
+                        <input id="answer_captcha" type="text" name="captcha_output" placeholder="Answer.." class="input extra_small_input" >
+                    </div>
+                </div>
+
 
                 <br>
                 <div  class="form_div_normal_fields">
