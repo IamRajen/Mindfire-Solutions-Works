@@ -241,3 +241,37 @@ p{
     width: 100%;  
     background-color: rgb(29, 18, 18);
 }
+
+.form_div_extra_small_fields
+{
+    height: auto;
+    width: 18%;
+    padding: 0;
+    display: inline-block;
+    margin: 5px;
+}
+
+.gender_border{
+   
+    width: 63%;
+    display: inline-block;
+    border: solid;
+    margin-left: 2px;
+    /* padding: 10px; */
+    border-radius: 10px; 
+    border-width: 1px;
+    border-color: rgb(0, 0, 0);
+    box-shadow: 3px 3px 3px 1px #888888;
+
+}
+
+.gender_level{
+    margin: auto;
+    font-family: 'Courier New', Courier, monospace;
+    color: rgb(0, 0, 0);
+    font-size: 15px;
+}
+/* 
+.radio{
+    margin: auto;
+} */
