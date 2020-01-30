@@ -56,14 +56,31 @@
                     </div>
                 </div>
 
+                <div class="form_div_normal_fields gender_border" >
+                    <div class="form_div_extra_small_fields ">
+                        <level class="gender_level">Gender<span>*</span></level>
+                    </div>
+                    <div class="form_div_extra_small_fields ">
+                        <div class="radio"><input id="male" type="radio" name="gender" value="male">Male</div>
+                    </div>
+                    <div class="form_div_extra_small_fields">
+                        
+                        <div class="radio"><input id="female" type="radio" name="gender"  value="female">Female</div>
+                        
+                    </div>
+                    <div class="form_div_extra_small_fields ">
+                        <div class="radio"><input id="other" type="radio" name="gender" value="other" >Others</div>
+                    </div>
+                </div>
+
                 <div class="form_div_normal_fields">
                     <div class="form_div_medium_fields">
                         <level class="level level_medium">Password<span>*</span></level>
-                        <input type="text" name="password1" placeholder="Password" class="input medium_input" required>
+                        <input type="password" name="password1" placeholder="Password" class="input medium_input" required>
                     </div> 
                     <div class="form_div_medium_fields">
                         <level class="level">Re-Entered Password<span>*</span></level>
-                        <input type="text" name="password2" placeholder="Re-Password" class="input medium_input"  required>
+                        <input type="password" name="password2" placeholder="Re-Password" class="input medium_input"  required>
                     </div>   
                 </div>
                 <div class="form_div_normal_fields">
@@ -79,29 +96,29 @@
 
                 <div  class="form_div_textarea_fields">
                     <div class="form_div_large_fields">
-                        <level class="level level_large">Full Address<span>*</span></level>
-                        <textarea size="4" type="text" name="address1" placeholder="Full Address" class="textarea medium_input"  required></textarea>
+                        <level class="level level_large">Current Address<span>*</span></level>
+                        <textarea size="4" type="text" name="address1" placeholder="Current Address" class="textarea medium_input"  required></textarea>
                     </div>
                     <!-- <textarea size="4" type="text" name="address1" placeholder="Full Address" class="textarea"  required></textarea> -->
                 </div>
 
                 <div  class="form_div_textarea_fields">
                     <div class="form_div_large_fields">
-                        <level class="level level_large">Alternative Address</level>
-                        <textarea size="4" type="text" name="address2" placeholder="Alternative Address" class="textarea medium_input"  required></textarea>
+                        <level class="level level_large">Permanent Address</level>
+                        <textarea size="4" type="text" name="address2" placeholder="Permanent Address" class="textarea medium_input" ></textarea>
                     </div>
                 </div>
 
                 <div class="form_div_normal_fields">
                     <div class="form_div_medium_fields">
-                        <level class="level">Country<span>*</span></level>
+                        <level class="level">Current Country<span>*</span></level>
                         <select class="select" name="Country">
                             <option value="">-----Country------</option>
                             <option value="india">India</option>
                         </select>
                     </div> 
                     <div class="form_div_medium_fields">
-                        <level class="level">State<span>*</span></level>
+                        <level class="level">Current State<span>*</span></level>
                         <select class="select" name="state">
                             <option value="">------State-----</option>
                             <option value="odissa">Odissa</option>
@@ -114,7 +131,7 @@
 
                 <div class="form_div_normal_fields">
                     <div class="form_div_medium_fields">
-                        <level class="level">City<span>*</span></level>
+                        <level class="level">Current City<span>*</span></level>
                         <input type="text" name="city" placeholder="City" class="input medium_input">
                     </div> 
                     <div class="form_div_medium_fields">
