@@ -37,17 +37,17 @@
                 <div class="form_div_normal_fields" >
                     <div class="form_div_small_fields">
                         <level class="level level_small">First Name<span>*</span></level>
-                        <input id="first_name" type="text" name="first_name" placeholder="First Name" class="input small_input" onkeydown="check_name(this)">
+                        <input id="first_name" type="text" name="first_name" placeholder="First Name" class="input small_input" onblur="check_first_name()">
                         <span class="error_msg" id="first_name_span"></span>
                     </div>
                     <div class="form_div_small_fields">
                         <level class="level level_small">Middle Name</level>
-                        <input id="middle_name" type="text" name="middle_name" placeholder="Middle Name" class="input small_input" onkeydown="check_name(this)" >
+                        <input id="middle_name" type="text" name="middle_name" placeholder="Middle Name" class="input small_input" onblur="check_middle_name()" >
                         <span class="error_msg"  id="middle_name_span"></span>
                     </div>
                     <div class="form_div_small_fields">
                         <level class="level level_small">Last Name<span>*</span></level>
-                        <input id="last_name" type="text" name="last_name" placeholder="Last Name" class="input small_input" onkeydown="check_name(this)" >
+                        <input id="last_name" type="text" name="last_name" placeholder="Last Name" class="input small_input" onblur="check_last_name()" >
                         <span class="error_msg"  id="last_name_span"></span>
                     </div>
                 </div>
@@ -55,25 +55,25 @@
                 <div class="form_div_normal_fields">
                     <div class="form_div_large_fields">
                         <level class="level level_large">Email ID<span>*</span></level>
-                        <input id="email_id" type="text" name="email_id" placeholder="E-mail Address" class="input large_input" onkeydown="check_email(this)">
+                        <input id="email_id" type="text" name="email_id" placeholder="E-mail Address" class="input large_input" onblur="check_email()">
                         <span class="error_msg" id="email_id_span"></span>
                     </div>
                 </div>
 
-                <div class="form_div_normal_fields gender_border" >
-                    <div class="form_div_extra_small_fields ">
+                <div class="form_div_normal_fields gender_border" id="gender_bor" >
+                    <div class="form_div_extra_small_fields " >
                         <level class="gender_level">Gender<span>*</span></level>
                     </div>
                     <div class="form_div_extra_small_fields ">
-                        <div class="radio"><input id="male" type="radio" name="gender" value="male">Male</div>
+                        <div class="radio"><input id="male" type="radio" name="gender" value="male" onblur="check_gender()">Male</div>
                     </div>
                     <div class="form_div_extra_small_fields">
                         
-                        <div class="radio"><input id="female" type="radio" name="gender"  value="female">Female</div>
+                        <div class="radio"><input id="female" type="radio" name="gender"  value="female" onblur="check_gender()">Female</div>
                         
                     </div>
                     <div class="form_div_extra_small_fields ">
-                        <div class="radio"><input id="other" type="radio" name="gender" value="other" >Others</div>
+                        <div class="radio"><input id="other" type="radio" name="gender" value="other" onblur="check_gender()" >Others</div>
                     </div>
                     <span class="error_msg" id="gender_span"></span>
                 </div>
@@ -81,24 +81,24 @@
                 <div class="form_div_normal_fields">
                     <div class="form_div_medium_fields">
                         <level class="level level_medium">Password<span>*</span></level>
-                        <input id="password1" type="password" name="password1" placeholder="Password" class="input medium_input" onkeydown="check_password(this)" >
+                        <input id="password1" type="password" name="password1" placeholder="Password" class="input medium_input" onblur="check_password1()" >
                         <span class="error_msg" id="password1_span"></span>
                     </div> 
                     <div class="form_div_medium_fields">
                         <level class="level">Re-Entered Password<span>*</span></level>
-                        <input id="password2" type="password" name="password2" placeholder="Re-Password" class="input medium_input" onkeydown="check_password(this)" >
+                        <input id="password2" type="password" name="password2" placeholder="Re-Password" class="input medium_input" onblur="check_password2()" >
                         <span class="error_msg" id="password2_span"></span>
                     </div>   
                 </div>
                 <div class="form_div_normal_fields">
                     <div class="form_div_medium_fields">
                         <level class="level level_medium">Phone Number<span>*</span></level>
-                        <input id="phone_number" type="tel" name="phone_number1" placeholder="Phone Number" class="input medium_input" onkeydown="check_phone_number(this)">
+                        <input id="phone_number" type="tel" name="phone_number1" placeholder="Phone Number" class="input medium_input" onblur="check_phone_number()">
                         <span class="error_msg" id="phone_number_span"></span>
                     </div> 
                     <div class="form_div_medium_fields">
                         <level class="level">Alternative Number</level>
-                        <input id="alt_phone_number" type="tel" name="phone_number2" placeholder="Alternative Phone Number" class="input medium_input" onkeydown="check_phone_number(this)">
+                        <input id="alt_phone_number" type="tel" name="phone_number2" placeholder="Alternative Phone Number" class="input medium_input" onblur="check_alt_phone_number()">
                         <span class="error_msg" id="alt_phone_number_span"></span>
                     </div>   
                 </div>
@@ -106,7 +106,7 @@
                 <div  class="form_div_textarea_fields">
                     <div class="form_div_large_fields">
                         <level class="level level_large">Current Address<span>*</span></level>
-                        <textarea id="current_address" size="4" type="text" name="address1" placeholder="Full Address" class="textarea medium_input" onkeydown="check_address(this)"></textarea>
+                        <textarea id="current_address" size="4" type="text" name="address1" placeholder="Full Address" class="textarea medium_input" onblur="check_current_address()"></textarea>
                         <span class="error_msg" id="current_address_span"></span>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
                 <div  class="form_div_textarea_fields">
                     <div class="form_div_large_fields">
                         <level class="level level_large">Permanent Address</level>
-                        <textarea id="permanent_address" size="4" type="text" name="address2" placeholder="Permanent Address" class="textarea medium_input" onkeydown="check_address(this)" ></textarea>
+                        <textarea id="permanent_address" size="4" type="text" name="address2" placeholder="Permanent Address" class="textarea medium_input" onblur="check_permanent_address()" ></textarea>
                         <span class="error_msg" id="permanent_address_span"></span>
                     </div>
                 </div>
@@ -122,7 +122,7 @@
                 <div class="form_div_normal_fields">
                     <div class="form_div_medium_fields">
                         <level class="level">Current Country<span>*</span></level>
-                        <select id="current_country" class="select" name="Country">
+                        <select id="current_country" class="select" name="Country" onblur="check_current_country()">
                             <option value="">-----Country------</option>
                             <option value="india">India</option>
                         </select>
@@ -130,7 +130,7 @@
                     </div> 
                     <div class="form_div_medium_fields">
                         <level class="level">Current State<span>*</span></level>
-                        <select id="current_state" class="select" name="state">
+                        <select id="current_state" class="select" name="state" onblur="check_current_state()">
                             <option value="">------State-----</option>
                             <option value="odissa">Odissa</option>
                             <option value="WB">West Bengal</option>
@@ -144,7 +144,7 @@
                 <div class="form_div_normal_fields">
                     <div class="form_div_medium_fields">
                         <level class="level">Current City<span>*</span></level>
-                        <input id="current_city" type="text" name="city" placeholder="City" class="input medium_input">
+                        <input id="current_city" type="text" name="city" placeholder="City" class="input medium_input" onblur="check_current_city()">
                         <span class="error_msg" id="current_city_span"></span>
                     </div> 
                     <div class="form_div_medium_fields">
@@ -157,7 +157,7 @@
                 <div class="form_div_normal_fields" >
                     <div class="form_div_large_fields">
                         <!-- <level class="level level_small">Captcha</level> -->
-                        <canvas id="canvas" class="canvas_input">weknk</canvas>
+                        <canvas id="canvas" class="canvas_input"></canvas>
                         <img  src="photos\refresh.png" onclick="reload_captcha()">
                         
                     </div>

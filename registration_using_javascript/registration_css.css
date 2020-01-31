@@ -250,6 +250,7 @@ p{
 .gender_border{
    
     width: 63%;
+    height: 55px;
     display: inline-block;
     border: solid;
     margin-left: 2px;
@@ -310,7 +311,7 @@ img{
 .error_msg{
     width: auto;
     height: 10px;
-    background-color: rgba(155, 35, 35, 0.555);
+    /* background-color: rgba(155, 35, 35, 0.555); */
     font-size: 10px;
     margin: 0;
     /* padding-right: 5px;
@@ -318,7 +319,7 @@ img{
     padding: 2px 8px;
     margin-top: 4px;
     border-radius: 5px;
-    color: #fff;
+    color: rgb(255, 0, 0);
     visibility: hidden;
     display: inline-block;
 }
