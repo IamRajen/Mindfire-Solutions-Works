@@ -32,20 +32,23 @@
 
             <h2><u>Registration Form</u></h2>
 
-            <form id="form" method="GET" onsubmit="return validate_form()">
+            <form id="form" method="POST" onsubmit="return validate_form()">
 
                 <div class="form_div_normal_fields" >
                     <div class="form_div_small_fields">
                         <level class="level level_small">First Name<span>*</span></level>
                         <input id="first_name" type="text" name="first_name" placeholder="First Name" class="input small_input" onkeydown="check_name(this)">
+                        <span class="error_msg" id="first_name_span"></span>
                     </div>
                     <div class="form_div_small_fields">
                         <level class="level level_small">Middle Name</level>
                         <input id="middle_name" type="text" name="middle_name" placeholder="Middle Name" class="input small_input" onkeydown="check_name(this)" >
+                        <span class="error_msg"  id="middle_name_span"></span>
                     </div>
                     <div class="form_div_small_fields">
                         <level class="level level_small">Last Name<span>*</span></level>
                         <input id="last_name" type="text" name="last_name" placeholder="Last Name" class="input small_input" onkeydown="check_name(this)" >
+                        <span class="error_msg"  id="last_name_span"></span>
                     </div>
                 </div>
 
@@ -53,6 +56,7 @@
                     <div class="form_div_large_fields">
                         <level class="level level_large">Email ID<span>*</span></level>
                         <input id="email_id" type="text" name="email_id" placeholder="E-mail Address" class="input large_input" onkeydown="check_email(this)">
+                        <span class="error_msg" id="email_id_span"></span>
                     </div>
                 </div>
 
@@ -71,26 +75,31 @@
                     <div class="form_div_extra_small_fields ">
                         <div class="radio"><input id="other" type="radio" name="gender" value="other" >Others</div>
                     </div>
+                    <span class="error_msg" id="gender_span"></span>
                 </div>
 
                 <div class="form_div_normal_fields">
                     <div class="form_div_medium_fields">
                         <level class="level level_medium">Password<span>*</span></level>
                         <input id="password1" type="password" name="password1" placeholder="Password" class="input medium_input" onkeydown="check_password(this)" >
+                        <span class="error_msg" id="password1_span"></span>
                     </div> 
                     <div class="form_div_medium_fields">
                         <level class="level">Re-Entered Password<span>*</span></level>
                         <input id="password2" type="password" name="password2" placeholder="Re-Password" class="input medium_input" onkeydown="check_password(this)" >
+                        <span class="error_msg" id="password2_span"></span>
                     </div>   
                 </div>
                 <div class="form_div_normal_fields">
                     <div class="form_div_medium_fields">
                         <level class="level level_medium">Phone Number<span>*</span></level>
                         <input id="phone_number" type="tel" name="phone_number1" placeholder="Phone Number" class="input medium_input" onkeydown="check_phone_number(this)">
+                        <span class="error_msg" id="phone_number_span"></span>
                     </div> 
                     <div class="form_div_medium_fields">
                         <level class="level">Alternative Number</level>
                         <input id="alt_phone_number" type="tel" name="phone_number2" placeholder="Alternative Phone Number" class="input medium_input" onkeydown="check_phone_number(this)">
+                        <span class="error_msg" id="alt_phone_number_span"></span>
                     </div>   
                 </div>
 
@@ -98,6 +107,7 @@
                     <div class="form_div_large_fields">
                         <level class="level level_large">Current Address<span>*</span></level>
                         <textarea id="current_address" size="4" type="text" name="address1" placeholder="Full Address" class="textarea medium_input" onkeydown="check_address(this)"></textarea>
+                        <span class="error_msg" id="current_address_span"></span>
                     </div>
                 </div>
 
@@ -105,6 +115,7 @@
                     <div class="form_div_large_fields">
                         <level class="level level_large">Permanent Address</level>
                         <textarea id="permanent_address" size="4" type="text" name="address2" placeholder="Permanent Address" class="textarea medium_input" onkeydown="check_address(this)" ></textarea>
+                        <span class="error_msg" id="permanent_address_span"></span>
                     </div>
                 </div>
 
@@ -115,6 +126,7 @@
                             <option value="">-----Country------</option>
                             <option value="india">India</option>
                         </select>
+                        <span class="error_msg" id="current_country_span"></span>
                     </div> 
                     <div class="form_div_medium_fields">
                         <level class="level">Current State<span>*</span></level>
@@ -125,6 +137,7 @@
                             <option value="UP">Utter Pradesh</option>
                             <option value="MP">Madhya Pradesh</option>
                         </select>
+                        <span class="error_msg" id="current_state_span"></span>
                     </div>   
                 </div>
 
@@ -132,10 +145,12 @@
                     <div class="form_div_medium_fields">
                         <level class="level">Current City<span>*</span></level>
                         <input id="current_city" type="text" name="city" placeholder="City" class="input medium_input">
+                        <span class="error_msg" id="current_city_span"></span>
                     </div> 
                     <div class="form_div_medium_fields">
                         <input id="subscription" type="checkbox" name="subscription" >
                         <p class="medium_input news">Subscribe NEWS Letter </p>
+
                     </div>   
                 </div>
 
@@ -153,6 +168,7 @@
                         <level style="margin-top: 15px;" class="level level_large">Captcha Output<span>*</span></level>
                         <input id="answer_captcha" type="text" name="captcha_output" placeholder="Answer.." class="input extra_small_input" >
                     </div>
+                    <span class="error_msg" id="answer_captcha_span"></span>
                 </div>
 
 

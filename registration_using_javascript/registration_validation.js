@@ -52,28 +52,36 @@ function validation_failed()
 {
     let return_statement = true;
     var s="";
-    if(document.forms['form']['gender'].value==null)
+    if(document.forms['form']['gender'].value == "")
     {
         inputFieldIds[4].setIsValid(false);
         inputFieldIds[4].setErrorMsg("Please Select your Gender");
+        // alert(inputFieldIds[4].getis_valid());
     }
     else {
+        
+        // alert(document.forms['form']['gender'].value)
         inputFieldIds[4].setIsValid(true);
     }
-    if(document.forms['form']['current_country'].value==null)
+    if(document.forms['form']['current_country'].value == "")
     {
         inputFieldIds[11].setIsValid(false);
+        setErrorBorder(document.forms['form']['current_country']);
         inputFieldIds[11].setErrorMsg("Please Select your current Country");
     }
     else {
+        setSuccessBorder(document.forms['form']['current_country']);
         inputFieldIds[11].setIsValid(true);
     }
-    if(document.forms['form']['current_state'].value==null)
+    if(document.forms['form']['current_state'].value=="")
     {
         inputFieldIds[12].setIsValid(false);
+
+        setErrorBorder(document.forms['form']['current_state']);
         inputFieldIds[12].setErrorMsg("Please Select your current State");
     }
     else {
+        setSuccessBorder(document.forms['form']['current_state']);
         inputFieldIds[12].setIsValid(true);
     }
     if(document.forms['form']['current_city'].value.trim() =="")
@@ -82,6 +90,7 @@ function validation_failed()
         inputFieldIds[13].setErrorMsg("Please your current City");
     }
     else {
+        setSuccessBorder(document.forms['form']['current_city']);
         inputFieldIds[13].setIsValid(true);
     }
     if(document.forms['form']['answer_captcha'].value!= ans)
@@ -90,37 +99,57 @@ function validation_failed()
         inputFieldIds[15].setErrorMsg("Invalid Captcha");
     }
     else {
+        setSuccessBorder(document.forms['form']['answer_captcha']);
         inputFieldIds[15].setIsValid(true);
     }
-    
-    
-
     
 
     for (let i = 0 ; i < inputFieldIds.length; i++)
     {
-        if(!inputFieldIds[i].getis_valid() && inputFieldIds[i].geterror_msg()!=""){
-            s += inputFieldIds[i].getId()+" "+inputFieldIds[i].geterror_msg()+"\n";
+        if(!inputFieldIds[i].getis_valid() && inputFieldIds[i].geterror_msg()!="")
+        {
+            // alert(inputFieldIds[i].geterror_msg());
+            if(inputFieldIds[i].getId()=='gender')
+            {
+                document.getElementById("gender_span").innerHTML = inputFieldIds[i].geterror_msg();
+            }
+            else{
+                let span = document.getElementById(inputFieldIds[i].getId()+"_span");
+                span.innerHTML = inputFieldIds[i].geterror_msg();
+                setErrorBorder(document.forms['form'][inputFieldIds[i].getId()],"");
+                
+            }
             return_statement = false;
         }
     }
-    if(s=="")
-        alert("Successfully Registered. Click OK to proceed");
+    
     if(return_statement)
-    { return false;}
-    else {return true;}
+    { 
+        alert("Successfully Registered. Click OK to proceed");
+        return false;}
+    else {
+        alert("Failed to Registered.");
+        return true;
+    }
 }
+
+// function setErrorToSpan(element,error)
 
 function setErrorBorder(element,error_msg)
 {
     element.style.borderWidth = "2px";
     element.style.borderColor = "red";   
+    document.getElementById(element.id+"_span").style.visibility = "visible";
+    // document.getElementById(element.id+"_span").innerHTML = error_msg;
 }
 
 function setSuccessBorder(element)
 {
     element.style.borderWidth = "2px";
     element.style.borderColor = "green";
+    document.getElementById(element.id+"_span").innerHTML = "";
+    document.getElementById(element.id+"_span").style.visibility = "hidden";
+    
 
 }
 
@@ -132,8 +161,9 @@ function check_name(element)
         if(element.value.length==0)
         {
             setSuccessBorder(element);
-            inputFieldIds[1].setErrorMsg("hello");
+            inputFieldIds[1].setErrorMsg("");
             inputFieldIds[1].setIsValid(true);
+            
         }
     }
     if(element.value.length == 1 || element.value.length > 15)
@@ -240,19 +270,10 @@ function check_password(element)
         setSuccessBorder(element);
         inputFieldIds[6].setErrorMsg("");
         inputFieldIds[6].setIsValid(true);
+        inputFieldIds[5].setErrorMsg("");
+        inputFieldIds[5].setIsValid(true);
     }
-    // else{
-    //     setErrorBorder(element,"Invalid Password");
-    //     if(element.id == "password1"){
-    //         inputFieldIds[5].setErrorMsg("Invalid Password");
-    //         inputFieldIds[5].setIsValid(false);
-    //     }
-    //     // else 
-    //     // {
-    //     //     inputFieldIds[6].setErrorMsg("Invalid Password");
-    //     //     inputFieldIds[6].setIsValid(false);
-    //     // }
-    // }
+    
 
 }
 
@@ -260,7 +281,7 @@ function check_phone_number(element)
 {
     if(element.value.length!=10 || element.value.match(phone_pattern)==null)
     {
-        setErrorBorder(element,"Invalid Phone Number.");
+        setErrorBorder(element);
         if(element.id == "phone_number"){
             inputFieldIds[7].setErrorMsg("Invalid Phone Number");
             inputFieldIds[7].setIsValid(false);
@@ -296,12 +317,12 @@ function check_phone_number(element)
 
 function check_address(element)
 {
-    if(element == document.forms['form']['permanent_address'] && element.value.length==0)
+    if(element == document.forms['form']['permanent_address'] && element.value.length.trim()==0)
     {
         setSuccessBorder(element);
         inputFieldIds[10].setErrorMsg("");
         inputFieldIds[10].setIsValid(true);
-
+        return;
     }
     if(element.value.length < 10 || element.value.length > 100)
     {
@@ -377,22 +398,22 @@ function reload_captcha(){
         
     }
 
-    inputFieldIds[0] = new InputField(document.forms['form']['first_name'].id,"", false);
-    inputFieldIds[1] = new InputField(document.forms['form']['middle_name'].id,"",false);
-    inputFieldIds[2] = new InputField(document.forms['form']['last_name'].id,"",false);
-    inputFieldIds[3] = new InputField(document.forms['form']['email_id'].id,"",false);
-    inputFieldIds[4] = new InputField(document.forms['form']['gender'].id,"",false);
-    inputFieldIds[5] = new InputField(document.forms['form']['password1'].id,"",false);
-    inputFieldIds[6] = new InputField(document.forms['form']['password2'].id,"",false);
-    inputFieldIds[7] = new InputField(document.forms['form']['phone_number'].id,"",false);
+    inputFieldIds[0] = new InputField(document.forms['form']['first_name'].id,"Enter your First Name", false);
+    inputFieldIds[1] = new InputField(document.forms['form']['middle_name'].id,"Enter your Middle Name",false);
+    inputFieldIds[2] = new InputField(document.forms['form']['last_name'].id,"Enter your Last Name",false);
+    inputFieldIds[3] = new InputField(document.forms['form']['email_id'].id,"Please Enter Your Email Address",false);
+    inputFieldIds[4] = new InputField('gender',"Select Your Gender",false);
+    inputFieldIds[5] = new InputField(document.forms['form']['password1'].id,"Please Create a Password",false);
+    inputFieldIds[6] = new InputField(document.forms['form']['password2'].id,"Password Not Matched",false);
+    inputFieldIds[7] = new InputField(document.forms['form']['phone_number'].id,"Please Enter Your Phone Number",false);
     inputFieldIds[8] = new InputField(document.forms['form']['alt_phone_number'].id,"",true);
-    inputFieldIds[9] = new InputField(document.forms['form']['current_address'].id,"",false);
+    inputFieldIds[9] = new InputField(document.forms['form']['current_address'].id,"Please Enter your Current Address",false);
     inputFieldIds[10] = new InputField(document.forms['form']['permanent_address'].id,"",true);
-    inputFieldIds[11] = new InputField(document.forms['form']['current_country'].id,"",false);
-    inputFieldIds[12] = new InputField(document.forms['form']['current_state'].id,"",false);
-    inputFieldIds[13] = new InputField(document.forms['form']['current_city'].id,"",false);
+    inputFieldIds[11] = new InputField(document.forms['form']['current_country'].id,"Select Your Country",false);
+    inputFieldIds[12] = new InputField(document.forms['form']['current_state'].id,"Select Your Country",false);
+    inputFieldIds[13] = new InputField(document.forms['form']['current_city'].id,"Select Your Country",false);
     inputFieldIds[14] = new InputField(document.forms['form']['subscription'].id,"",true);
-    inputFieldIds[15] = new InputField(document.forms['form']['answer_captcha'].id,"",false);
+    inputFieldIds[15] = new InputField(document.forms['form']['answer_captcha'].id,"Invalid Captcha",false);
 
 
 }
