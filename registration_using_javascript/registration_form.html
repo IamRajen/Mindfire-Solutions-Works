@@ -142,42 +142,30 @@
                 </div>
 
                 <div class="form_div_normal_fields">
-                    <div class="form_div_medium_fields">
+                    <div class="form_div_large_fields">
                         <level class="level">Current City<span>*</span></level>
                         <input id="current_city" type="text" name="city" placeholder="City" class="input medium_input" onblur="check_current_city()">
                         <span class="error_msg" id="current_city_span"></span>
                     </div> 
-                    <div class="form_div_medium_fields">
-                        <input id="subscription" type="checkbox" name="subscription" >
-                        <p class="medium_input news">Subscribe NEWS Letter </p>
-
-                    </div>   
                 </div>
-
-                <div class="form_div_normal_fields" >
-                    <div class="form_div_large_fields">
-                        <!-- <level class="level level_small">Captcha</level> -->
+                <input id="subscription"  type="checkbox" name="subscription" value="subscribed"> Subscribe NEWS Letter<br>
+                
+                <div class="form_div_normal_fields">
                         <canvas id="canvas" class="canvas_input"></canvas>
                         <img  src="photos\refresh.png" onclick="reload_captcha()">
-                        
-                    </div>
                 </div>
-
                 <div class="form_div_normal_fields">
                     <div class="form_div_large_fields">
                         <level style="margin-top: 15px;" class="level level_large">Captcha Output<span>*</span></level>
                         <input id="answer_captcha" type="text" name="captcha_output" placeholder="Answer.." class="input extra_small_input" >
-                    </div>
-                    <span class="error_msg" id="answer_captcha_span"></span>
+                        <span class="error_msg" id="answer_captcha_span"></span>
+                    </div> 
                 </div>
-
-
-                <br>
+                
                 <div  class="form_div_normal_fields">
                     <input type="submit" name="submit" value="SUBMIT" class="button">
                 </div>
-
-
+                
             </form>
 
 
@@ -189,3 +177,4 @@
         </div>
     </body>
 </html>
+

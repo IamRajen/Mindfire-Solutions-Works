@@ -53,6 +53,7 @@ function validate()
     var s="";
     if(document.forms['form']['answer_captcha'].value != ans)
     {
+        refresh_captcha();
         inputFieldIds[15].setIsValid(false);
         setErrorBorder(document.forms['form']['answer_captcha']);
         inputFieldIds[15].setErrorMsg("Invalid Captcha");
@@ -72,7 +73,8 @@ function validate()
     for (let i = 0 ; i < inputFieldIds.length; i++)
     {
         var span;
-        console.log(inputFieldIds[i].getId()+" "+inputFieldIds[i].geterror_msg()+" "+inputFieldIds[i].getis_valid());
+        // alert(inputFieldIds[i].getId()+" "+inputFieldIds[i].geterror_msg());
+        // console.log(inputFieldIds[i].getId()+" "+inputFieldIds[i].geterror_msg()+" "+inputFieldIds[i].getis_valid());
         if(!inputFieldIds[i].getis_valid())
         {
             if(inputFieldIds[i].getId()=='gender')
@@ -509,6 +511,37 @@ function check_current_city()
 
 }
 
+function refresh_captcha()
+{
+    canvas.width = canvas.width;
+    var captcha=document.getElementById("canvas");
+    var context=captcha.getContext("2d");
+    var operator=["+","-","*","/"];
+
+    var operand1=Math.floor(Math.random() * 10)+1; 
+    var operand2=Math.floor(Math.random() * 10)+1;
+    var symbol=operator[Math.floor(Math.random()*4)];
+    if(symbol=='/' && operand1%operand2 != 0)
+    {
+        symbol="+";
+    }
+    context.font = "60px Arial";
+    context.fillText(operand1,20,80);
+    context.fillText(symbol,90,80);
+    context.fillText(operand2,160,80);
+    switch(symbol)
+    {
+        case "+": ans=operand1+operand2;
+                    break;
+        case "-": ans=operand1-operand2;
+                    break;
+        case "/": ans=operand1/operand2;
+                    break;
+        case "*": ans=operand1*operand2;
+        
+    }
+}
+
 //on load() body called function Activiies..!!
 
 function reload_captcha(){
@@ -524,34 +557,7 @@ function reload_captcha(){
         country_select_element.appendChild(child);
 
     }
-    
-    canvas.width = canvas.width;
-    var captcha=document.getElementById("canvas");
-    var context=captcha.getContext("2d");
-    var operator=["+","-","*","/"];
-
-    var operand1=Math.floor(Math.random() * 10)+1; 
-    var operand2=Math.floor(Math.random() * 10)+1;
-    var symbol=operator[Math.floor(Math.random()*4)];
-    if(symbol=='/' && operand1%operand2 != 0)
-    {
-        symbol="+";
-    }
-    context.font = "60px Arial";
-    context.fillText(operand1,10,80);
-    context.fillText(symbol,80,80);
-    context.fillText(operand2,150,80);
-    switch(symbol)
-    {
-        case "+": ans=operand1+operand2;
-                    break;
-        case "-": ans=operand1-operand2;
-                    break;
-        case "/": ans=operand1/operand2;
-                    break;
-        case "*": ans=operand1*operand2;
-        
-    }
+    refresh_captcha();
     inputFieldIds[0] = new InputField(document.forms['form']['first_name'].id,"Enter your First Name", false);
     inputFieldIds[1] = new InputField(document.forms['form']['middle_name'].id,"",true);
     inputFieldIds[2] = new InputField(document.forms['form']['last_name'].id,"Enter your Last Name",false);

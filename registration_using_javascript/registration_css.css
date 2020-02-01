@@ -106,24 +106,24 @@ input:focus ,textarea:focus, select:focus
 }
 
 .form_div_small_fields{
-    height: 100%;
+    height: 100px;
     width: 20%;
     padding: 0;
-    display: inline-block;
+    display: inline-grid;
     margin: 5px;
     /* background-color: aqua; */
 }
 .form_div_large_fields{
-    height: auto;
+    height: 100px;
     width: 70%;
-    display: inline-block;
+    display: inline-grid;
     margin: 2px;
     /* background-color: brown; */
 }
 .form_div_medium_fields{
-    height: auto;
+    height: 100px;
     width: 31%;
-    display: inline-block;
+    display: inline-grid;
     margin: 2px;
     
 }
@@ -163,7 +163,7 @@ p{
 
 .level_large
 {
-    margin-left: 6%;
+    /* margin-left: 6%; */
 }
 .level_small
 {
@@ -175,7 +175,7 @@ p{
 }
 .extra_small_input{
     width: 30%;
-    margin-bottom: 20px;
+    margin-bottom: 2px;
 }
 
 .level{
@@ -272,8 +272,9 @@ p{
 /* javascript code css */
 
 img{
-    width: 10%;
-    height: 10%;
+    width: 5%;
+    height: auto;
+    margin-bottom: 20px;
 }
 
 .margin_auto{
@@ -290,18 +291,19 @@ img{
 
 .canvas_input
 { 
-    height: 17%;
-    width: 17%;
-    padding: 10px;
+    height: 70%;
+    width: 20%;
+    padding: 5px;
     border-radius: 10px; 
     border-width: 1px;
     background-color: rgba(54, 54, 54, 0.288);
     display: inline;
+    margin-top: 20px;
     /* border-color: black;
     box-shadow: 3px 3px 3px 1px #888888; */
 }
 .form_div_captcha{
-    height: auto;
+    height: 30px;
     width: 65%;
     display: inline-block;
     margin: 2px;
@@ -323,3 +325,21 @@ img{
     visibility: hidden;
     display: inline-block;
 }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto;
+    background-color: #2196F3;
+  }
+  .grid-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    /* padding: 20px; */
+    font-size: 20px;
+    text-align: center;
+  }
+
+  /* input.largerCheckbox { 
+    transform : scale(2); 
+  background-color : black;
+}  */
