@@ -32,6 +32,7 @@ var inputFieldIds = new Array();
 var name_pattern = /^[A-Za-z']+$/;
 var email_pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 var phone_pattern = /^[^0-1][0-9]{9}$/;
+var city_pattern = /^[a-zA-Z ]*$/;
 
 var ans;
 
@@ -73,8 +74,6 @@ function validate()
     for (let i = 0 ; i < inputFieldIds.length; i++)
     {
         var span;
-        // alert(inputFieldIds[i].getId()+" "+inputFieldIds[i].geterror_msg());
-        // console.log(inputFieldIds[i].getId()+" "+inputFieldIds[i].geterror_msg()+" "+inputFieldIds[i].getis_valid());
         if(!inputFieldIds[i].getis_valid())
         {
             if(inputFieldIds[i].getId()=='gender')
@@ -156,17 +155,17 @@ function check_first_name()
     if(element.value.trim().match(name_pattern)==null)
     {
         setErrorBorder(element);
-        inputFieldIds[0].setErrorMsg('Please use only characters');
+        inputFieldIds[0].setErrorMsg('Please use only Alphabets');
         inputFieldIds[0].setIsValid(false);
-        spanVisible("first_name_span","Please use only characters");
+        spanVisible("first_name_span","Please use only Alphabets");
         return;
     }
     if(element.value.trim().length>15)
     {
         setErrorBorder(element);
-        inputFieldIds[0].setErrorMsg('Name must be less than 15 characters');
+        inputFieldIds[0].setErrorMsg('Name must be less than 15 Alphabets');
         inputFieldIds[0].setIsValid(false);
-        spanVisible("first_name_span",'Name must be less than 15 characters');
+        spanVisible("first_name_span",'Name must be less than 15 Alphabets');
         return;
     }
     else {
@@ -200,7 +199,7 @@ function check_middle_name()
     if(element.value.trim().length>15)
     {
         setErrorBorder(element);
-        inputFieldIds[1].setErrorMsg('Upto 15 characters');
+        inputFieldIds[1].setErrorMsg('Upto 15 Alphabets');
         inputFieldIds[1].setIsValid(false);
         spanVisible("middle_name_span",inputFieldIds[1].geterror_msg())
         return;
@@ -220,7 +219,7 @@ function check_last_name()
     if(element.value.trim() == " ")
     {
         setErrorBorder(element);
-        inputFieldIds[2].setErrorMsg("Enter Surame");
+        inputFieldIds[2].setErrorMsg("Enter Lastname");
         inputFieldIds[2].setIsValid(false);
         spanVisible("last_name_span",inputFieldIds[2].geterror_msg())
         return;
@@ -228,7 +227,7 @@ function check_last_name()
     if(element.value.trim().match(name_pattern)==null)
     {
         setErrorBorder(element);
-        inputFieldIds[2].setErrorMsg('Please use only characters');
+        inputFieldIds[2].setErrorMsg('Please use only Alphabets');
         inputFieldIds[2].setIsValid(false);
         spanVisible("last_name_span",inputFieldIds[2].geterror_msg())
         return;
@@ -236,7 +235,7 @@ function check_last_name()
     if(element.value.trim().length>15)
     {   
         setErrorBorder(element);
-        inputFieldIds[2].setErrorMsg('Name must be less than 15 characters');
+        inputFieldIds[2].setErrorMsg('Name must be less than 15 Alphabets');
         inputFieldIds[2].setIsValid(false);
         spanVisible("last_name_span",inputFieldIds[2].geterror_msg())
         return;
@@ -503,6 +502,14 @@ function check_current_city()
         spanVisible("current_city_span",inputFieldIds[13].geterror_msg());
         return;
     }
+    else if(element.value.trim().match(city_pattern)==null)
+    {
+        inputFieldIds[13].setErrorMsg("Name should contain only Alphabets and spaces");
+        inputFieldIds[13].setIsValid(false);
+        setErrorBorder(element);
+        spanVisible("current_city_span",inputFieldIds[13].geterror_msg());
+        return;
+    }
     setSuccessBorder(element);
     inputFieldIds[13].setErrorMsg("");
     inputFieldIds[13].setIsValid(true);
@@ -570,8 +577,8 @@ function reload_captcha(){
     inputFieldIds[9] = new InputField(document.forms['form']['current_address'].id,"Please Enter your Current Address",false);
     inputFieldIds[10] = new InputField(document.forms['form']['permanent_address'].id,"",true);
     inputFieldIds[11] = new InputField(document.forms['form']['current_country'].id,"Select Your Country",false);
-    inputFieldIds[12] = new InputField(document.forms['form']['current_state'].id,"Select Your Country",false);
-    inputFieldIds[13] = new InputField(document.forms['form']['current_city'].id,"Select Your Country",false);
+    inputFieldIds[12] = new InputField(document.forms['form']['current_state'].id,"Select Your state",false);
+    inputFieldIds[13] = new InputField(document.forms['form']['current_city'].id,"Select Your city",false);
     inputFieldIds[14] = new InputField(document.forms['form']['subscription'].id,"",true);
     inputFieldIds[15] = new InputField(document.forms['form']['answer_captcha'].id,"Invalid Captcha",false);
 }
