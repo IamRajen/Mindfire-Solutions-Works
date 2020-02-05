@@ -13,124 +13,170 @@ class inputFieldIds{
     setValue(value){this.value = value;}
 }
 
+
 $( document ).ready(function() 
 {
-    first_name = new inputFieldIds( "first_name" , "Enter First Name..!!","" );
-    middle_name = new inputFieldIds("middle_name" , "","" );
-    last_name = new inputFieldIds("last_name" , "Enter Last Name..!!","" );
+    first_name = new inputFieldIds( "first_name" , "Enter First Name.","" );
+    middle_name = new inputFieldIds("middle_name" , "" ,"" );
+    last_name = new inputFieldIds("last_name" , "Enter Last Name.","" );
     email_id = new inputFieldIds("email_id" , "Enter Email Address" );
     gender = new inputFieldIds("gender", "Choose Your Gender", "" );
     password1 = new inputFieldIds("password1" , "Create a Password1", "" );
-    password2 = new inputFieldIds("password2", "Password not Matched", "" );
+    password2 = new inputFieldIds("password2", "", "" );
     phone_number = new inputFieldIds( "phone_number" , "Enter Your Phone Number", "" );
     alt_phone_number = new inputFieldIds( "alt_phone_number" , "" ,"");
     current_address = new inputFieldIds( "current_address" , "Enter Your Current Address", "" );
     permanent_address = new inputFieldIds( "permanent_address" , "", "" );
-    current_country = new inputFieldIds( "current_country" , "Enter Your Current Country", "" );
-    current_state = new inputFieldIds( "current_state" , "Enter Your Current State", "" );
-    current_city = new inputFieldIds( "current_city" , "Enter Your Current City", "" );
+    current_country = new inputFieldIds( "current_country" , "Select Current Country", "" );
+    current_state = new inputFieldIds( "current_state" , "Select Current State", "" );
+    current_city = new inputFieldIds( "current_city" , "Select Current City", "" );
     subscription = new inputFieldIds( 'subscription' , "", "");
     answer_captcha = new inputFieldIds( "answer_captcha" , "Invalid Captcha", "" );
-    captcha_refresh_button = $('#captcha_refresh_button');
-});
+    input_fields_array = new Array(first_name,middle_name,last_name,email_id,gender,password1,password2,phone_number,alt_phone_number,current_address
+                            ,permanent_address,current_country,current_state,current_city,subscription,answer_captcha);
 
-$(document).ready(function(){
-    $('#submit_button').click(function()
+    refresh_captcha();
+    $(function()
     {
-        return false;
-    });
-});
+        $('#first_name').focusout(function()
+        {
+            first_name.setValue($(this).val());
+            checkName(first_name);
+        });
+        $('#middle_name').focusout(function()
+        {
+            middle_name.setValue($(this).val());
+            checkName(middle_name);
+        });
+        $('#last_name').focusout(function()
+        {
+            last_name.setValue($(this).val());
+            checkName(last_name);
+        });
+        $('#email_id').focusout(function()
+        {
+            email_id.setValue($(this).val());
+            checkEmailId(email_id);
+        });
+        $('input[name ="gender"]').on('blur',function()
+        {
+            gender.setValue($('input[name ="gender"]:checked').val());
+            checkGender(gender);
+        });
+        $('#password1').on('blur',function()
+        {
+            password1.setValue($.trim($(this).val()));
+            checkPassword(password1);
+        });
+        $('#password2').on('blur',function()
+        {
+            password2.setValue($.trim($(this).val()));
+            checkPassword(password2);
+        });
+        $('#phone_number').on('blur',function()
+        {
+            phone_number.setValue($(this).val());
+            checkPhoneNumber(phone_number);
+        });
+        $('#alt_phone_number').on('blur',function()
+        {
+            alt_phone_number.setValue($(this).val());
+            checkPhoneNumber(alt_phone_number);
+        });
+        $('#current_address').on('blur',function()
+        {
+            current_address.setValue($(this).val());
+            checkAddress(current_address);
+        });
+        $('#permanent_address').on('blur',function()
+        {
+            permanent_address.setValue($(this).val());
+            checkAddress(permanent_address);
+        });
+        $('#current_country').on('blur',function()
+        {
+            current_country.setValue($(this).val());
+            checkAreaName(current_country);
+        });
+        $('#current_state').on('blur',function()
+        {
+            current_state.setValue($(this).val());
+            checkAreaName(current_state);
+        });
+        $('#current_city').on('blur',function()
+        {
+            current_city.setValue($(this).val());
+            checkAreaName(current_city);
+        });
+        $('#subscription').on('blur',function()
+        {
+            subscription.setValue($(this).val());
+            // check_subscription(subscription);
+        });
+        $('#answer_captcha').on('blur',function()
+        {
+            answer_captcha.setValue($(this).val());
+            checkCaptcha(answer_captcha);
+        });
+        $('#captcha_refresh_button').click(function(){
+            refresh_captcha();
+        });
+        $('#submit_button').click(function()
+        {
+            let total_error_fields = true;
+            for(let i = 0; i < input_fields_array.length; i++)
+            {
+                if(input_fields_array[i].getErrorMsg() != "")
+                {
+                    setErrorBorder(input_fields_array[i]);
+                    total_error_fields = false;
+                }
+            }
+            if(total_error_fields)
+            {
+                alert("Successfully Registered. Click OK to Proceed");
+            }
+            alert("Registration Failed. Many Fields are empty or not correctely filled.")
+            return total_error_fields;
+        });
 
-$(function()
-{
-    $('#first_name').focusout(function()
-    {
-        first_name.setValue($(this).val());
-        checkName(first_name);
-    });
-    $('#middle_name').focusout(function()
-    {
-        middle_name.setValue($(this).val());
-        checkName(middle_name);
-    });
-    $('#last_name').focusout(function()
-    {
-        last_name.setValue($(this).val());
-        checkName(last_name);
-    });
-    $('#email_id').focusout(function()
-    {
-        email_id.setValue($(this).val());
-        checkEmailId(email_id);
-    });
-    // $('#gender').on('blur',function()
-    // {
-    //     gender.setValue($(this).val());
-    //     checkGender(gender);
-    // });
-    $('#password1').on('blur',function()
-    {
-        password1.setValue($(this).val());
-        checkPassword(password1);
-    });
-    $('#password2').on('blur',function()
-    {
-        password2.setValue($(this).val());
-        checkPassword(password2);
-    });
-    $('#phone_number').on('blur',function()
-    {
-        phone_number.setValue($(this).val());
-        checkPhoneNumber(phone_number);
-    });
-    $('#alt_phone_number').on('blur',function()
-    {
-        alt_phone_number.setValue($(this).val());
-        checkPhoneNumber(alt_phone_number);
-    });
-    $('#current_address').on('blur',function()
-    {
-        current_address.setValue($(this).val());
-        checkAddress(current_address);
-    });
-    $('#permanent_address').on('blur',function()
-    {
-        permanent_address.setValue($(this).val());
-        checkAddress(permanent_address);
-    });
-    $('#current_country').on('blur',function()
-    {
-        current_country.setValue($(this).val());
-        checkAreaName(current_country);
-    });
-    $('#current_state').on('blur',function()
-    {
-        current_state.setValue($(this).val());
-        checkAreaName(current_state);
-    });
-    $('#current_city').on('blur',function()
-    {
-        current_city.setValue($(this).val());
-        checkAreaName(current_city);
-    });
-    $('#answer_captcha').on('blur',function()
-    {
-        answer_captcha.setValue($(this).val());
-        checkCaptcha(answer_captcha);
-    });
-    captcha_refresh_button.click(function(){
-        refresh_captcha();
     });
 
 
+    function refresh_captcha()
+    {
+        canvas.width = canvas.width;
+        var captcha = $("#canvas");
+        var context = captcha[0].getContext("2d");
+        var operator = ["+","-","*","/"];
 
-
+        var operand1 = Math.floor(Math.random() * 10)+1; 
+        var operand2 = Math.floor(Math.random() * 10)+1;
+        var symbol = operator[Math.floor(Math.random()*4)];
+        if(symbol == '/' && operand1 % operand2 != 0)
+        {
+            symbol = "+";
+        }
+        context.font = "60px Arial";
+        context.fillText(operand1,20,80);
+        context.fillText(symbol,90,80);
+        context.fillText(operand2,160,80);
+        switch(symbol)
+        {
+            case "+": ans = operand1 + operand2;
+                        break;
+            case "-": ans = operand1 - operand2;
+                        break;
+            case "/": ans = operand1 / operand2;
+                        break;
+            case "*": ans = operand1 * operand2;   
+        }
+    }
     
     function setErrorBorder(object)
     {
         $("#"+object.getId()).css({"border-color": "red", "border-width":"2px"}); 
         $("#"+object.getId()+"_span").text(object.getErrorMsg());
-        console.log($("#"+object.getId()+"_span").val());
     }
 
     function setSuccessBorder(object)
@@ -138,9 +184,15 @@ $(function()
         $("#"+object.getId()).css({"border-color": "green", "border-width":"2px"}); 
         object.setErrorMsg("");
         $("#"+object.getId()+"_span").text(object.getErrorMsg());
-        console.log($("#"+object.getId()+"_span").val()+"All Clear");
+        total_error_fields--;
     }
-
+    function setNormalBorder(object)
+    {
+        $("#"+object.getId()).css({"border-color": "black", "border-width":"1px"}); 
+        object.setErrorMsg("");
+        $("#"+object.getId()+"_span").text(object.getErrorMsg());
+        total_error_fields--;
+    }
 
     function checkName(object)
     {
@@ -149,6 +201,7 @@ $(function()
         console.log(object.getId()+"hello");
         if(text =="" && object.getId() == 'middle_name')
         {
+            setNormalBorder(object);
             return;
         }
         if(text == "")
@@ -196,8 +249,16 @@ $(function()
         }
 
     }
-    function checkGender()
+    function checkGender(object)
     {
+        if(object.getValue() == null)
+        {
+            setErrorBorder(object);
+            return;
+        }
+        else{
+            setSuccessBorder(object);
+        }
 
     }
     function checkPassword(object)
@@ -207,32 +268,42 @@ $(function()
         if(object.getId() == 'password1' && text == "")
         {
             object.setErrorMsg("Create a Password.");
+            if(password2.getValue() == "")
+            {
+                setNormalBorder(password2);
+            }
             setErrorBorder(object);
+            return;
         }
-        else if(text.length > 15)
-        {
-            object.setErrorMsg("Password must be of 8 to 15 characters.");
-            setErrorBorder(object);
-        }
-        else if(object.getId() == "password1" && !pattern.test(text))
-        {
-            object.setErrorMsg("Must contain at least 1 UPPERCASE 1 LOWERCASE 1 SPECIAL CHARACTER.");
-            setErrorBorder(object);
-        }
-        else if((object.getId() == 'password2' && password1.getValue().length > 0 && text != password1.getValue()) || 
+        if((object.getId() == 'password2' && password1.getValue().length > 0 && text != password1.getValue()) || 
                 (object.getId() == "password1" && password2.getValue().length > 0 && password2.getValue() != text))
         {
             password2.setErrorMsg("Password not matched");
             setErrorBorder(password2);
+            return;
         }
-        else if(object.getId() == 'password1' && password2.getValue() == object.getValue())
+        if(object.getId() == 'password2' && $.trim(password1.getValue())=="")
+        {
+            setNormalBorder(object);
+            return;
+        }
+        if(text.length > 15 || text.length < 8)
+        {
+            object.setErrorMsg("Password must be of 8 to 15 characters.");
+            setErrorBorder(object);
+            return;
+        }
+        if(object.getId() == "password1" && !pattern.test(text))
+        {
+            object.setErrorMsg("Must contain at least 1 UPPERCASE 1 LOWERCASE 1 SPECIAL CHARACTER.");
+            setErrorBorder(object);
+            return;
+        }
+        if(object.getId() == 'password1' && password2.getValue() == object.getValue())
         {
             setSuccessBorder(password2);
         }
         setSuccessBorder(object);
-
-        
-
     }
     function checkPhoneNumber(object)
     {
@@ -256,10 +327,7 @@ $(function()
         }
         else {
             setSuccessBorder(object);
-        }
-        
-        
-        
+        }   
     }
     function checkAddress(object)
     {
@@ -321,45 +389,6 @@ $(function()
 
 
     
-    function refresh_captcha()
-    {
-        // canvas.width = canvas.width;
-        var $captcha = $("#canvas");
-        $captcha.drawRect({
-            fillStyle: 'steelblue',
-            strokeStyle: 'blue',
-            strokeWidth: 4,
-            x: 450, y: 500,
-            fromCenter: false,
-            width: 200,
-            height: 100
-          });
-        // var context = captcha.getContext("2d");
-        // var operator = ["+","-","*","/"];
-
-        // var operand1 = Math.floor(Math.random() * 10)+1; 
-        // var operand2 = Math.floor(Math.random() * 10)+1;
-        // var symbol = operator[Math.floor(Math.random()*4)];
-        // if(symbol == '/' && operand1 % operand2 != 0)
-        // {
-        //     symbol = "+";
-        // }
-        // context.font = "60px Arial";
-        // context.fillText(operand1,20,80);
-        // context.fillText(symbol,90,80);
-        // context.fillText(operand2,160,80);
-        // console.log(operand1 + operand2);
-        // switch(symbol)
-        // {
-        //     case "+": ans = operand1 + operand2;
-        //                 break;
-        //     case "-": ans = operand1 - operand2;
-        //                 break;
-        //     case "/": ans = operand1 / operand2;
-        //                 break;
-        //     case "*": ans = operand1 * operand2;   
-        // }
-    }
-
+    
 
 });
