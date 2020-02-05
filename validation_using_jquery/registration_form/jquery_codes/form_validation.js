@@ -12,8 +12,6 @@ class inputFieldIds{
     setErrorMsg(error){this.error_msg = error;}
     setValue(value){this.value = value;}
 }
-
-
 $( document ).ready(function() 
 {
     first_name = new inputFieldIds( "first_name" , "Enter First Name.","" );
@@ -36,6 +34,7 @@ $( document ).ready(function()
                             ,permanent_address,current_country,current_state,current_city,subscription,answer_captcha);
 
     refresh_captcha();
+
     $(function()
     {
         $('#first_name').focusout(function()
@@ -139,9 +138,7 @@ $( document ).ready(function()
             alert("Registration Failed. Many Fields are empty or not correctely filled.")
             return total_error_fields;
         });
-
     });
-
 
     function refresh_captcha()
     {
@@ -172,33 +169,27 @@ $( document ).ready(function()
             case "*": ans = operand1 * operand2;   
         }
     }
-    
     function setErrorBorder(object)
     {
         $("#"+object.getId()).css({"border-color": "red", "border-width":"2px"}); 
         $("#"+object.getId()+"_span").text(object.getErrorMsg());
     }
-
     function setSuccessBorder(object)
     {
         $("#"+object.getId()).css({"border-color": "green", "border-width":"2px"}); 
         object.setErrorMsg("");
         $("#"+object.getId()+"_span").text(object.getErrorMsg());
-        total_error_fields--;
     }
     function setNormalBorder(object)
     {
         $("#"+object.getId()).css({"border-color": "black", "border-width":"1px"}); 
         object.setErrorMsg("");
         $("#"+object.getId()+"_span").text(object.getErrorMsg());
-        total_error_fields--;
     }
-
     function checkName(object)
     {
         var pattern = /^[A-Za-z']+$/;
         var text = $.trim(object.getValue());
-        console.log(object.getId()+"hello");
         if(text =="" && object.getId() == 'middle_name')
         {
             setNormalBorder(object);
@@ -224,11 +215,8 @@ $( document ).ready(function()
         }
         else {
             setSuccessBorder(object);
-            return;
         }
     }
-
-    
     function checkEmailId(object)
     {
         var pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -243,11 +231,9 @@ $( document ).ready(function()
         {
             object.setErrorMsg("Invalid Email Address.");
             setErrorBorder(object);
+            return;
         }
-        else{
-            setSuccessBorder(object);
-        }
-
+        setSuccessBorder(object);
     }
     function checkGender(object)
     {
@@ -256,10 +242,7 @@ $( document ).ready(function()
             setErrorBorder(object);
             return;
         }
-        else{
-            setSuccessBorder(object);
-        }
-
+        setSuccessBorder(object);
     }
     function checkPassword(object)
     {
@@ -314,21 +297,21 @@ $( document ).ready(function()
             object.setErrorMsg("Enter your Phone number.")
             setErrorBorder(object);
         }
-        else if(!pattern.test(text))
+        if(!pattern.test(text))
         {
             object.setErrorMsg("Invalid Phone Number");
             setErrorBorder(object);
+            return;
         }
-        else if((object.getId() == "alt_phone_number" && phone_number.getValue() && text == phone_number.getValue())
+        if((object.getId() == "alt_phone_number" && phone_number.getValue() && text == phone_number.getValue())
             || (object.getId() == "phone_number" && alt_phone_number.getValue() && text == alt_phone_number.getValue()))
         {
             alt_phone_number.setErrorMsg("Number should not be same.");
             setErrorBorder(alt_phone_number);
+            return;
         }
-        else {
-            setSuccessBorder(object);
-        }   
-    }
+        setSuccessBorder(object);   
+    }   
     function checkAddress(object)
     {
         var pattern = /^[0-9 _ , / & a-zA-Z ]*$/;
@@ -360,12 +343,10 @@ $( document ).ready(function()
         object.setErrorMsg("");
         setSuccessBorder(object);
     }
-
     function checkAreaName(object)
     {   
         var pattern = /^[a-zA-Z ]*$/;
         var text = $.trim(object.getValue());
-        
         if(!pattern.test(text) || text == "")
         {
             object.setErrorMsg('Please select a valid name. Can Use Only UPPERCASE LOWERCASE and spaces');
@@ -373,7 +354,6 @@ $( document ).ready(function()
             return;
         }
         setSuccessBorder(object);
-
     }
     function checkCaptcha(object)
     {
@@ -385,10 +365,5 @@ $( document ).ready(function()
             return;
         }
         setSuccessBorder(object);
-    }
-
-
-    
-    
-
+    } 
 });
