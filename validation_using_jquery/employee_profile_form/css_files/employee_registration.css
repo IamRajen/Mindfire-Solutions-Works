@@ -1,0 +1,138 @@
+.div_container{
+    margin: auto; 
+    height: 100%; 
+    width: 70% ;
+    background-color: rgb(255, 255, 255);
+    border-radius: 20px;
+    margin-top: 5%;
+    margin-bottom: 2%;
+    padding: 2%;
+    box-shadow: 5px 10px 8px 10px #888888;
+}
+
+.div_outer_row
+{
+    grid-row-gap: 2px;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+}
+.select_div
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+.phone_address_div
+{
+    display: grid;
+    grid-template-columns: 6fr 1fr 1fr;
+}
+
+.medium_div
+{
+    grid-template-columns: 1fr 1fr;
+    display: grid;
+}
+.div_inner_col
+{
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 5px;
+}
+.div_button
+{
+    margin: 10%;
+}
+
+.div_large_input
+{
+    display: grid;
+    height: auto;
+}
+
+span{
+    color: red;
+}
+
+.input
+{ 
+    width: 85%;
+    height: 20px;
+    padding: 10px;
+    border-radius: 10px; 
+    border: solid;
+    border-width: 1px;
+    border-color: black;
+    box-shadow: 3px 3px 3px 1px #888888;
+}
+
+img{
+    height: 120px;
+    width: 120px;
+    margin: 10px;
+    display: block;
+    border-radius: 50%;
+}
+
+.button
+{
+    margin: 10px;
+    color: #000000;
+    border: solid;
+    border-width: 1px;
+    border-color: rgb(0, 0, 0);
+    box-shadow: 3px 3px 3px 1px #888888;
+}
+.button_address
+{
+    margin: 22px 17px;
+    color: #000000;
+    font-style: bold;
+    border: solid;
+    border-width: 1px;
+    border-color: rgb(0, 0, 0);
+    box-shadow: 3px 3px 3px 1px #888888;
+}
+
+.textarea{
+    background-color: #fff; 
+    height: 30px;
+    width: 85%; 
+    padding: 10px; 
+    margin: 0px; 
+    border-radius: 10px; 
+    border: solid;
+    border-width: 1px;
+    border-color: rgb(0, 0, 0);
+    box-shadow: 3px 3px 3px 1px #888888;
+}
+.level{
+    float: left;
+    font-family: 'Courier New', Courier, monospace;
+    color: rgb(0, 0, 0);
+    font-size: 15px;
+}
+
+.error_msg{
+    width: auto;
+    height: 10px;
+    font-size: 12px;
+    margin: 0;
+    padding: 2px 8px;
+    margin-top: 4px;
+    border-radius: 5px;
+    color: rgb(255, 0, 0);
+    visibility: visible;
+    display: inline-block;
+}
+
+
+.select{
+    padding: 10px; 
+    width: 100%; 
+    border-radius: 10px; 
+    margin: 0;
+    background-color: #fff;
+    border-width: 1;
+    border-color: rgb(40, 42, 43);
+    box-shadow: 3px 3px 3px 1px #888888;
+}
