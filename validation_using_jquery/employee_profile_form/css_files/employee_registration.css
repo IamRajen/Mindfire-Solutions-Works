@@ -10,6 +10,12 @@
     box-shadow: 5px 10px 8px 10px #888888;
 }
 
+.shadow
+{   
+    /* box-shadow: 5px 10px 8px 10px #888888; */
+    /* margin-bottom: 25px; */
+    
+}
 .div_outer_row
 {
     grid-row-gap: 2px;
@@ -24,9 +30,25 @@
 .phone_address_div
 {
     display: grid;
-    grid-template-columns: 6fr 1fr 1fr;
+    grid-template-columns: 8fr 1fr;
 }
-
+.remove
+{
+    background-image: url('../images/delete.png');
+    width: 30px;
+    height: 30px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: auto;
+}
+.add{
+    background-image: url('../images/plus.png');
+    width: 30px;
+    height: 30px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: auto;
+}
 .medium_div
 {
     grid-template-columns: 1fr 1fr;
@@ -41,6 +63,7 @@
 .div_button
 {
     margin: 10%;
+    /* border: 1px solid black; */
 }
 
 .div_large_input
@@ -55,6 +78,7 @@ span{
 
 .input
 { 
+    margin: auto;
     width: 85%;
     height: 20px;
     padding: 10px;

@@ -43,36 +43,15 @@
                 <div class="div_inner_col">
                     <div id="profile_photo">
                         <level class="level">Profile Photo<span>*</span></level>
-                        <img id="profile_photo" src="logo.jpg"> 
-                        <input class="button" type ="button" name="upload_photo" value="Upload Photo">
-                        <input class="button"  type ="button" name="remove_photo" value="Remove Photo">
+                        <img id="profile_photo" src=""> 
+                        <!-- <input id="add_photo" class="button" type ="file" name="upload_photo" value="Upload Photo"/>
+                        <input id="remove_photo" class="button"  type ="button" name="remove_photo" value="Remove Photo"/> -->
                         <span class="error_msg" id="profile_photo_span">how are you</span>
                     </div>
                 </div>
             </div>
 
             <div class="div_outer_row">
-                <div class="div_inner_col">
-                    <div class="phone_address_div">
-                        <div class="div_inner_col">
-                            <level class="level">Phone Number<span>*</span></level>
-                            <input class="input " type="tel" id="primary_phone_number" placeholder="Phone Number">
-                            <span class="error_msg" id="phone_number_span">how are you</span>
-                        </div>
-                        <div class="div_inner_col div_button">
-                            <input class="button button_plus"  type ="button" name="add_phone_number" value="+">
-                        </div>
-                        <div class="div_inner_col div_button">
-                            <input class="button button_minus"  type ="button" name="remove_phone_number" value="-">
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="div_outer_row">
-
                 <div class="div_inner_col">
                     <div class="medium_div">
                         <div class="div_medium_input">
@@ -87,30 +66,44 @@
                         </div>
                     </div>
                 </div>
-
             </div>
+
+
+                <div class="div_outer_row">
+                    <div class="div_inner_col" id="phone_address_div" >
+
+                        <div class="phone_address_div" >
+                            <div class="div_inner_col">
+                                <level class="level">Phone Number<span>*</span></level>
+                                <input class="input " type="tel" id="phone_number" placeholder="Phone Number">
+                                <span class="error_msg" id="phone_number_span">how are you</span>
+                            </div>
+                            <div class="div_inner_col div_button">
+                                <button class="add" type="button" id="add_phone_field" ></button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
 
             <h3>Address Information</h3>
             <hr>
             <div class="div_outer_row">
                 <div class="div_inner_col">
 
-                    <div class="div_large_input">
+                    
                         <div class="phone_address_div">
                             <div class="div_inner_col">
                                 <level class="level">Current Address<span>*</span></level>
-                                <textarea id="current_address" size="4" type="text" name="address1" placeholder="Full Address" class="textarea" onblur="check_current_address()"></textarea>
-                                <span class="error_msg" id="current_address_span">how are you</span>
+                                <textarea id="current_address" size="4" type="text" name="current_address" placeholder="Full Address" class="textarea" onblur="check_current_address()"></textarea>
+                                <span class="error_msg" id="address_span">how are you</span>
                             </div>
                             <div class="div_inner_col">
-                                <input class="button_address button_plus"  type ="button" name="add_address" value="+">
-                            </div>
-                            <div class="div_inner_col">
-                                <input class="button_address button_minus"  type ="button" name="remove_address" value="-">
+                                <button class="add" type="button" id="add_address_field" ></button>
                             </div>
                         </div>
-                    </div>
-                    <div class="div_large_input">
+                        
                         <div class="select_div">
                             <div class="div_inner_col">
                                 <level class="level">Current Country<span>*</span></level>
@@ -127,8 +120,7 @@
                                 <span class="error_msg" id="current_state_span">how are you</span>
                             </div>
                         </div>  
-                    </div>
-                    <div class="div_large_input">
+                        
                         <div class="select_div">
                             <div class="div_inner_col">
                                 <level class="level">Current City<span>*</span></level>
@@ -143,7 +135,8 @@
                                 <span class="error_msg" id="current_pincode_span">how are you</span>
                             </div>
                         </div>  
-                    </div>
+
+                    
                     
                 </div>
 
