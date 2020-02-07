@@ -39,6 +39,7 @@ class Address
     setState(state){ this.state = state;}
     setCity(city){ this.city = city;}
     setPincode(pincode){ this.pincode = pincode};
+
 }
 class inputFieldIds
 {
@@ -57,6 +58,7 @@ class inputFieldIds
 }
 
 alt_phone_number_ids = 1;
+alt_address_ids = 1;
 
 
 $(document).ready(function()
@@ -85,7 +87,7 @@ $(document).ready(function()
         addPhoneField();
     });
     
-    $('#ad_address_field').click(function()
+    $('#add_address_field').click(function()
     {
         addAddressField();
     });
@@ -93,51 +95,150 @@ $(document).ready(function()
 
 function addPhoneField()
 {
-    var phone_address_div = document.createElement('div');
-    var div_inner_col_input = document.createElement('div');
-    var div_inner_col_button = document.createElement('div');
+    if(alt_phone_number_ids<5){
+        var phone_address_div = document.createElement('div');
+        var div_inner_col_input = document.createElement('div');
+        var div_inner_col_button = document.createElement('div');
 
-    phone_address_div.className = 'phone_address_div shadow'
-    div_inner_col_input.className = 'div_inner_col';
-    div_inner_col_button.className = 'div_inner_col div_button'
+        phone_address_div.className = 'phone_address_div shadow'
+        div_inner_col_input.className = 'div_inner_col';
+        div_inner_col_button.className = 'div_inner_col div_button'
 
-    var level = document.createElement('level');
-    var input = document.createElement('input');
-    var span = document.createElement('span');
-    var minus_button = document.createElement('button');
+        var level = document.createElement('level');
+        var input = document.createElement('input');
+        var span = document.createElement('span');
+        var minus_button = document.createElement('button');
 
-    phone_address_div.id = 'phone_address_div'+alt_phone_number_ids;
-    level.className = 'level';
-    level.innerHTML = "Alternative Phone Number" ;
+        level.className = 'level';
+        level.innerHTML = "Alternative Phone Number" ;
 
-    input.className = 'input';
-    input.placeholder = "Enter Alternative Number";
-    input.id = "alt_phone_number"+alt_phone_number_ids;
+        input.className = 'input';
+        input.placeholder = "Enter Alternative Number";
+        input.id = "alt_phone_number"+alt_phone_number_ids;
 
-    span.className = 'error_msg';
-    span.id = 'alt_phone_number_span'+alt_phone_number_ids;
+        span.className = 'error_msg';
+        span.id = 'alt_phone_number_span'+alt_phone_number_ids;
 
-    minus_button.className = 'remove';
-    minus_button.id = 'remove_button'+alt_phone_number_ids;
-    minus_button.onclick = function(){
-        phone_address_div.remove();
+        minus_button.className = 'remove';
+        minus_button.id = 'remove_button'+alt_phone_number_ids;
+        minus_button.onclick = function(){
+            phone_address_div.remove();
+            alt_phone_number_ids--;
+        }
+        
+        div_inner_col_input.append(level);
+        div_inner_col_input.append(input);
+        div_inner_col_input.append(span);
+
+        div_inner_col_button.append(minus_button);
+
+        phone_address_div.append(div_inner_col_input);
+        phone_address_div.append(div_inner_col_button);
+        $('#phone_div').append(phone_address_div);
+        alt_phone_number.push(input);
+        alt_phone_number_ids++;
     }
-    
-    div_inner_col_input.append(level);
-    div_inner_col_input.append(input);
-    div_inner_col_input.append(span);
-
-    div_inner_col_button.append(minus_button);
-
-    phone_address_div.append(div_inner_col_input);
-    phone_address_div.append(div_inner_col_button);
-    $('#phone_address_div').append(phone_address_div);
-    alt_phone_number.push(input);
-    alt_phone_number_ids++;
     return;
+
 }
 
 function addAddressField()
 {
     
+    
+
+    var div_inner_col1 = document.createElement('div');
+    var div_inner_col2 = document.createElement('div');
+    var div_inner_col3 = document.createElement('div');
+    var div_inner_col4 = document.createElement('div');
+    var div_inner_col5 = document.createElement('div');
+    var div_inner_col6 = document.createElement('div');
+    var phone_address_div = document.createElement('div');
+    var select_div = document.createElement('div');
+
+    var textarea = document.createElement('textarea');
+    var input = document.createElement('input');
+    var span1 = document.createElement('span');
+    var button = document.createElement('button');
+    var level1 = document.createElement('level');
+    var level2 = document.createElement('level');
+    var level3 = document.createElement('level');
+    var level4 = document.createElement('level');
+    var level5 = document.createElement('level');
+    var span2 = document.createElement('span');
+    var span3 = document.createElement('span');
+    var span4 = document.createElement('span');
+    var span5 = document.createElement('span');
+    var select1 = document.createElement('select');
+    var select2 = document.createElement('select');
+    var select3 = document.createElement('select');
+    
+    phone_address_div.className = 'phone_address_div';
+    select_div.className = 'select_div';
+    div_inner_col1.className = 'div_inner_col' ;
+    div_inner_col2.className = 'div_inner_col' ;
+    div_inner_col3.className = 'div_inner_col' ;
+    div_inner_col4.className = 'div_inner_col' ;
+    div_inner_col5.className = 'div_inner_col' ;
+    div_inner_col6.className = 'div_inner_col' ;
+    
+    textarea.className = 'textarea';
+    level1.className = 'level';
+    span1.className = 'error_msg';
+    button.className = 'remove'
+    input.className = 'input';
+
+    level1.innerHTML = 'Alternative address'
+    textarea.id = 'alt_address'+alt_address_ids;
+    span1.id = 'alt_address'+alt_address_ids+'_span';
+    button.id = 'remove_button'+alt_address_ids;
+
+
+    div_inner_col1.append(level1);
+    div_inner_col1.append(textarea);
+    div_inner_col1.append(span1);
+    div_inner_col2.append(button);
+    phone_address_div.append(div_inner_col1,div_inner_col2);
+
+
+    button.onclick = function(){this};
+    
+    select1.className = 'select';
+    select2.className = 'select';
+    select3.className = 'select';
+
+    span2.className = 'span';
+    span3.className = 'span';
+    span4.className = 'span';
+    span5.className = 'span';
+
+    level2.innerHTML = 'Alternative Country'
+    select1.id = 'alt_country'+alt_address_ids;
+    span2.id = 'altt_country'+alt_address_ids+'_span';
+    div_inner_col3.append(level2,select1,span2);
+
+    level3.innerHTML = 'Alternative State'
+    select2.id = 'alt_state'+alt_address_ids;
+    span3.id = 'alt_state'+alt_address_ids+'_span';
+    div_inner_col4.append(level3,select2,span3);
+
+    level4.innerHTML = 'Alternative City'
+    select3.id = 'alt_city'+alt_address_ids;
+    span4.id = 'alt_city'+alt_address_ids+'_span';
+    div_inner_col5.append(level4,select3,span4);
+
+    level5.innerHTML = 'Alternative Pincode'
+    input.id = 'alt_pincode'+alt_address_ids;
+    span5.id = 'alt_pincode'+alt_address_ids+'_span';
+    div_inner_col6.append(level5,input,span5);
+
+    select_div.append(div_inner_col3,div_inner_col4,div_inner_col5,div_inner_col6)
+    $('#address_div').append(phone_address_div,select_div);
+    alt_address_ids++;
+
+    var address_obj = new Address(textarea,select1,select2,select3,input);
+    addresses.push(address_obj);
+
+    return;
+
 }
