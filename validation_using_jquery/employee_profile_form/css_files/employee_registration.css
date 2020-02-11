@@ -8,6 +8,13 @@
     margin-bottom: 2%;
     padding: 2%;
 }
+.show_details
+{
+    display: inline-block;
+    width: auto;
+    height: auto;
+    text-align: center;
+}
 .div_image
 {
     margin: auto;

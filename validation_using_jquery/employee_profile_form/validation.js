@@ -9,12 +9,53 @@ class Employee
         this.email_id = email_id;
         this.phone_number = phone_number;
         this.current_address = current_address;
-        this.profile_photo = profile_photo;
         this.pan_card_number = pan_card_number;
         this.aadhar_card_number = aadhar_card_number;
         this.alt_phone_numbers = alt_phone_numbers;
         this.addresses = addresses;
         this.profile_photo = profile_photo;
+    }
+    getName()
+    {
+        return this.first_name+" "+this.middle_name+" "+this.last_name;
+    }
+    getEmailId()
+    {
+        return this.email_id;
+    }
+    getPrimaryPhoneNumber()
+    {
+        return this.phone_number;
+    }
+    getCurrentAddress()
+    {
+        var address = this.current_address.getAddress();
+        var country = this.current_address.getCountry();
+        var state = this.current_address.getState();
+        var city = this.current_address.getCity();
+        var pincode = this.current_address.getPincode();
+   
+        return address+" "+country+" "+state+" "+city+" "+pincode;
+    }
+    getPancardNumber()
+    {
+        return this.pan_card_number;
+    }
+    getAadharcardNumber()
+    {
+        return this.aadhar_card_number;
+    }
+    getAlternativePhoneNumbers()
+    {
+        return this.alt_phone_numbers;
+    }
+    getAddresses()
+    {
+        return this.addresses;
+    }
+    getProfilePhoto()
+    {
+        this.profile_photo;
     }
 }
 
@@ -39,7 +80,6 @@ class Address
     setState(state){ this.state = state;}
     setCity(city){ this.city = city;}
     setPincode(pincode){ this.pincode = pincode};
-
 }
 class InputFields
 {
@@ -65,6 +105,7 @@ var map = new Map();
 
 $(document).ready(function()
 {
+    $('#employee_details').hide();
     $('#div_container').addClass('blue_class');
     alt_phone_number = new Array();
     addresses = new Array();
@@ -82,8 +123,8 @@ $(document).ready(function()
        .set("current_pincode",new InputFields("current_pincode","Enter your Pincode",""))
        .set("pan_card",new InputFields( 'pan_card' , "Enter Your Pan card Number", ""))
        .set("aadhar_card",new InputFields( "aadhar_card" , "Enter Your Aadhar card Number", "" ))
-       .set("answer_captcha",new InputFields("answer_captcha","Invalid Captcha",""))
-       .set("profile_photo",new InputFields("profile_photo","Please Upload a photo",""));
+       .set("answer_captcha",new InputFields("answer_captcha","Invalid Captcha",""));
+    //    .set("profile_photo",new InputFields("profile_photo","Please Upload a photo",""));
 
     alt_phone_number.push(map.get("phone_number"));
     $('#add_phone_field').click(function()
@@ -96,8 +137,6 @@ $(document).ready(function()
         addAddressField();
     });
 
-    refresh_captcha();
-
     $('#captcha_refresh_button').click(function()
     {
         refresh_captcha();
@@ -106,32 +145,54 @@ $(document).ready(function()
     {
         checkCaptcha('answer_captcha');
     });
+    
+    refresh_captcha();
 
     $('#submit_button').click(function()
     {
         var valid = true;
-        for(var m of map.keys())
+        for(var key of map.keys())
         {
-            if(map.get(m).getErrorMsg())
+            if(map.get(key).getErrorMsg())
             {
-                setErrorBorder(map.get(m));
+                setErrorBorder(map.get(key));
                 valid = false;
+                refresh_captcha();
             }
         }
-        if(!valid)
+        if(valid) 
         {
-            refresh_captcha();
+            alt_address_objects = new Array()
+            for (var address =0 ;address<addresses.length;address++)
+            {
+                alt_address_objects.push(addresses[address].getAddress().value + addresses[address].getCountry().value+addresses[address].getState().value+addresses[address].getCity().value+addresses[address].getPincode().value);
+            }
+            var current_address = new Address(
+                map.get('current_address').getValue(),
+                map.get('current_country').getValue(),
+                map.get('current_state').getValue(),
+                map.get('current_city').getValue(),
+                map.get('current_pincode').getValue()
+            );
+            employee = new Employee(
+                map.get('first_name').getValue(),
+                map.get('middle_name').getValue(),
+                map.get('last_name').getValue(),
+                map.get('email_id').getValue(),
+                map.get('phone_number').getValue(),
+                current_address,
+                map.get('pan_card').getValue(),
+                map.get('aadhar_card').getValue(),
+                alt_address_objects,
+                "profile photo",
+                alt_phone_number,
+            );
+            alert("Registration Succesful");
+            $('#employee_registration_form').hide();
+            return displayData();
         }
-        else 
-        {
-            var current_address = new Address(map.get("current_address"),map.get("current_country"),map.get("current_state"),map.get("current_city"),map.get("current_pincode"));
-            var employee = new Employee(map.get('first_name').getValue(),map.get('middile_name').getValue(),map.get('last_name').getValue()
-            ,map.get('email_id').getValue(),map.get('phone_number').getValue(),current_address,map.get('pan_card').getValue(),map.get('aadhar_card').getValue()
-            ,addresses,map.get('profile_photo'),alt_phone_number);
-        }
-        return valid;
+        return false;
     });
-
     loadCountries(document.getElementById('current_country'));
     $('#current_country').change(function()
     {
@@ -139,11 +200,42 @@ $(document).ready(function()
     });
 });
 
+function validatedForm()
+{
+
+    var valid = true;
+    for(var m of map.keys())
+    {
+        if(map.get(m).getErrorMsg())
+        {
+            setErrorBorder(map.get(m));
+            valid = false;
+            console.log(map.get(m))
+        }
+    }
+    if(!valid)
+    {
+        refresh_captcha();
+
+    }
+    else 
+    {
+        var current_address = new Address(map.get("current_address"),map.get("current_country"),map.get("current_state"),map.get("current_city"),map.get("current_pincode"));
+        var employee = new Employee(map.get('first_name').getValue(),map.get('middile_name').getValue(),map.get('last_name').getValue()
+        ,map.get('email_id').getValue(),map.get('phone_number').getValue(),current_address,map.get('pan_card').getValue(),map.get('aadhar_card').getValue()
+        ,addresses,map.get('profile_photo'),alt_phone_number);
+        // console.log("validated");
+        $('#employee_registration_form').hide();
+    }
+    return false;
+
+}
+
 function loadCountries(country_field)
 {
     var country_options;
     $.getJSON('json_files/countries.json',function(result)
-    {
+    { 
         $.each(result, function(j,countries)
         {
             country_options+="<option value='"+countries.id+"'>"+countries.name+"</option>";
@@ -182,15 +274,18 @@ function loadImage(input)
 
 function removeField()
 { 
+    for(let i =0;i<alt_phone_number.length;i++)
+    {
+        if(map.get(arguments[0].id).getId() == alt_phone_number[i].getId())
+        {
+            alt_phone_number.splice(i,1);
+        }
+    }
     for(let i=0;i<arguments.length;i++)
     {
         map.delete(arguments[i].id); 
     }
-    var index = alt_phone_number.indexOf(arguments[0]);
-    if(index > -1)
-    {
-        alt_phone_number.splice(index,1);
-    }
+    
 }
 
 function addPhoneField()
@@ -233,7 +328,7 @@ function addPhoneField()
     $(div_row).insertAfter('#phone_div');
 
     map.set(input.id,new InputFields(input.id,"Enter Your Phone Number",""));
-    alt_phone_number.push(input);
+    alt_phone_number.push(new InputFields(input.id,"Enter Your Phone Number",""));
     alt_phone_number_ids++;
     return;
 
@@ -425,7 +520,7 @@ function checkPhoneNumber(element)
     {
         for(let i = 0;i<alt_phone_number.length;i++)
         {
-            if($('#'+alt_phone_number[i].id).val() == object.getValue() && alt_phone_number[i].id != object.getId())
+            if($('#'+alt_phone_number[i].getId()).val() == object.getValue() && alt_phone_number[i].getId() != object.getId())
             {
                 object.setErrorMsg("This Number is already Entered..!!");
                 setErrorBorder(object);
@@ -565,4 +660,56 @@ function refresh_captcha()
                     break;
         case "*": ans = operand1 * operand2;   
     }
+}
+
+function displayData()
+{
+    $('#employee_details').show()
+    // console.log(employee.getName());
+    // console.log(employee.getAddresses());
+    // console.log(employee.getPancardNumber());
+
+    $('#employee_full_name').text(employee.getName());
+    $('#employee_email_id').text(employee.getEmailId());
+    $('#employee_pan_card_number').text(employee.getPancardNumber());
+    $('#employee_aadhar_card_number').text(employee.getAadharcardNumber());
+    $('#employee_primary_phone_number').text(employee.getPrimaryPhoneNumber());
+    if(employee.getAlternativePhoneNumbers().length > 0)
+    {
+        var phone_array = employee.getAlternativePhoneNumbers();
+        console.log(phone_array)
+        for (let i = 1; i < phone_array.length; i++)
+        {
+            var phone = phone_array[i].value;
+            let div = document.createElement('div');
+            div.className = 'div_row';
+            let level = document.createElement('level');
+            level.innerHTML = 'Alternative Phone Number '+i;
+            let p = document.createElement('p');
+            p.innerHTML = phone;
+            div.append(level,p);
+            $(div).insertAfter('#employee_phone_div');
+        }
+    }  
+    console.log(employee.getCurrentAddress());
+    $('#employee_current_address').text(employee.getCurrentAddress());
+    if(employee.getAddresses().length > 0)
+    {
+        var address_array = employee.getAddresses();
+        console.log(address_array.length);
+        for (let i = 0; i<address_array.length; i++)
+        {
+            address = address_array[i];
+            // console.log(address);
+            let div = document.createElement('div');
+            div.className = 'div_row';
+            let level = document.createElement('level');
+            level.innerHTML = 'Alternative Address '+i;
+            let p = document.createElement('p');
+            p.innerHTML = address;
+            div.append(level,p);
+            $(div).insertAfter('#employee_address_field');
+        }
+    }  
+    return false;
 }
