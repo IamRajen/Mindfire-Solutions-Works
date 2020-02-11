@@ -1,7 +1,7 @@
 class Employee  
 {
-    constructor(first_name,middle_name,last_name,email_id,phone_number,current_address,pan_card_number,aadhar_card_number,
-                addresses,profile_photo,alt_phone_numbers)
+    constructor( first_name, middle_name, last_name, email_id, phone_number, current_address, pan_card_number, aadhar_card_number,
+                addresses, profile_photo, alt_phone_numbers )
     {
         this.first_name = first_name;
         this.middle_name = middle_name;
@@ -124,7 +124,6 @@ $(document).ready(function()
        .set("pan_card",new InputFields( 'pan_card' , "Enter Your Pan card Number", ""))
        .set("aadhar_card",new InputFields( "aadhar_card" , "Enter Your Aadhar card Number", "" ))
        .set("answer_captcha",new InputFields("answer_captcha","Invalid Captcha",""));
-    //    .set("profile_photo",new InputFields("profile_photo","Please Upload a photo",""));
 
     alt_phone_number.push(map.get("phone_number"));
     $('#add_phone_field').click(function()
@@ -200,37 +199,6 @@ $(document).ready(function()
     });
 });
 
-function validatedForm()
-{
-
-    var valid = true;
-    for(var m of map.keys())
-    {
-        if(map.get(m).getErrorMsg())
-        {
-            setErrorBorder(map.get(m));
-            valid = false;
-            console.log(map.get(m))
-        }
-    }
-    if(!valid)
-    {
-        refresh_captcha();
-
-    }
-    else 
-    {
-        var current_address = new Address(map.get("current_address"),map.get("current_country"),map.get("current_state"),map.get("current_city"),map.get("current_pincode"));
-        var employee = new Employee(map.get('first_name').getValue(),map.get('middile_name').getValue(),map.get('last_name').getValue()
-        ,map.get('email_id').getValue(),map.get('phone_number').getValue(),current_address,map.get('pan_card').getValue(),map.get('aadhar_card').getValue()
-        ,addresses,map.get('profile_photo'),alt_phone_number);
-        // console.log("validated");
-        $('#employee_registration_form').hide();
-    }
-    return false;
-
-}
-
 function loadCountries(country_field)
 {
     var country_options;
@@ -274,7 +242,7 @@ function loadImage(input)
 
 function removeField()
 { 
-    for(let i =0;i<alt_phone_number.length;i++)
+    for(let i =0; i < alt_phone_number.length; i++)
     {
         if(map.get(arguments[0].id).getId() == alt_phone_number[i].getId())
         {
@@ -285,7 +253,6 @@ function removeField()
     {
         map.delete(arguments[i].id); 
     }
-    
 }
 
 function addPhoneField()
@@ -665,9 +632,6 @@ function refresh_captcha()
 function displayData()
 {
     $('#employee_details').show()
-    // console.log(employee.getName());
-    // console.log(employee.getAddresses());
-    // console.log(employee.getPancardNumber());
 
     $('#employee_full_name').text(employee.getName());
     $('#employee_email_id').text(employee.getEmailId());
@@ -677,7 +641,6 @@ function displayData()
     if(employee.getAlternativePhoneNumbers().length > 0)
     {
         var phone_array = employee.getAlternativePhoneNumbers();
-        console.log(phone_array)
         for (let i = 1; i < phone_array.length; i++)
         {
             var phone = phone_array[i].value;
@@ -691,16 +654,13 @@ function displayData()
             $(div).insertAfter('#employee_phone_div');
         }
     }  
-    console.log(employee.getCurrentAddress());
     $('#employee_current_address').text(employee.getCurrentAddress());
     if(employee.getAddresses().length > 0)
     {
         var address_array = employee.getAddresses();
-        console.log(address_array.length);
         for (let i = 0; i<address_array.length; i++)
         {
             address = address_array[i];
-            // console.log(address);
             let div = document.createElement('div');
             div.className = 'div_row';
             let level = document.createElement('level');

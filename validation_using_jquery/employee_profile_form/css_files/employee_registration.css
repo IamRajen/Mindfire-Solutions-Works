@@ -19,6 +19,14 @@
 {
     margin: auto;
     padding: 20px;
+    text-align: center;
+}
+#profile_photo
+{
+    border: 2px dotted grey;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 .div_row
 {
