@@ -10,9 +10,10 @@
 
     <body>
         <div id = "employee_registration_form">
+            <h1>Registration Form</h1>
             <form id="employee_form">
                 <div class="div_image">
-                    <img id="profile_photo" src="images/profile.jpg" >
+                    <img id="profile_pic" class="profile_photo" src="images/profile.jpg" >
                     <input accept="image/*" id="file" type="file" name="files[]" onChange="loadImage(this);"  />    
                 </div>
                 <div id="div_container" class="div_container">
@@ -52,7 +53,7 @@
                     </div>
                     <br>
                     <h3>Phone Number</h3>
-                    <button class="add" type="button" id="add_phone_field" ></button>
+                    <button class="add" type="button" id="add_phone_field" onclick="addPhoneField()"></button>
                     <hr>
                     <div class="div_row" id="phone_div">
                         <level class="level phone_field">Phone Number<span>*</span></level>
@@ -65,7 +66,7 @@
 
                     <div id="address_field">
                         <h3>Address Information</h3>
-                        <button class="add" type="button" id="add_address_field" ></button>
+                        <button class="add" type="button" id="add_address_field" onclick="addAddressField()"></button>
                         <hr>
                         <div class="div_row">
                             <level class="level">Current Address<span>*</span></level>
@@ -74,25 +75,24 @@
                         </div>
                         <div class="div_row">
                             <level class="level">Current Country<span>*</span></level>
-                            <select id="current_country" class="select" name="Country" onblur="checkAddress(this)">
-                                <option value="">-----Country------</option>
+                            <select id="current_country" class="select" name="Country" onblur="checkAddress(this)" onchange="loadStates(this)">
+                                <option value="">Select Country</option>
                             </select>
                             <span class="error_msg" id="current_country_span"></span>
                         </div>
                         <div class="div_row">
                             <level class="level">Current State<span>*</span></level>
-                            <select id="current_state" class="select" name="State" onblur="checkAddress(this)">
-                                <option value="">-----State------</option>
+                            <select id="current_state" class="select" name="State" onblur="checkAddress(this)" >
                             </select>
                             <span class="error_msg" id="current_state_span"></span>
                         </div>
                         <div class="div_row">
                             <level class="level">Current City<span>*</span></level>
-                            <input type="text", id="current_city" class="input" onblur="checkAddress(this)">
+                            <input type="text", id="current_city" placeholder="Enetr Your City" class="input" onblur="checkAddress(this)">
                         </div>
                         <div class="div_row">
                             <level class="level">Current Pincode<span>*</span></level>
-                            <input type="text" id="current_pincode" name="pincode" class="input" onblur="checkPincode(this)">
+                            <input type="text" id="current_pincode" placeholder="Enter Your Pincode" name="pincode" class="input" onblur="checkPincode(this)">
                             <span class="error_msg" id="current_pincode_span"></span>
                         </div>
                         
@@ -101,9 +101,9 @@
 
                     <div class="div_captcha">
                         <canvas id="canvas" class="canvas_input section"></canvas>
-                        <img class="img section" id="captcha_refresh_button" src="images/refresh.png" >
+                        <img class="img section" id="captcha_refresh_button" src="images/refresh.png" onclick="refresh_captcha()"  >
                         <div class="section">
-                            <input id="answer_captcha" type="text" name="captcha_output" placeholder="Answer.." class="input extra_small_input" >
+                            <input id="answer_captcha" type="text" name="captcha_output" placeholder="Answer.." class="input extra_small_input" onblur="checkCaptcha()">
                             <span class="error_msg" id="answer_captcha_span"></span>
                         </div> 
                     </div>
@@ -115,12 +115,13 @@
             </form>
         </div>
         <div id="employee_details" >
-            
+            <h1>Your Profile</h1>
             <div id="div_container" class="div_container">
-                <h3>Employee Details</h3>
+                
                 <div class="div_image">
-                    <img  src="images/profile.jpg" >  
+                    <img id="display_profile_pic" class="profile_photo" >  
                 </div>
+                <h3>Basic Information</h3>
                 <div class="div_row">
                     <level class="level">Name</level>
                     <p id="employee_full_name"></p>
@@ -138,20 +139,16 @@
                     <p id="employee_aadhar_card_number"></p>
                 </div>
 
+                <h3>Phone Numbers</h3>
                 <div class="div_row" id="employee_phone_div">
                     <level class="level phone_field">Primary Phone Number</level>
                     <p id="employee_primary_phone_number" ></p>
                 </div>
-
                 <br>
-                
-
                 <div >
                     <h3>Address Information</h3>
 
-                    <div class="div_row" id="employee_address_field">
-                        <level class="level">Current Address</level>
-                        <p id="employee_current_address"></p>
+                    <div id="employee_address_field">
                     </div>
                 </div>
             </div>

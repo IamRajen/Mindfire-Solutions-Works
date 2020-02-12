@@ -29,13 +29,7 @@ class Employee
     }
     getCurrentAddress()
     {
-        var address = this.current_address.getAddress();
-        var country = this.current_address.getCountry();
-        var state = this.current_address.getState();
-        var city = this.current_address.getCity();
-        var pincode = this.current_address.getPincode();
-   
-        return address+" "+country+" "+state+" "+city+" "+pincode;
+        return this.current_address;
     }
     getPancardNumber()
     {
@@ -55,7 +49,7 @@ class Employee
     }
     getProfilePhoto()
     {
-        this.profile_photo;
+        return this.profile_photo;
     }
 }
 
@@ -100,16 +94,14 @@ class InputFields
 alt_phone_number_ids = 1;
 alt_address_ids = 1;
 var map = new Map();
-
-
+var phone_number_map = new Map();
+var addresses_map = new Map();
+var country_map = new Map();
+var state_map = new Map();
 
 $(document).ready(function()
 {
     $('#employee_details').hide();
-    $('#div_container').addClass('blue_class');
-    alt_phone_number = new Array();
-    addresses = new Array();
-    profile_photo = new InputFields("profile_photo","Upload Profile Photo", "");
     
     map.set("first_name",new InputFields( "first_name" , "Enter First Name.","" ))
        .set("middle_name",new InputFields("middle_name" , "" ,"" ))
@@ -123,29 +115,14 @@ $(document).ready(function()
        .set("current_pincode",new InputFields("current_pincode","Enter your Pincode",""))
        .set("pan_card",new InputFields( 'pan_card' , "Enter Your Pan card Number", ""))
        .set("aadhar_card",new InputFields( "aadhar_card" , "Enter Your Aadhar card Number", "" ))
-       .set("answer_captcha",new InputFields("answer_captcha","Invalid Captcha",""));
+       .set("answer_captcha",new InputFields("answer_captcha","Invalid Captcha",""))
+       .set("profile_pic", new InputFields("profile_pic","Upload Profile Photo", ""));
 
-    alt_phone_number.push(map.get("phone_number"));
-    $('#add_phone_field').click(function()
-    {
-        addPhoneField();
-    });
+    phone_number_map.set('phone_number' , "");
     
-    $('#add_address_field').click(function()
-    {
-        addAddressField();
-    });
-
-    $('#captcha_refresh_button').click(function()
-    {
-        refresh_captcha();
-    });
-    $('#answer_captcha').blur(function()
-    {
-        checkCaptcha('answer_captcha');
-    });
-    
+    loadCountries($('#current_country'));
     refresh_captcha();
+    loadCountryState();
 
     $('#submit_button').click(function()
     {
@@ -161,10 +138,20 @@ $(document).ready(function()
         }
         if(valid) 
         {
-            alt_address_objects = new Array()
-            for (var address =0 ;address<addresses.length;address++)
+            alt_addresses = new Array()
+            for (var key of addresses_map.keys())
             {
-                alt_address_objects.push(addresses[address].getAddress().value + addresses[address].getCountry().value+addresses[address].getState().value+addresses[address].getCity().value+addresses[address].getPincode().value);
+                var address = addresses_map.get(key);
+                alt_addresses.push(new Address( $(address.getAddress()).val(),
+                                                $(address.getCountry()).val(),
+                                                $(address.getState()).val(),
+                                                $(address.getCity()).val(),
+                                                $(address.getPincode()).val() ));
+            }
+            alt_phone_numbers = new Array()
+            for (var key of phone_number_map.keys())
+            {
+                alt_phone_numbers.push(phone_number_map.get(key));
             }
             var current_address = new Address(
                 map.get('current_address').getValue(),
@@ -182,9 +169,9 @@ $(document).ready(function()
                 current_address,
                 map.get('pan_card').getValue(),
                 map.get('aadhar_card').getValue(),
-                alt_address_objects,
-                "profile photo",
-                alt_phone_number,
+                alt_addresses,
+                map.get('profile_pic').getValue(),
+                alt_phone_numbers
             );
             alert("Registration Succesful");
             $('#employee_registration_form').hide();
@@ -192,39 +179,57 @@ $(document).ready(function()
         }
         return false;
     });
-    loadCountries(document.getElementById('current_country'));
-    $('#current_country').change(function()
-    {
-        loadStates('current_country',document.getElementById('current_state'));
-    });
 });
+
+function loadCountryState()
+{
+    $.getJSON('json_files/countries.json',function(countries)
+    { 
+        for(let i = 0; i < countries.length; i++)
+        {
+            country_map.set(countries[i].id , countries[i].name);
+            // console.log(result[i].name);
+        }
+    });
+    $.getJSON('json_files/states.json',function(states)
+    { 
+        for(let i = 0; i < states.length; i++)
+        {
+            state_map.set(states[i].id , states[i].country_id);
+            // console.log(result[i].name);
+        }
+    });  
+    
+}
 
 function loadCountries(country_field)
 {
-    var country_options;
+    var country_options = "";
     $.getJSON('json_files/countries.json',function(result)
     { 
         $.each(result, function(j,countries)
         {
             country_options+="<option value='"+countries.id+"'>"+countries.name+"</option>";
         });
-        $("#"+country_field.id).html(country_options);
+        $(country_field).append(country_options);
     });
 }
 
-function loadStates(country_id,state_field)
+function loadStates(country_field)
 {
-    var state_options;
+    var state_field = $(country_field).parent().next().children('select');
+    var country_field_value = $(country_field).val();
+    var state_options = "<option value=''> Select State </option>";
         $.getJSON('json_files/states.json',function(result)
         {
             $.each(result, function(i,states)
             {
-                if($("#"+country_id).val()==states.country_id)
+                if(country_field_value == states.country_id)
                 {
                     state_options+="<option value='"+states.id+"'>"+states.name+"</option>";
                 }
             });
-        $("#"+state_field.id).html(state_options);
+        $(state_field).html(state_options);
         });
 }
 
@@ -232,70 +237,49 @@ function loadImage(input)
 {
     if (input.files && input.files[0])
     {
+        
         var reader = new FileReader();
         reader.onload = function (e) {
-            $('#profile_photo').attr('src', e.target.result);
+            $('#profile_pic').attr('src', e.target.result);
+            map.get('profile_pic').setErrorMsg("");
+            map.get('profile_pic').setValue(e.target.result);
+            setSuccessBorder(map.get('profile_pic'));
         }
-    reader.readAsDataURL(input.files[0]);
+        reader.readAsDataURL(input.files[0]);
     }
 }
 
-function removeField()
+function removePhoneField(element)
 { 
-    for(let i =0; i < alt_phone_number.length; i++)
-    {
-        if(map.get(arguments[0].id).getId() == alt_phone_number[i].getId())
-        {
-            alt_phone_number.splice(i,1);
-        }
-    }
-    for(let i=0;i<arguments.length;i++)
-    {
-        map.delete(arguments[i].id); 
-    }
+    var phone_field_id = $(element).siblings('.div_input').children('input').attr('id');
+    phone_number_map.delete(phone_field_id);
+    $(element).parent().empty();
+}
+function removeAddressField(element)
+{
+    var address_map_id = $(element).attr('id').slice(20);
+    addresses_map.delete("alternative_address"+address_map_id);
+    $(element).parent().empty();
 }
 
 function addPhoneField()
 {
 
-    var div_row = document.createElement('div');
-    var div_input = document.createElement('div');
+    var div_row = $("<div></div>").attr({ "id" : "phone_field"+alt_phone_number_ids , "class" : "div_row" });
+    var div_input = $("<div></div>").addClass("div_input");
 
-    div_input.className = 'div_input';
-    div_row.className = 'div_row';
-    div_row.id = 'phone_field'+alt_phone_number_ids;
+    var level = $("<level></level>").addClass("level phone_field").attr("id","phone_field"+alt_phone_number_ids).text('Alternative Number');
+    var input = $("<input></input>").addClass("input phone_field").attr({"id" : "alt_phone_number"+alt_phone_number_ids , "placeholder" : "Enter Alternative Number", 
+                                                                        "onblur" : "checkPhoneNumber(this)"});
+    var span = $("<span></span>").attr({"id" : $(input).attr("id")+"_span" , "class" : "error_msg phone_field" });
+    var remove_button = $("<button></button>").attr({"id" : 'remove_phone_field'+alt_phone_number_ids , "class" : "remove", 'onclick' : 'removePhoneField(this)'});
 
-    var level = document.createElement('level');
-    var input = document.createElement('input');
-    var span = document.createElement('span');
-    var remove_button = document.createElement('button');
-
-    level.className = 'level phone_field';
-    input.className = 'input phone_field';
-    span.className = 'error_msg phone_field';
-    remove_button.className = 'remove';
-
-    level.innerHTML = 'Alternative Number';
-    input.placeholder = "Enter Alternative Number";
-    input.id = "alt_phone_number"+alt_phone_number_ids;
-    span.id = input.id+"_span";
-    remove_button.id = 'remove_phone_field'+alt_phone_number_ids;
-    input.onblur = function()
-    {
-        checkPhoneNumber(input);
-    } 
-
-    remove_button.onclick = function(){
-        removeField(input);
-        div_row.remove();
-    }
     div_input.append(input,span);
     div_row.append(level,div_input,remove_button);
-
     $(div_row).insertAfter('#phone_div');
 
-    map.set(input.id,new InputFields(input.id,"Enter Your Phone Number",""));
-    alt_phone_number.push(new InputFields(input.id,"Enter Your Phone Number",""));
+    map.set($(input).attr('id') , new InputFields($(input).attr('id'),"Enter Your Phone Number",""));
+    phone_number_map.set($(input).attr('id') , "");
     alt_phone_number_ids++;
     return;
 
@@ -303,107 +287,70 @@ function addPhoneField()
 
 function addAddressField()
 {
-    var div_row = new Array(5);
-    for(let i=0;i<div_row.length;i++)
-    {
-        div_row[i] = document.createElement('div');
-        div_row[i].className = 'div_row';
-        div_row[i].id = 'div_row'+alt_address_ids+i;
-    }
-     
-    var heading = document.createElement('h3');
-    var remove_button = document.createElement('button');
-    var hr = document.createElement('hr');
-    heading.innerHTML = 'Alternative Address  ';
-    remove_button.className = 'remove';
-    remove_button.id = 'remove_address_field'+alt_address_ids;
+    var div_row_textarea = $('<div></div>').attr({'class': 'div_row', 'id' : 'div_row_textarea'+alt_address_ids});
+    var div_row_country = $('<div></div>').attr({'class': 'div_row', 'id' : 'div_row_country'+alt_address_ids});
+    var div_row_state = $('<div></div>').attr({'class': 'div_row', 'id' : 'div_row_state'+alt_address_ids});
+    var div_row_city = $('<div></div>').attr({'class': 'div_row', 'id' : 'div_row_city'+alt_address_ids});
+    var div_row_pincode = $('<div></div>').attr({'class': 'div_row', 'id' : 'div_row_pincode'+alt_address_ids});
+
+    var heading = $('<h3></h3>').text('Alternative Address');
+    var remove_button = $('<button></button>').attr({'class' : 'remove', 'id' : 'remove_address_field'+alt_address_ids, 'onclick' : 'removeAddressField(this)'});
+    var hr = $('<hr></hr>');
+
+    var address_level = $('<level></level>').attr('class' , 'level').text('Address');
+    var country_level = $('<level></level>').attr('class' , 'level').text('Country');
+    var state_level = $('<level></level>').attr('class' , 'level').text('State');
+    var city_level = $('<level></level>').attr('class' , 'level').text('City');
+    var pincode_level = $('<level></level>').attr('class' , 'level').text('Pincode');
+
+    var address = $('<textarea></textarea>').attr({'id' : 'alt_address'+alt_address_ids, 'class' : 'textarea', 'placeholder' : 'Enter Your Address Here..',
+                                                    'onblur' : 'checkAddress(this)'});
+    var country = $('<select></select>').attr({'id' : 'alt_country'+alt_address_ids, 'class' : 'select', 'onblur' : 'checkAddress(this)',
+                                                'onchange' : 'loadStates(this)'});
+    var state = $('<select></select>').attr({'id' : 'alt_state'+alt_address_ids, 'class' : 'select', 'onblur' : 'checkAddress(this)'});
+    var city = $('<input></input>').attr({'id' : 'alt_city'+alt_address_ids, 'class' : 'input', 'placeholder' : 'Enter Your City Here..', 
+                                            'onblur' : 'checkAddress(this)'});
+    var pincode = $('<input></input>').attr({'id' : 'alt_pincode'+alt_address_ids, 'class' : 'input', 'placeholder' : 'Enter Your Pincode Here..',
+                                                'onblur' : 'checkPincode(this)'});
     
+    country.append($('#current_country').html());
 
-    var address_level , country_level , state_level , city_level , pincode_level;
-    var address_span , country_span , state_span , city_span , pincode_span;
-    var level = new Array(address_level, country_level , state_level , city_level , pincode_level);
-    var span = new Array(address_span , country_span , state_span , city_span , pincode_span);
-    for(let i = 0;i <level.length ; i++)
-    {
-        level[i] = document.createElement('level');
-        level[i].className = 'level';
-        span[i] = document.createElement('span');
-        span[i].className = 'error_msg'; 
-    }
-
-    level[0].innerHTML = "Address";
-    level[1].innerHTML = 'Country';
-    level[2].innerHTML = 'State';
-    level[3].innerHTML = 'City';
-    level[4].innerHTML = 'Pincode';
-
-    var address_textarea = document.createElement('textarea');
-    var select_country = document.createElement('select');
-    var select_state = document.createElement('select');
-    var select_city = document.createElement('input');
-    var pincode = document.createElement('input')
-    address_textarea.className = 'textarea';
-    select_country.className = 'select';
-    select_state.className = 'select';
-    select_city.className = 'input';
-    pincode.className = 'input';
-
-    address_textarea.id = 'alt_address'+alt_address_ids;
-    select_country.id = 'alt_country'+alt_address_ids;
-    select_state.id = 'alt_state'+alt_address_ids;
-    select_city.id = 'alt_city'+alt_address_ids;
-    pincode.id = 'alt_pincode'+alt_address_ids;
-    span[0].id = address_textarea.id+"_span";
-    span[1].id = select_country.id+"_span";
-    span[2].id = select_state.id+"_span";
-    span[3].id = select_city.id+"_span";
-    span[4].id = pincode.id+"_span";
+    var address_span = $('<span></span>').attr({'class' : 'error_msg', 'id' : $(address).attr("id")+"_span"});
+    var country_span = $('<span></span>').attr({'class' : 'error_msg', 'id' : $(country).attr("id")+"_span"});
+    var state_span = $('<span></span>').attr({'class' : 'error_msg', 'id' : $(state).attr("id")+"_span"});
+    var city_span = $('<span></span>').attr({'class' : 'error_msg', 'id' : $(city).attr("id")+"_span"});
+    var pincode_span = $('<span></span>').attr({'class' : 'error_msg', 'id' : $(pincode).attr("id")+"_span"});
 
 
-    div_row[0].append(level[0],address_textarea,span[0]);
-    div_row[1].append(level[1],select_country,span[1]);
-    div_row[2].append(level[2],select_state,span[2]);
-    div_row[3].append(level[3],select_city,span[3]);
-    div_row[4].append(level[4],pincode,span[4]);
+    div_row_textarea.append(address_level,address,address_span);
+    div_row_country.append(country_level,country,country_span);
+    div_row_state.append(state_level,state,state_span);
+    div_row_city.append(city_level,city,city_span);
+    div_row_pincode.append(pincode_level,pincode,pincode_span);
 
-    loadCountries(select_country);
-    select_country.onchange  = function(){loadStates(select_country.id,select_state)}
-
-    address_textarea.onblur = function(){checkAddress(address_textarea);}
-    select_city.onblur = function(){checkAddress(select_city)}
-    select_country.onblur = function(){checkAddress(select_country)};
-    select_state.onblur = function(){checkAddress(select_state)};
-    pincode.onblur  = function(){checkPincode(pincode)}
-
-    var phone_field = document.createElement('div');
-    phone_field.id = 'alt_address_field'+alt_address_ids;
-    phone_field.append(heading, remove_button, hr, div_row[0], div_row[1], div_row[2],div_row[3],div_row[4])
+    var phone_field = $('<div></div>').attr('id' , 'alt_address_field'+alt_address_ids);
+    phone_field.append(heading, remove_button, hr, div_row_textarea, div_row_country, div_row_state, div_row_city, div_row_pincode)
     $(phone_field).insertAfter('#address_field');
+    
+    addresses_map.set('alternative_address'+alt_address_ids , new Address(address, country, state, city, pincode));
+    map.set($(address).attr('id'),new InputFields($(address).attr('id'),"Enter Your Address",""))
+        .set($(country).attr('id'),new InputFields(country.attr('id'),"Enter Your Country",""))
+        .set($(state).attr('id'),new InputFields(state.attr('id'),"Enter Your State",""))
+        .set($(city).attr('id'),new InputFields(city.attr('id'),"Enter Your City",""))
+        .set($(pincode).attr('id'),new InputFields(pincode.attr('id'),"Enter Your Pincode",""));
+
     alt_address_ids++;
-    remove_button.onclick = function() {
-        removeField(address_textarea,select_country,select_state,select_city,pincode);
-        $('#'+phone_field.id).remove();
-    }
-
-    addresses.push(new Address(address_textarea,select_country,select_state,select_city,pincode));
-
-    map.set(address_textarea.id,new InputFields(address_textarea.id,"Enter Your Address",""));
-    map.set(select_country.id,new InputFields(select_country.id,"Enter Your Country",""));
-    map.set(select_state.id,new InputFields(select_state.id,"Enter Your State",""));
-    map.set(select_city.id,new InputFields(select_city.id,"Enter Your City",""));
-    map.set(pincode.id,new InputFields(pincode.id,"Enter Your Pincode",""));
     return;
-
 }
 
 function setErrorBorder(object)
 {
-    $("#"+object.getId()).css({"border-color": "red", "border-width":"2px"}); 
+    $("#"+object.getId()).css({"border-color": "red", "box-shadow" : "0px 0px  5px 2px rgb(255, 100, 100)"}); 
     $("#"+object.getId()+"_span").text(object.getErrorMsg());
 }
 function setSuccessBorder(object)
 {
-    $("#"+object.getId()).css({"border-color": "green", "border-width":"2px"}); 
+    $("#"+object.getId()).css({"border-color": "lightgreen" , "box-shadow" : "0px 0px  5px 2px lightgreen"}); 
     object.setErrorMsg("");
     $("#"+object.getId()+"_span").text(object.getErrorMsg());
 }
@@ -468,8 +415,9 @@ function checkEmailId(element)
 }
 function checkPhoneNumber(element)
 {
-    var object = map.get(element.id);
-    object.setValue($('#'+element.id).val());
+    var id = $(element).attr("id");
+    var object = map.get(id);
+    object.setValue($('#'+id).val());
     var pattern = /^[^0-1][0-9]{9}$/;
     var text = $.trim(object.getValue());
     if(text == "")
@@ -483,18 +431,16 @@ function checkPhoneNumber(element)
         setErrorBorder(object);
         return;
     }
-    if(object.getId().slice(0,3) == 'alt' &&  alt_phone_number.length > 1)
+    for(var key of phone_number_map.keys())
     {
-        for(let i = 0;i<alt_phone_number.length;i++)
+        if(phone_number_map.get(key) == object.getValue())
         {
-            if($('#'+alt_phone_number[i].getId()).val() == object.getValue() && alt_phone_number[i].getId() != object.getId())
-            {
-                object.setErrorMsg("This Number is already Entered..!!");
-                setErrorBorder(object);
-                return;
-            }
+            object.setErrorMsg("This Number has already been Entered..!!");
+            setErrorBorder(object);
+            return;
         }
     }
+    phone_number_map.set(object.getId() , object.getValue());
     setSuccessBorder(object);   
 }   
 function checkAddress(element)
@@ -518,10 +464,11 @@ function checkAddress(element)
     object.setErrorMsg("");
     setSuccessBorder(object);
 }
-function checkCaptcha(element)
+function checkCaptcha()
 {
-    var object = map.get(element);
-    object.setValue($('#'+element).val());
+    var object = map.get('answer_captcha');
+    console.log(object);
+    object.setValue($('#answer_captcha').val());
     var text = $.trim(object.getValue());
     if( ans != text)
     {
@@ -598,7 +545,6 @@ function checkPincode(element)
         setSuccessBorder(object);
     }
 }
-
 function refresh_captcha()
 {
     canvas.width = canvas.width;
@@ -628,48 +574,48 @@ function refresh_captcha()
         case "*": ans = operand1 * operand2;   
     }
 }
-
 function displayData()
 {
     $('#employee_details').show()
-
+    $('#display_profile_pic').attr('src' , employee.getProfilePhoto())
+    console.log(employee.getProfilePhoto())
     $('#employee_full_name').text(employee.getName());
     $('#employee_email_id').text(employee.getEmailId());
     $('#employee_pan_card_number').text(employee.getPancardNumber());
     $('#employee_aadhar_card_number').text(employee.getAadharcardNumber());
     $('#employee_primary_phone_number').text(employee.getPrimaryPhoneNumber());
-    if(employee.getAlternativePhoneNumbers().length > 0)
+    if(employee.getAlternativePhoneNumbers().length > 1)
     {
         var phone_array = employee.getAlternativePhoneNumbers();
         for (let i = 1; i < phone_array.length; i++)
         {
             var phone = phone_array[i].value;
-            let div = document.createElement('div');
-            div.className = 'div_row';
-            let level = document.createElement('level');
-            level.innerHTML = 'Alternative Phone Number '+i;
-            let p = document.createElement('p');
-            p.innerHTML = phone;
+            let div = $('<div></div>').attr({'class' : 'div_row'});
+            let level = $('<level></level>').text('Alternative Phone Number'+i).addClass('level');
+            let p = $('<p></p>').text(phone_array[i]);
             div.append(level,p);
             $(div).insertAfter('#employee_phone_div');
         }
     }  
-    $('#employee_current_address').text(employee.getCurrentAddress());
-    if(employee.getAddresses().length > 0)
+    address = employee.getCurrentAddress();
+    displayAddress("Current Address" , address);
+    let alt_addresses = employee.getAddresses();
+    for(var i = 0; i < alt_addresses.length; i++)
     {
-        var address_array = employee.getAddresses();
-        for (let i = 0; i<address_array.length; i++)
-        {
-            address = address_array[i];
-            let div = document.createElement('div');
-            div.className = 'div_row';
-            let level = document.createElement('level');
-            level.innerHTML = 'Alternative Address '+i;
-            let p = document.createElement('p');
-            p.innerHTML = address;
-            div.append(level,p);
-            $(div).insertAfter('#employee_address_field');
-        }
-    }  
+        address = alt_addresses[i];
+        displayAddress("Alternative Address" , address);
+    }
     return false;
+}
+function displayAddress(title , address)
+{
+    var div = $('<div></div>').addClass('div_row');
+    var p = $('<p></p>').html( "Address: " + address.getAddress() + "<br>" +
+                                // "Country: " + country_map.get(parseInt(address.getCountry())) + "<br>" +
+                                // "State: " + country_map(state_map(parseInt(address.getState()))) + "<br>" +
+                                "City: " + address.getCity() + "<br>" +
+                                "Pincode: " + address.getPincode() + "<br>");
+    var level = $('<level></level>').addClass('level').text(title);
+    div.append(level,p);
+    $('#employee_address_field').append(div);
 }
