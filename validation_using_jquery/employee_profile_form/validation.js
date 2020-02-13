@@ -48,20 +48,20 @@ $(document).ready(function()
 {
     $('#employee_details').hide();
     
-    map.set("first_name",new InputFields( "first_name" , "Enter First Name.","" ))
-       .set("middle_name",new InputFields("middle_name" , "" ,"" ))
-       .set("last_name",new InputFields("last_name" , "Enter Last Name.","" ))
-       .set("email_id",new InputFields("email_id" , "Enter Email Address" ))
-       .set("phone_number",new InputFields( "phone_number" , "Enter Your Phone Number", "" ))
-       .set("current_address",new InputFields( "current_address" , "Enter Your Current Address", "" ))
-       .set("current_country",new InputFields( "current_country" , "Select Current Country", "" ))
-       .set("current_state",new InputFields( "current_state" , "Select Current State", "" ))
-       .set("current_city",new InputFields( "current_city" , "Select Current City", "" ))
-       .set("current_pincode",new InputFields("current_pincode","Enter your Pincode",""))
-       .set("pan_card",new InputFields( 'pan_card' , "Enter Your Pan card Number", ""))
-       .set("aadhar_card",new InputFields( "aadhar_card" , "Enter Your Aadhar card Number", "" ))
-       .set("answer_captcha",new InputFields("answer_captcha","Invalid Captcha",""))
-       .set("profile_pic", new InputFields("profile_pic","Upload Profile Photo", ""));
+    map.set("profile_pic", new InputFields("profile_pic","Upload Profile Photo", ""))
+        .set("first_name",new InputFields( "first_name" , "Enter First Name.","" ))
+        .set("middle_name",new InputFields("middle_name" , "" ,"" ))
+        .set("last_name",new InputFields("last_name" , "Enter Last Name.","" ))
+        .set("email_id",new InputFields("email_id" , "Enter Email Address" ))
+        .set("pan_card",new InputFields( 'pan_card' , "Enter Your Pan card Number", ""))
+        .set("aadhar_card",new InputFields( "aadhar_card" , "Enter Your Aadhar card Number", "" ))
+        .set("phone_number",new InputFields( "phone_number" , "Enter Your Phone Number", "" ))
+        .set("current_address",new InputFields( "current_address" , "Enter Your Current Address", "" ))
+        .set("current_country",new InputFields( "current_country" , "Select Current Country", "" ))
+        .set("current_state",new InputFields( "current_state" , "Select Current State", "" ))
+        .set("current_city",new InputFields( "current_city" , "Select Current City", "" ))
+        .set("current_pincode",new InputFields("current_pincode","Enter your Pincode",""))
+        .set("answer_captcha",new InputFields("answer_captcha","Invalid Captcha",""));
 
     phone_number_map.set('phone_number' , "");
 
@@ -76,6 +76,9 @@ $(document).ready(function()
         {
             if(map.get(key).getErrorMsg())
             {
+                $('html, body').animate({
+                    'scrollTop' : $("#"+key).position().top
+                },1000);
                 setErrorBorder(map.get(key));
                 valid = false;
                 refresh_captcha();
@@ -119,6 +122,11 @@ $(document).ready(function()
             alert("Registration Succesful");
             $('#employee_registration_form').hide();
             return displayData();
+        }
+        else 
+        {   
+            $("html, body").animate({ scrollTop: "0" }
+            );
         }
         return false;
     });
