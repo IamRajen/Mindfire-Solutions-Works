@@ -1,58 +1,3 @@
-class Employee  
-{
-    constructor( first_name, middle_name, last_name, email_id, phone_number, current_address, pan_card_number, aadhar_card_number,
-                addresses, profile_photo, alt_phone_numbers )
-    {
-        this.first_name = first_name;
-        this.middle_name = middle_name;
-        this.last_name = last_name;
-        this.email_id = email_id;
-        this.phone_number = phone_number;
-        this.current_address = current_address;
-        this.pan_card_number = pan_card_number;
-        this.aadhar_card_number = aadhar_card_number;
-        this.alt_phone_numbers = alt_phone_numbers;
-        this.addresses = addresses;
-        this.profile_photo = profile_photo;
-    }
-    getName()
-    {
-        return this.first_name+" "+this.middle_name+" "+this.last_name;
-    }
-    getEmailId()
-    {
-        return this.email_id;
-    }
-    getPrimaryPhoneNumber()
-    {
-        return this.phone_number;
-    }
-    getCurrentAddress()
-    {
-        return this.current_address;
-    }
-    getPancardNumber()
-    {
-        return this.pan_card_number;
-    }
-    getAadharcardNumber()
-    {
-        return this.aadhar_card_number;
-    }
-    getAlternativePhoneNumbers()
-    {
-        return this.alt_phone_numbers;
-    }
-    getAddresses()
-    {
-        return this.addresses;
-    }
-    getProfilePhoto()
-    {
-        return this.profile_photo;
-    }
-}
-
 class Address
 {
     constructor(address,country,state,city,pincode)
@@ -119,11 +64,11 @@ $(document).ready(function()
        .set("profile_pic", new InputFields("profile_pic","Upload Profile Photo", ""));
 
     phone_number_map.set('phone_number' , "");
-    
+
     loadCountries($('#current_country'));
     refresh_captcha();
-    loadCountryState();
-
+    loadCountryStateMap();
+    
     $('#submit_button').click(function()
     {
         var valid = true;
@@ -160,19 +105,17 @@ $(document).ready(function()
                 map.get('current_city').getValue(),
                 map.get('current_pincode').getValue()
             );
-            employee = new Employee(
-                map.get('first_name').getValue(),
-                map.get('middle_name').getValue(),
-                map.get('last_name').getValue(),
-                map.get('email_id').getValue(),
-                map.get('phone_number').getValue(),
-                current_address,
-                map.get('pan_card').getValue(),
-                map.get('aadhar_card').getValue(),
-                alt_addresses,
-                map.get('profile_pic').getValue(),
-                alt_phone_numbers
-            );
+            employee = {
+                employee_name : map.get("first_name").getValue() + " " + map.get("middle_name").getValue() + " " + map.get('last_name').getValue(),
+                employee_email : map.get("email_id").getValue(),
+                employee_primary_phone_number : map.get("phone_number").getValue(),
+                employee_current_address : current_address,
+                pan_card : map.get("pan_card").getValue(),
+                aadhar_card : map.get("aadhar_card").getValue(),
+                alternative_phone_numbers : alt_phone_numbers,
+                alternative_addresses : alt_addresses,
+                profile_photo : map.get("profile_pic").getValue()
+            }
             alert("Registration Succesful");
             $('#employee_registration_form').hide();
             return displayData();
@@ -181,27 +124,23 @@ $(document).ready(function()
     });
 });
 
-function loadCountryState()
+function loadCountryStateMap()
 {
     $.getJSON('json_files/countries.json',function(countries)
     { 
         for(let i = 0; i < countries.length; i++)
         {
-            country_map.set(countries[i].id , countries[i].name);
-            // console.log(result[i].name);
+            country_map.set(""+countries[i].id , countries[i].name);
         }
     });
     $.getJSON('json_files/states.json',function(states)
     { 
         for(let i = 0; i < states.length; i++)
         {
-            state_map.set(states[i].id , states[i].country_id);
-            // console.log(result[i].name);
+            state_map.set(states[i].id , states[i].name);
         }
     });  
-    
 }
-
 function loadCountries(country_field)
 {
     var country_options = "";
@@ -214,25 +153,23 @@ function loadCountries(country_field)
         $(country_field).append(country_options);
     });
 }
-
 function loadStates(country_field)
 {
     var state_field = $(country_field).parent().next().children('select');
     var country_field_value = $(country_field).val();
     var state_options = "<option value=''> Select State </option>";
-        $.getJSON('json_files/states.json',function(result)
+    $.getJSON('json_files/states.json',function(result)
+    {
+        $.each(result, function(i,states)
         {
-            $.each(result, function(i,states)
+            if(country_field_value == states.country_id)
             {
-                if(country_field_value == states.country_id)
-                {
-                    state_options+="<option value='"+states.id+"'>"+states.name+"</option>";
-                }
-            });
-        $(state_field).html(state_options);
+                state_options+="<option value='"+states.id+"'>"+states.name+"</option>";
+            }
         });
+    $(state_field).html(state_options);
+    });
 }
-
 function loadImage(input)
 {
     if (input.files && input.files[0])
@@ -253,13 +190,13 @@ function removePhoneField(element)
 { 
     var phone_field_id = $(element).siblings('.div_input').children('input').attr('id');
     phone_number_map.delete(phone_field_id);
-    $(element).parent().empty();
+    $(element).parent().remove();
 }
 function removeAddressField(element)
 {
     var address_map_id = $(element).attr('id').slice(20);
     addresses_map.delete("alternative_address"+address_map_id);
-    $(element).parent().empty();
+    $(element).parent().remove();
 }
 
 function addPhoneField()
@@ -341,6 +278,10 @@ function addAddressField()
 
     alt_address_ids++;
     return;
+}
+function capitilizes(element)
+{
+    element.value = element.value.toUpperCase();
 }
 
 function setErrorBorder(object)
@@ -433,7 +374,7 @@ function checkPhoneNumber(element)
     }
     for(var key of phone_number_map.keys())
     {
-        if(phone_number_map.get(key) == object.getValue())
+        if(phone_number_map.get(key) == object.getValue() && key != object.getId())
         {
             object.setErrorMsg("This Number has already been Entered..!!");
             setErrorBorder(object);
@@ -467,7 +408,6 @@ function checkAddress(element)
 function checkCaptcha()
 {
     var object = map.get('answer_captcha');
-    console.log(object);
     object.setValue($('#answer_captcha').val());
     var text = $.trim(object.getValue());
     if( ans != text)
@@ -559,7 +499,7 @@ function refresh_captcha()
     {
         symbol = "+";
     }
-    context.font = "60px Arial";
+    context.font = "60px Schoolbell";
     context.fillText(operand1,20,80);
     context.fillText(symbol,90,80);
     context.fillText(operand2,160,80);
@@ -577,16 +517,15 @@ function refresh_captcha()
 function displayData()
 {
     $('#employee_details').show()
-    $('#display_profile_pic').attr('src' , employee.getProfilePhoto())
-    console.log(employee.getProfilePhoto())
-    $('#employee_full_name').text(employee.getName());
-    $('#employee_email_id').text(employee.getEmailId());
-    $('#employee_pan_card_number').text(employee.getPancardNumber());
-    $('#employee_aadhar_card_number').text(employee.getAadharcardNumber());
-    $('#employee_primary_phone_number').text(employee.getPrimaryPhoneNumber());
-    if(employee.getAlternativePhoneNumbers().length > 1)
+    $('#display_profile_pic').attr('src' , employee.profile_photo)
+    $('#employee_full_name').text(employee.employee_name);
+    $('#employee_email_id').text(employee.employee_email);
+    $('#employee_pan_card_number').text(employee.pan_card);
+    $('#employee_aadhar_card_number').text(employee.aadhar_card);
+    $('#employee_primary_phone_number').text(employee.employee_primary_phone_number);
+    if(employee.alternative_phone_numbers.length > 1)
     {
-        var phone_array = employee.getAlternativePhoneNumbers();
+        var phone_array = employee.alternative_phone_numbers;
         for (let i = 1; i < phone_array.length; i++)
         {
             var phone = phone_array[i].value;
@@ -597,9 +536,9 @@ function displayData()
             $(div).insertAfter('#employee_phone_div');
         }
     }  
-    address = employee.getCurrentAddress();
+    address = employee.employee_current_address
     displayAddress("Current Address" , address);
-    let alt_addresses = employee.getAddresses();
+    let alt_addresses = employee.alternative_addresses;
     for(var i = 0; i < alt_addresses.length; i++)
     {
         address = alt_addresses[i];
@@ -611,8 +550,8 @@ function displayAddress(title , address)
 {
     var div = $('<div></div>').addClass('div_row');
     var p = $('<p></p>').html( "Address: " + address.getAddress() + "<br>" +
-                                // "Country: " + country_map.get(parseInt(address.getCountry())) + "<br>" +
-                                // "State: " + country_map(state_map(parseInt(address.getState()))) + "<br>" +
+                                "Country: " + country_map.get(address.getCountry()) + "<br>" +
+                                "State: " + state_map.get(address.getState()) + "<br>" +
                                 "City: " + address.getCity() + "<br>" +
                                 "Pincode: " + address.getPincode() + "<br>");
     var level = $('<level></level>').addClass('level').text(title);

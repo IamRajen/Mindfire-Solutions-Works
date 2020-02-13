@@ -11,7 +11,7 @@
     <body>
         <div id = "employee_registration_form">
             <h1>Registration Form</h1>
-            <form id="employee_form">
+            <!-- <form id="employee_form"> -->
                 <div class="div_image">
                     <img id="profile_pic" class="profile_photo" src="images/profile.jpg" >
                     <input accept="image/*" id="file" type="file" name="files[]" onChange="loadImage(this);"  />    
@@ -43,7 +43,7 @@
                     </div>
                     <div class="div_row">
                         <level class="level">Pan Card Number<span>*</span></level>
-                        <input class="input" id="pan_card" type="text" name="pancard" placeholder="Enter Pancard Number" onblur="checkPanCardNumber(this)"> 
+                        <input class="input" id="pan_card" type="text" name="pancard" placeholder="Enter Pancard Number" onblur="checkPanCardNumber(this)" onkeyup="capitilizes(this)"> 
                         <span class="error_msg" id="pan_card_span"></span>
                     </div>
                     <div class="div_row">
@@ -112,7 +112,7 @@
                         <input id="submit_button" type="submit" name="submit" class="button_submit">
                     </div>
                 </div>
-            </form>
+            <!-- </form> -->
         </div>
         <div id="employee_details" >
             <h1>Your Profile</h1>

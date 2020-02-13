@@ -1,6 +1,6 @@
-body{
-background-color: rgb(109, 170, 172);
-}
+/* body{
+background-color: #333333;
+} */
 .div_container{
     margin: auto; 
     height: 100%; 
@@ -10,7 +10,6 @@ background-color: rgb(109, 170, 172);
     margin-top: 5%;
     margin-bottom: 2%;
     padding: 2%;
-    background-color:rgb(109, 170, 172);
 }
 .show_details
 {
@@ -45,7 +44,7 @@ background-color: rgb(109, 170, 172);
     margin: 15px 0px;
     display: grid;
     grid-template-columns: 3fr 5fr 3fr;
-    padding: 5px;
+    padding: 20px;
     grid-column-gap: 5px;
 }
 .div_input
@@ -59,8 +58,9 @@ background-color: rgb(109, 170, 172);
 .div_captcha
 {
     display: inline-grid;
-    border: 1px solid black;
     grid-template-columns: 5fr 1fr 6fr;
+    box-shadow: 0px 0px 10px 1px grey;
+    background-color: snow;
 }
 .section {
     display: flex;
@@ -83,7 +83,7 @@ h1
 {
     display: block;
     text-align: center;
-    color: whitesmoke;
+    color: darkblue;
 }
 .select_field
 {
@@ -190,7 +190,7 @@ img{
 .level{
     
     font-family: 'Courier New', Courier, monospace;
-    color: whitesmoke;
+    color: rgb(0, 0, 0);
     font-style: italic;
     padding: 13px;
     font-size: 17px;
@@ -199,7 +199,7 @@ img{
 .error_msg{
     width: auto;
     height: 10px;
-    font-size: 12px;
+    font-size: 17px;
     margin: 0;
     padding: 2px 8px;
     margin-top: 4px;
@@ -226,7 +226,7 @@ img{
     padding: 5px;
     border-radius: 10px; 
     border-width: 1px;
-    background-color: rgba(54, 54, 54, 0.288);
+    background-color: snow;
     display: inline;
     /* border-color: black;
     box-shadow: 3px 3px 3px 1px #888888; */
