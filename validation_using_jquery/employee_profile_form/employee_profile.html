@@ -14,6 +14,7 @@
             <!-- <form id="employee_form"> -->
                 <div class="div_image">
                     <img id="profile_pic" class="profile_photo" src="images/profile.jpg" >
+                    <span class="error_msg" id="profile_photo_span"></span>
                     <input accept="image/*" id="file" type="file" name="files[]" onChange="loadImage(this);"  />    
                 </div>
                 <div id="div_container" class="div_container">
@@ -24,41 +25,55 @@
                     <hr>
                     <div class="div_row">
                         <level class="level">First Name<span>*</span></level>
-                        <input class="input" type="text" id="first_name" name="first_name" placeholder="First Name" onblur="checkName(this)">
-                        <span class="error_msg" id="first_name_span"></span>
+                        <div class="div_input">
+                            <input class="input" type="text" id="first_name" name="first_name" placeholder="First Name" onblur="checkName(this)">
+                            <span class="error_msg"></span>
+                        </div>
                     </div>
                     <div class="div_row">
                         <level class="level">Middle Name</level>
-                        <input class="input" type="text" id="middle_name" name="middle_name" placeholder="Middle Name" onblur="checkName(this)">
-                        <span class="error_msg" id="middle_name_span"></span>
+                        <div class="div_input">
+                            <input class="input" type="text" id="middle_name" name="middle_name" placeholder="Middle Name" onblur="checkName(this)">
+                            <span class="error_msg" ></span>
+                        </div>
                     </div><div class="div_row">
                         <level class="level">Last Name<span>*</span></level>
-                        <input class="input" type="text" id="last_name" name="last_name" placeholder="Last Name" onblur="checkName(this)">
-                        <span class="error_msg" id="last_name_span"></span>
+                        <div class="div_input">
+                            <input class="input" type="text" id="last_name" name="last_name" placeholder="Last Name" onblur="checkName(this)">
+                            <span class="error_msg" ></span>
+                        </div>
                     </div>
                     <div class="div_row">
                         <level class="level">Email ID<span>*</span></level>
-                        <input class="input" type="text" id="email_id" name="email_id" placeholder="Email Id" onblur="checkEmailId(this)">
-                        <span class="error_msg" id="email_id_span"></span>
+                        <div class="div_input">
+                            <input class="input" type="text" id="email_id" name="email_id" placeholder="Email Id" onblur="checkEmailId(this)">
+                            <span class="error_msg" ></span>
+                        </div>    
                     </div>
                     <div class="div_row">
                         <level class="level">Pan Card Number<span>*</span></level>
-                        <input class="input" id="pan_card" type="text" name="pancard" placeholder="Enter Pancard Number" onblur="checkPanCardNumber(this)" onkeyup="capitilizes(this)"> 
-                        <span class="error_msg" id="pan_card_span"></span>
+                        <div class="div_input">
+                            <input class="input" id="pan_card" type="text" name="pancard" placeholder="Enter Pancard Number" onblur="checkPanCardNumber(this)" onkeyup="capitilizes(this)"> 
+                            <span class="error_msg" ></span>
+                        </div>    
                     </div>
                     <div class="div_row">
-                            <level class="level">Aadhar Card Number<span>*</span></level>
+                        <level class="level">Aadhar Card Number<span>*</span></level>
+                        <div class="div_input">
                             <input class="input" id="aadhar_card" type="text" name="aadhar_card" placeholder="Enter Aadhar Number" onblur="checkAadharCardNumber(this)">
-                            <span class="error_msg" id="aadhar_card_span"></span>
+                            <span class="error_msg" ></span>
+                        </div>    
                     </div>
                     <br>
                     <h3>Phone Number</h3>
                     <button class="add" type="button" id="add_phone_field" onclick="addPhoneField()"></button>
                     <hr>
-                    <div class="div_row" id="phone_div">
+                    <div class="div_row_phone" id="phone_div">
                         <level class="level phone_field">Phone Number<span>*</span></level>
-                        <input class="input phone_field " type="tel" id="phone_number" placeholder="Phone Number"  onblur="checkPhoneNumber(this)">
-                        <span class="error_msg phone_field" id="phone_number_span">
+                        <div class="div_input">
+                            <input class="input phone_field " type="tel" id="phone_number" placeholder="Phone Number"  onblur="checkPhoneNumber(this)">
+                            <span class="error_msg phone_field" ></span>
+                        </div>        
                     </div>
 
                     <br>
@@ -69,31 +84,44 @@
                         <button class="add" type="button" id="add_address_field" onclick="addAddressField()"></button>
                         <hr>
                         <div class="div_row">
-                            <level class="level">Current Address<span>*</span></level>
-                            <textarea id="current_address" size="4" type="text" name="current_address" placeholder="Full Address" class="textarea" onblur="checkAddress(this)"></textarea>
-                            <span class="error_msg" id="current_address_span"></span>
+                            <level class="level">Address<span>*</span></level>
+                            <div class="div_input">
+                                <textarea id="current_address" size="4" type="text" name="current_address" placeholder="Full Address" class="textarea" onblur="checkAddress(this)"></textarea>
+                                <span class="error_msg" ></span>
+                            </div>
                         </div>
                         <div class="div_row">
-                            <level class="level">Current Country<span>*</span></level>
-                            <select id="current_country" class="select" name="Country" onblur="checkAddress(this)" onchange="loadStates(this)">
-                                <option value="">Select Country</option>
-                            </select>
-                            <span class="error_msg" id="current_country_span"></span>
+                            <level class="level">Country<span>*</span></level>
+                            <div class="div_input">
+                                <select id="current_country" class="select" name="Country" onblur="checkAddress(this)" onchange="loadStates(this)">
+                                    <option value="">Select Your Country</option>
+                                </select>
+                                <span class="error_msg"></span>
+                            </div>
+                            
                         </div>
                         <div class="div_row">
-                            <level class="level">Current State<span>*</span></level>
-                            <select id="current_state" class="select" name="State" onblur="checkAddress(this)" >
-                            </select>
-                            <span class="error_msg" id="current_state_span"></span>
+                            <level class="level">State<span>*</span></level>
+                            <div class="div_input">
+                                <select id="current_state" class="select" name="State" onblur="checkAddress(this)" >
+                                    <!-- <option value="">Select Your State</option> -->
+                                </select>
+                                <span class="error_msg" ></span>
+                            </div>
                         </div>
                         <div class="div_row">
-                            <level class="level">Current City<span>*</span></level>
-                            <input type="text", id="current_city" placeholder="Enetr Your City" class="input" onblur="checkAddress(this)">
+                            <level class="level">City<span>*</span></level>
+                            <div class="div_input">
+                                <input type="text", id="current_city" placeholder="Enetr Your City" class="input" onblur="checkAddress(this)">
+                                <span class="error_msg" ></span>
+                            </div>
                         </div>
                         <div class="div_row">
-                            <level class="level">Current Pincode<span>*</span></level>
-                            <input type="text" id="current_pincode" placeholder="Enter Your Pincode" name="pincode" class="input" onblur="checkPincode(this)">
-                            <span class="error_msg" id="current_pincode_span"></span>
+                            <level class="level">Pincode<span>*</span></level>
+                            <div class="div_input">
+                                <input type="text" id="current_pincode" placeholder="Enter Your Pincode" name="pincode" class="input" onblur="checkPincode(this)">
+                                <span class="error_msg" ></span>
+                            </div>
                         </div>
                         
                     </div>
@@ -104,7 +132,7 @@
                         <img class="img section" id="captcha_refresh_button" src="images/refresh.png" onclick="refresh_captcha()"  >
                         <div class="section">
                             <input id="answer_captcha" type="text" name="captcha_output" placeholder="Answer.." class="input extra_small_input" onblur="checkCaptcha()">
-                            <span class="error_msg" id="answer_captcha_span"></span>
+                            <span class="error_msg"></span>
                         </div> 
                     </div>
                     
