@@ -60,7 +60,6 @@ $( document ).ready(function()
             }
             else 
             {
-                // $("html, body").animate({ scrollTop: "0" });
                 alert("Registration Failed. Many Fields are empty or not correctely filled.")
                 return total_error_fields;  
             }
@@ -104,12 +103,6 @@ function setErrorBorder(object)
 function setSuccessBorder(object)
 {
     $("#"+object.getId()).css({"border-color": "green", "border-width":"2px"}); 
-    object.setErrorMsg("");
-    $("#"+object.getId()+"_span").text(object.getErrorMsg());
-}
-function setNormalBorder(object)
-{
-    $("#"+object.getId()).css({"border-color": "black", "border-width":"1px"}); 
     object.setErrorMsg("");
     $("#"+object.getId()+"_span").text(object.getErrorMsg());
 }
