@@ -41,7 +41,9 @@ SELECT DISTINCT(ntLevel) FROM tblEmp;
 /*2. Correct this query:
 
     SELECT [ntEmpID], E.[vcName],tblEmp.[vcMobieNumer]
-    FROM tblEmp E*/
+    FROM tblEmp E */
+	
+
 SELECT E.[ntEmpID], E.[vcName],E.[vcMobieNumer]
 FROM tblEmp E
 ------------------------------------------------------------------------------------------
@@ -54,11 +56,11 @@ WHERE (ntLevel = 1 and vcMobieNumer is null) or ntLevel = 0;
 ------------------------------------------------------------------------------------------
 
 -- 4.  Write a sql query which displays those employee data first, who knows javascript.
-
+SELECT @@VERSION
 select * from tblEmp
 order by(case
 			when vcSkills not like '%JavaScript%' then 1
-			else null
+			else 0
 		end);
 ------------------------------------------------------------------------------------------
 /*5. Explain the TOP clause in the following sql queries?
@@ -112,9 +114,9 @@ where Suffix is Not NULL;
 -- 9. Using BusinessEntityAddress table (and other tables as required), list the full name of people living in the city of Frankfurt.
 
 select Person.Person.FirstName +' '+ + ISNULL(Person.Person.MiddleName,'') +' ' + ISNULL(Person.Person.LastName,'')
-from ((Person.BusinessEntityAddress
-Inner join Person.Address on Person.Address.AddressID = Person.BusinessEntityAddress.AddressID and Person.Address.City = 'Frankfurt')
-Inner Join Person.Person on Person.Person.BusinessEntityID = Person.BusinessEntityAddress.BusinessEntityID);
+from ((Person.BusinessEntityAddress as bea
+Inner join Person.Address on Person.Address.AddressID = bea.AddressID and Person.Address.City = 'Frankfurt')
+Inner Join Person.Person on Person.Person.BusinessEntityID = bea.BusinessEntityID);
 
 
 -------------------------------------------------------------------------------------------
@@ -127,25 +129,25 @@ where OrderQty = 1;
 -------------------------------------------------------------------------------------------
 -- 11. Show the product description for culture 'fr' for product with ProductID 736.
 
-select ProductDescription.Description
-from Production.ProductDescription
-join Production.ProductModelProductDescriptionCulture
-on Production.ProductDescription.ProductDescriptionID = Production.ProductModelProductDescriptionCulture.ProductDescriptionID
-join Production.ProductModel
-on Production.ProductModelProductDescriptionCulture.ProductModelID = Production.ProductModel.ProductModelID
-join Production.Product
-on Production.ProductModel.ProductModelID = Production.Product.ProductModelID
-where Production.ProductModelProductDescriptionCulture.CultureID = 'fr' and Production.Product.ProductID = '736';
+select pd.Description
+from Production.ProductDescription as pd
+join Production.ProductModelProductDescriptionCulture as ppdc
+on pd.ProductDescriptionID = ppdc.ProductDescriptionID
+join Production.ProductModel as pm
+on ppdc.ProductModelID = pm.ProductModelID
+join Production.Product as p
+on pm.ProductModelID = p.ProductModelID
+where ppdc.CultureID = 'fr' and p.ProductID = '736';
 
 -------------------------------------------------------------------------------------------
 -- 12. Show OrderQty, the Name and the ListPrice of the order made by CustomerID 635
 
-select Sales.SalesOrderDetail.OrderQty , Production.Product.ListPrice ,Production.Product.Name
-from Sales.SalesOrderDetail 
-join Sales.SalesOrderHeader
-on Sales.SalesOrderDetail.SalesOrderID = Sales.SalesOrderHeader.SalesOrderID
-join Production.Product
-on Production.Product.ProductID = Sales.SalesOrderDetail.ProductID
+select sod.OrderQty , p.ListPrice ,p.Name
+from Sales.SalesOrderDetail as sod
+join Sales.SalesOrderHeader as soh
+on sod.SalesOrderID = soh.SalesOrderID
+join Production.Product as p
+on p.ProductID = sod.ProductID
 where CustomerID = 635;
 
 
@@ -153,13 +155,13 @@ where CustomerID = 635;
 -- 13. How many products in ProductSubCategory 'Cranksets' have been sold to an address in 'London'?
 
 
-select sum(Sales.SalesOrderDetail.OrderQty)
-from Production.ProductSubcategory
-join Production.Product on ProductSubcategory.ProductSubcategoryID = Product.ProductSubcategoryID
-join Sales.SalesOrderDetail on Product.ProductID = SalesOrderDetail.ProductID
-join Sales.SalesOrderHeader on SalesOrderDetail.SalesOrderID = SalesOrderHeader.SalesOrderID
-join Person.Address on SalesOrderHeader.ShipToAddressID = Address.AddressID
-where Address.City = 'London' AND Production.ProductSubcategory.Name = 'Cranksets';
+select sum(sod.OrderQty)
+from Production.ProductSubcategory as ps
+join Production.Product as p on ps.ProductSubcategoryID = p.ProductSubcategoryID
+join Sales.SalesOrderDetail as sod on p.ProductID = sod.ProductID
+join Sales.SalesOrderHeader as soh on sod.SalesOrderID = soh.SalesOrderID
+join Person.Address on soh.ShipToAddressID = Address.AddressID
+where Address.City = 'London' AND ps.Name = 'Cranksets';
 
 -------------------------------------------------------------------------------------------
 -- 14. Describe Char, Varchar and NVarChar datatypes with examples. 
