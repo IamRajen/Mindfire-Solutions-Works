@@ -112,19 +112,23 @@ where Suffix is Not NULL;
 
 -------------------------------------------------------------------------------------------
 -- 9. Using BusinessEntityAddress table (and other tables as required), list the full name of people living in the city of Frankfurt.
-
-select Person.Person.FirstName +' '+ + ISNULL(Person.Person.MiddleName,'') +' ' + ISNULL(Person.Person.LastName,'')
+--select COALESCE(person.FirstName, person.MiddleName , person.LastName)
+select person.FirstName +' '+ + ISNULL(person.MiddleName,'') +' ' + ISNULL(person.LastName,'')
 from ((Person.BusinessEntityAddress as bea
 Inner join Person.Address on Person.Address.AddressID = bea.AddressID and Person.Address.City = 'Frankfurt')
-Inner Join Person.Person on Person.Person.BusinessEntityID = bea.BusinessEntityID);
+Inner Join Person.Person as person on person.BusinessEntityID = bea.BusinessEntityID);
 
 
 -------------------------------------------------------------------------------------------
 -- 10. "Single Item Order" is a customer order where only one item is ordered. Show the SalesOrderID and the UnitPrice for every Single Item Order.
 
-select SalesOrderID , UnitPrice
-from Sales.SalesOrderDetail
-where OrderQty = 1;
+select [SalesOrderID], [OrderQty], [ProductID]
+from [Sales].[SalesOrderDetail]
+where [SalesOrderID] In (
+select SalesOrderID
+from [Sales].[SalesOrderDetail]
+group by SalesOrderID 
+having Count(SalesOrderID) =1) and OrderQty =1;
 
 -------------------------------------------------------------------------------------------
 -- 11. Show the product description for culture 'fr' for product with ProductID 736.
@@ -155,13 +159,13 @@ where CustomerID = 635;
 -- 13. How many products in ProductSubCategory 'Cranksets' have been sold to an address in 'London'?
 
 
-select sum(sod.OrderQty)
-from Production.ProductSubcategory as ps
-join Production.Product as p on ps.ProductSubcategoryID = p.ProductSubcategoryID
-join Sales.SalesOrderDetail as sod on p.ProductID = sod.ProductID
-join Sales.SalesOrderHeader as soh on sod.SalesOrderID = soh.SalesOrderID
+select sum(orderDetails.OrderQty)
+from Production.ProductSubcategory as subcategory
+join Production.Product as product on subcategory.ProductSubcategoryID = product.ProductSubcategoryID
+join Sales.SalesOrderDetail as orderDetails on product.ProductID = orderDetails.ProductID
+join Sales.SalesOrderHeader as soh on orderDetails.SalesOrderID = soh.SalesOrderID
 join Person.Address on soh.ShipToAddressID = Address.AddressID
-where Address.City = 'London' AND ps.Name = 'Cranksets';
+where Address.City = 'London' AND subcategory.Name = 'Cranksets';
 
 -------------------------------------------------------------------------------------------
 -- 14. Describe Char, Varchar and NVarChar datatypes with examples. 
@@ -170,4 +174,5 @@ where Address.City = 'London' AND ps.Name = 'Cranksets';
 
 
 -------------------------------------------------------------------------------------------
+
 
