@@ -28,14 +28,11 @@ INSERT [dbo].[tblEmp] VALUES
 -- 1. Write a single sql query with following information's:
 
 -- a. Total number number of employees
-SELECT COUNT(*) FROM tblEmp;
-------------------------------------------------------------------------------------------
 -- b. Minimum salary received by any employees.
-SELECT MIN(moSalary) FROM tblEmp;
-------------------------------------------------------------------------------------------
-
 -- c. Total distinct ntLevel
-SELECT DISTINCT(ntLevel) FROM tblEmp;
+
+SELECT count(ntEmpID) 'Total Employees',MIN(moSalary) 'Minimum Salary',Count(distinct ntLevel) 'Total Distinct nthLevel'
+FROM tblEmp;
 ------------------------------------------------------------------------------------------
 
 /*2. Correct this query:
