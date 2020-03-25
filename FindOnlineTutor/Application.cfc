@@ -8,13 +8,7 @@
 
 	<!---OnApplicationStart() method--->
 	<cffunction name="onApplicationStart" returntype="boolean" >
-<!--- 		<cfset application.pageService = createObject("component",'final.components.pageService') /> --->
-<!--- 		<cfset application.eventsService = createObject("component",'final.components.eventsService') /> --->
-<!--- 		<cfset application.newsService = createObject("component",'final.components.newsService') /> --->
-<!--- 		<cfset application.userService = createObject("component",'final.components.userService') /> --->
-<!--- 		<cfset application.commentsService = createObject("component",'final.components.commentsService') /> --->
 		<cfset application.utils = CreateObject("component",'FindOnlineTutor.Components.utils') />
-
 		<cfreturn true />
 	</cffunction>
 	
