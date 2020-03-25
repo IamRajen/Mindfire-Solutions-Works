@@ -1,0 +1,55 @@
+body, html {
+  height: 100%;
+}
+.bg {
+  background-image: url("../Images/backgroundImage3.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+*{
+    padding: 0px;
+    margin: 0px;
+    font-family: 'Sen', sans-serif;
+    font-family: 'Lora', serif;
+}
+.required:after {
+  content:" *";
+  color: red;
+}
+.center-container{
+	background-size: 100%;
+	width: 70%;
+	height: 200px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+}
+.button-color
+{
+	background-color: maroon;
+	color: white;
+}
+.btn-round-lg{
+  border-radius: 22.5px;
+  max-width: 100px;
+}
+.profile_photo
+{
+    height: 150px;
+    width: 150px;
+    border: 2px solid grey;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0px 0px 10px 3px grey;
+}
+canvas
+{
+  background-image: url("../Images/canvasBackground.jpg");
+}
+
+
+
+
