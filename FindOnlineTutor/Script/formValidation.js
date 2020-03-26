@@ -15,19 +15,38 @@ function loadImage(input)
 {
     if (input.files && input.files[0])
     {
-        console.log(inputFields)
+        var formData = new FormData();
+        var file = document.getElementById("img").files[0];
+        formData.append("Filedata", file);
+        var t = file.type.split('/').pop().toLowerCase();
+        if (t != "jpeg" && t != "jpg" && t != "png") {
+            inputFields.get("profilePhoto").errorMsg="Image should be only JPEG/JPG/PNG format.";
+            setErrorBorder(inputFields.get("profilePhoto"));
+            document.getElementById("img").value = '';
+            return false;
+        }
+        if (file.size > 512000) {
+            inputFields.get("profilePhoto").errorMsg="Image should be less than 512 KB";
+            setErrorBorder(inputFields.get("profilePhoto"));
+            document.getElementById("img").value = '';
+            return false;
+        }
         var reader = new FileReader();
         reader.onload = function (e) {
             $('#profilePhoto').attr('src', e.target.result);
             inputFields.get("profilePhoto").value=e.target.result;
-            inputFields.get('profilePhoto').errrorMsg = "";
+            setSuccessBorder(inputFields.get("profilePhoto"));
         }
         reader.readAsDataURL(input.files[0]);
     }
 }
+function makeErrorMsgEmpty()
+{
+    setSuccessBorder(inputFields.get("profilePhoto"));
+}
 $(document).ready(function()
 {
-    inputFields.set("profilePhoto",{id:"profilePhoto", errorMsg:"", value:""});
+    inputFields.set("profilePhoto",{id:"profilePhoto", errorMsg:"Select an Image", value:""});
     inputFields.set("firstName",{id:"firstName", errorMsg:"Please Provide Your Name"});
     // inputFields.set("middleName",{id:"middleName", errorMsg:""});
     inputFields.set("lastName",{id:"lastName", errorMsg:"Please Provide Your Last Name"});
@@ -50,8 +69,9 @@ $(document).ready(function()
     inputFields.set("alternativeCity",{id:"alternativeCity", errorMsg:""});
     inputFields.set("alternativePincode",{id:"alternativePincode", errorMsg:""});
     inputFields.set("bio",{id:"bio", errorMsg:""});
-    inputFields.set("isTeacher",{id:"isTeacher",errorMsg:""})
+    // inputFields.set("isTeacher",{id:"isTeacher",errorMsg:""})
     inputFields.set("captcha",{id:"captcha",errorMsg:"Invalid Captcha"});
+    alternativeAddress=["alternativeAddress","alternativeCountry","alternativeState","alternativeCity","alternativePincode"];
     $("#teacherSection").hide()
     $("#isTeacher").click(function(){
         if($(this).prop("checked") == true){
@@ -63,20 +83,38 @@ $(document).ready(function()
             inputFields.get("experience").errorMsg="";
         }
     });
-    console.log($("#profilePhoto").val())
     
     loadCountryStateMap();
     generateCaptcha();
     $('#submitButton').click(function()
     {
-        alert("hello");
+        var successfullySubmitted=true;
+        var havingAlternativeAddress=checkAlternativeAddress(alternativeAddress);
         for(var i of inputFields.keys())
         {
+            if(alternativeAddress.includes(i) && !havingAlternativeAddress)
+            {
+                continue;
+            }
+            if(i=="experience" && $("#isTeacher").prop("checked"))
+            {   
+                var dob = new Date($("#dob").val());
+                if(dob.getFullYear()+10+parseInt($("#experience").val()) > (new Date()).getFullYear())
+                {
+                    inputFields.get("experience").errorMsg="Experience having more than age not allowed!!"
+                    setErrorBorder(inputFields.get("experience"));
+                    successfullySubmitted=false;
+                }
+            }
             if(inputFields.get(i).errorMsg)
             {
-
                 setErrorBorder(inputFields.get(i))
+                successfullySubmitted=false;
             }
+        }
+        if(successfullySubmitted)
+        {
+            alert("Successfully Registered!!");
         }
         return false;
     });
@@ -239,9 +277,9 @@ function checkAddress(element)
     var text = $.trim($("#"+object.id).val());
     if(text == "")
     {   
+        object.errorMsg="Mandatory Field";
         if(addressType.slice(0,1)!="a" )
         {
-            object.errorMsg="Mandatory Field";
             setErrorBorder(object);
         }
         return;
@@ -269,12 +307,13 @@ function checkCountry(element)
 function checkState(element)
 {
     var object=inputFields.get(element.id);
-    if(element.id.slice(0,1)!="a" && $(element).val())
+    if(element.id.slice(0,1)!="a" && !$(element).val())
     {
         object.errorMsg="Mandatory Field!! Provide Current State";
         setErrorBorder(object);
         return;
     }
+    setSuccessBorder(object);
 }
 function checkPincode(element)
 {
@@ -366,9 +405,9 @@ function checkDOB(element)
     var today = new Date();
     var object=inputFields.get(element.id);
     var dateObject = new Date($(element).val());
-    if(dateObject.getFullYear()>=today.getFullYear()-2)
+    if(dateObject.getFullYear()>=today.getFullYear()-2 || dateObject.getFullYear()<today.getFullYear()-80)
     {
-        object.errorMsg="Should be greater than 2 years";
+        object.errorMsg="Should be greater than 2 years and less than 80 years old";
         setErrorBorder(object);
         return;
     }
@@ -439,4 +478,16 @@ function generateCaptcha()
     }
     context.font = "60px Arial";
     context.fillText(toReturn,40,100);
+}
+function checkAlternativeAddress(alternativeAddress)
+{
+    var havingAlternativeAddress=true;
+    for(let i=0;i<alternativeAddress.length;i++)
+    {
+        if($("#"+alternativeAddress[i]).val()!="" || !$("#"+alternativeAddress[i]).val())
+        {
+            havingAlternativeAddress=false;
+        }
+    }
+    return havingAlternativeAddress;
 }
