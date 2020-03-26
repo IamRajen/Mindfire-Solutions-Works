@@ -13,7 +13,12 @@
 		<div class="row mr-2 ml-2">
 			<div class="col-md-12 text-center">
 				<img id="profilePhoto" class="profile_photo rounded-circle" src="Images/profile.jpg" >
-				<input accept="image/*" id="file" type="file" name="files[]" onChange="loadImage(this);"  /> 
+				<span class="text-danger small"></span>
+			</div>
+		</div>
+		<div class="row mr-2 ml-2">
+			<div class="col-md-12 text-center">
+				<input accept="image/*" id="img" type="file" name="files[]" onChange="loadImage(this);" onclick="makeErrorMsgEmpty()" /> 
 			</div>
 		</div>
 	<!---Name Field--->
