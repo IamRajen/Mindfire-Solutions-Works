@@ -1,15 +1,9 @@
 <!---Including the navibar custom tag--->
 <cf_header homeLink="index.cfm"  logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/formValidation.js">
 
-<cfif structKeyExists(form, "submit")>
+<!--- <cfif structKeyExists(form, "submit")> --->
 <!---form validation starts here--->
-	
-	<cfif #application.validation.validateName(form.FIRSTNAME)# NEQ ''>
-		
-	</cfif>
-	
 
-<cfelse>
 <!--- Registration Page starts here --->
 <div class="container-fuild w-100 mx-auto pb-4 mb-5 shadow rounded bg-light">
 	<!---Heading Field--->
@@ -233,7 +227,7 @@
 	</div>
 	
 </div>
-</cfif>
+<!--- </cfif> --->
 </cf_header>
         
 	

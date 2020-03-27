@@ -88,7 +88,6 @@ $(document).ready(function()
     generateCaptcha();
     $('#submitButton').click(function()
     {
-        return true;
         var successfullySubmitted=true;
         var havingAlternativeAddress=checkAlternativeAddress(alternativeAddress);
         for(var i of inputFields.keys())
@@ -111,7 +110,7 @@ $(document).ready(function()
             {
                 setErrorBorder(inputFields.get(i))
                 successfullySubmitted=false;
-                
+
             }
         }
         if(successfullySubmitted)
@@ -185,23 +184,27 @@ function setSuccessBorder(object)
     object.errorMsg=""
     $('#'+object.id).next().text(object.errorMsg);
 }
+function isEmpty(object)
+{
+    if(!($.trim($("#"+object.id).val())))
+    {
+        object.errorMsg="Mandatory Fields";
+        setErrorBorder(object);
+        return true;
+    }
+    return false;
+}
 
 //All Validation Functions Starts here
+
 function checkName(element)
 {
     var object = inputFields.get(element.id);
+    if(isEmpty(object))
+    {
+        return;
+    }
     var text = $.trim($(element).val());
-    if(text=="" && object.id=='middleName')
-    {
-        setSuccessBorder(object);
-        return;
-    }
-    if(text=="")
-    {
-        object.errorMsg="Mandatory Field";
-        setErrorBorder(object);
-        return;
-    }
     if(!patternName.test(text))
     {
         object.errorMsg="Please use only Alphabets";
@@ -220,14 +223,12 @@ function checkName(element)
 }
 function checkEmailId(element)
 {
-    var object=inputFields.get(element.id);
-    var text=$.trim($("#"+object.id).val());
-    if(text=="")
+    var object = inputFields.get(element.id);
+    if(isEmpty(object))
     {
-        object.errorMsg="Please Enter your Email ID";
-        setErrorBorder(object);
         return;
     }
+    var text = $.trim($(element).val());
     if(!patternEmail.test(text))
     {
         object.errorMsg="Invalid Email Address.";
@@ -260,7 +261,7 @@ function checkPhoneNumber(element)
     if((object.id=="primaryPhoneNumber" && text==$('#alternativePhoneNumber').val())
         || (object.id=="alternativePhoneNumber" && text==$('#primaryPhoneNumber').val()))
     {
-        inputFields.get('alternativePhoneNumber').errorMsg="Alternative number should not be same.You can keep this blank."
+        inputFields.get('alternativePhoneNumber').errorMsg="Alternative number should not be same.You can keep this blank.";
         setErrorBorder(inputFields.get('alternativePhoneNumber'));
         return
     }
@@ -335,20 +336,35 @@ function checkPincode(element)
 }
 function checkUsername(element)
 {
-    var object=inputFields.get(element.id);
-    var text=$.trim($(element).val());
-    if(!text)
+    var object = inputFields.get(element.id);
+    if(isEmpty(object))
     {
-        object.errorMsg="Mandatory Field";
-        setErrorBorder(object);
         return;
     }
+    var text = $.trim($(element).val());
     if(!patternUserName.test(text) || text.length>8)
     {
         object.errorMsg="Username should contain only alphabets, numbers, (_ @ .) and 8 characters long";
         setErrorBorder(object);
         return
     }
+    $.ajax({
+        type:"POST",
+        url:"Components/validation.cfc?method=validateUsername",
+        data: "usrName="+$(element).val(),
+        cache:false,
+        success: function(msg) {
+        console.log(JSON.parse(msg).msg)
+        }
+    });
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        console.log(this.responseText);
+        }
+    };
+    xhttp.open("POST", "Components/validation.cfc?method=validateUsername", true);
+    xhttp.send("usrUsername="+$(element).val());
     setSuccessBorder(object);
 }
 function checkPassword(element)
@@ -410,10 +426,6 @@ function checkDOB(element)
     }
     setSuccessBorder(object);
 }
-function checkCaptcha(element)
-{
-
-}
 function checkExperience(element)
 {
     var object=inputFields.get(element.id);
@@ -463,7 +475,8 @@ function generateCaptcha()
     canvas.width = canvas.width;
     var captcha = $("#canvas");
     var context = captcha[0].getContext("2d");
-    var aChars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    var aChars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'n', 'o', 'p', 'q', 'r', 's', 't',
+                    'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     var maxNum = 35;
     toReturn = '';
 

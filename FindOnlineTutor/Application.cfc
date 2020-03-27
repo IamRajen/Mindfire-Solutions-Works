@@ -8,13 +8,7 @@
 
 	<!---OnApplicationStart() method--->
 	<cffunction name="onApplicationStart" returntype="boolean" >
-<<<<<<< HEAD
-		<cfset application.utils = CreateObject("component","FindOnlineTutor.Components.utils") />
-		<cfset application.validation = createObject("component", "FindOnlineTutor.Components.validation")>
-
-=======
 		<cfset application.utils = CreateObject("component",'FindOnlineTutor.Components.utils') />
->>>>>>> f9497468d2b0b926214d297d7b6fe90a950c8a63
 		<cfreturn true />
 	</cffunction>
 
@@ -24,7 +18,6 @@
 		<cfif isDefined('url.restartApp')>
 			<cfset this.onApplicationStart() />
 		</cfif>
-		<!---Implement ressource Access control for the 'admin' folder--->
 		<cfreturn true />
 	</cffunction>
 	
