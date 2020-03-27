@@ -111,6 +111,7 @@ $(document).ready(function()
             {
                 setErrorBorder(inputFields.get(i))
                 successfullySubmitted=false;
+                
             }
         }
         if(successfullySubmitted)
