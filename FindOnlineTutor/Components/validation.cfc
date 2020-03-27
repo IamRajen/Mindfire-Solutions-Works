@@ -38,9 +38,6 @@
         <cfset var errorMsg=""/>
         <cfif NOT isValid("regular_expression", arguments.usrUsername, "/^[a-zA-Z0-9_@]+$/") >
             <cfset errorMsg="Invalid Username!! Should include only alphabets,numbers,(_@)">
-        <cfelseif len(arguments.usrUsername)>8>
-            <cfset errorMsg="Must be of 8 character long!!"
-        <cfelseif>
         <!---database work to validate unique username--->
         </cfif>
         
