@@ -1,14 +1,23 @@
 <!---Including the navibar custom tag--->
 <cf_header homeLink="index.cfm"  logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/formValidation.js">
 
-<div class="container-fuild w-75 mx-auto pb-4 mb-5 shadow rounded bg-light">
+<cfif structKeyExists(form, "submit")>
+<!---form validation starts here--->
+	
+	<cfif #application.validation.validateName(form.FIRSTNAME)# NEQ ''>
+		
+	</cfif>
+	
+
+<cfelse>
 <!--- Registration Page starts here --->
+<div class="container-fuild w-100 mx-auto pb-4 mb-5 shadow rounded bg-light">
 	<!---Heading Field--->
 	<div class="bg-dark pt-3 pb-3 rounded-top">
 		<h4 class="text-light text-center">REGISTRATION FORM</h4>
 	</div>
 	<!---Form Field--->
-	<form class="pt-4" id="form-registration" method="POST" >
+	<form class="pt-4" id="form-registration" method="POST" action="signup.cfm">
 	<!---Profile Photo Field--->
 		<div class="row mr-2 ml-2">
 			<div class="col-md-12 text-center">
@@ -197,7 +206,6 @@
 	
 	
 	<!---Captcha section--->
-<!--- 		<cfset securityCode = application.utils.generateCaptcha() /> --->
 		<div class="row mt-5 mr-2 ml-2">
 			<div class="col-md-3">
 				<label class="control-label"  for="captcha">Captcha:</label>
@@ -225,7 +233,7 @@
 	</div>
 	
 </div>
-
+</cfif>
 </cf_header>
         
 	

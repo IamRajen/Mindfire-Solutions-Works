@@ -7,7 +7,7 @@ var patternEmail=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 var patternPhone=/^[^0-1][0-9]{9}$/;
 var patternText=/^[a-zA-Z0-9\s,'-]*$/;
 var patternUserName=/^[a-zA-Z0-9_@]+$/
-var patternPassword=/^(?=.{8,15})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/;
+var patternPassword=/^(?=.{8,15})(?=.*[a-z])(?=.*[A-Z])(?=.*[@$%^&+=]).*$/;
 var patternPincode=/^[0-9]{6}$/
 var patternExperience=/^[0-9]+$/
 
@@ -88,6 +88,7 @@ $(document).ready(function()
     generateCaptcha();
     $('#submitButton').click(function()
     {
+        return true;
         var successfullySubmitted=true;
         var havingAlternativeAddress=checkAlternativeAddress(alternativeAddress);
         for(var i of inputFields.keys())
@@ -115,6 +116,7 @@ $(document).ready(function()
         if(successfullySubmitted)
         {
             alert("Successfully Registered!!");
+            return true;
         }
         return false;
     });
@@ -173,7 +175,6 @@ function populateState(element)
 //border work
 function setErrorBorder(object)
 {
-    // console.log(object)
     $("#"+object.id).css({"border-color": "#CD5C5C", "border-width":"2px"}); 
     $('#'+object.id).next().text(object.errorMsg);
 }
@@ -238,7 +239,6 @@ function checkPhoneNumber(element)
 {
     let object = inputFields.get(element.id);
     let text = $.trim($(element).val());
-    console.log(object)
     if(text == "" && object.id=="primaryPhoneNumber")
     {
         object.errorMsg="Enter your Phone number.";
@@ -264,10 +264,6 @@ function checkPhoneNumber(element)
         return
     }
     setSuccessBorder(object);
-    // if(element.id=="primaryPhoneNumber" && $("#alternativePhoneNumber").val()==$(element).val()) 
-    // {
-        
-    // } 
 }   
 function checkAddress(element)
 {

@@ -8,13 +8,19 @@
 
 	<!---OnApplicationStart() method--->
 	<cffunction name="onApplicationStart" returntype="boolean" >
-<!--- 		<cfset application.pageService = createObject("component",'final.components.pageService') /> --->
-<!--- 		<cfset application.eventsService = createObject("component",'final.components.eventsService') /> --->
-<!--- 		<cfset application.newsService = createObject("component",'final.components.newsService') /> --->
-<!--- 		<cfset application.userService = createObject("component",'final.components.userService') /> --->
-<!--- 		<cfset application.commentsService = createObject("component",'final.components.commentsService') /> --->
-		<cfset application.utils = CreateObject("component",'FindOnlineTutor.Components.utils') />
+		<cfset application.utils = CreateObject("component","FindOnlineTutor.Components.utils") />
+		<cfset application.validation = createObject("component", "FindOnlineTutor.Components.validation")>
 
+		<cfreturn true />
+	</cffunction>
+
+	<cffunction name="onRequestStart" returntype="boolean" >
+		<cfargument name="targetPage" type="string" required="true" />
+		<!---handle some special URL parameters--->
+		<cfif isDefined('url.restartApp')>
+			<cfset this.onApplicationStart() />
+		</cfif>
+		<!---Implement ressource Access control for the 'admin' folder--->
 		<cfreturn true />
 	</cffunction>
 	
