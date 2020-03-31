@@ -11,7 +11,7 @@
 		<h4 class="text-light text-center">REGISTRATION FORM</h4>
 	</div>
 	<!---Form Field--->
-	<form class="pt-4" id="form-registration" method="POST" action="signup.cfm">
+	<form class="pt-4" id="form-registration" method="POST">
 	<!---Profile Photo Field--->
 		<div class="row mr-2 ml-2">
 			<div class="col-md-12 text-center">
@@ -45,6 +45,7 @@
 			</div>
 			<div class="col-md-8">
 				<input type="text" id="emailAddress" name="emailAddress" placeholder="Email Address" class="form-control d-block" onblur="checkEmailId(this)">
+				
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>
@@ -216,7 +217,7 @@
 	<!---Submit Section--->
 		<div class="row mt-5 mr-2 ml-2">
 			<div class="col-md-2">
-				<button id="submitButton" type="submit" class="btn btn-danger btn-block" name="submit" value="SUBMIT">Register</button>
+				<button id="submitButton" type="submit" class="btn btn-danger btn-block" name="submit" value="SUBMIT">Register Me !!</button>
 			</div>
 		</div>
 		

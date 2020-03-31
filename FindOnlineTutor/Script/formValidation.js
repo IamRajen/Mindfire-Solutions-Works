@@ -1,15 +1,15 @@
-var inputFields=new Map()
-var countryMap=new Map()
-var stateMap=new Map()
+var inputFields=new Map();
+var countryMap=new Map();
+var stateMap=new Map();
 
 var patternName=/^[A-Za-z']+$/;
 var patternEmail=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 var patternPhone=/^[^0-1][0-9]{9}$/;
 var patternText=/^[a-zA-Z0-9\s,'-]*$/;
-var patternUserName=/^[a-zA-Z0-9_@]+$/
+var patternUserName=/^[a-zA-Z0-9_@]+$/;
 var patternPassword=/^(?=.{8,15})(?=.*[a-z])(?=.*[A-Z])(?=.*[@$%^&+=]).*$/;
-var patternPincode=/^[0-9]{6}$/
-var patternExperience=/^[0-9]+$/
+var patternPincode=/^[0-9]{6}$/;
+var patternExperience=/^[0-9]+$/;
 
 function loadImage(input)
 {
@@ -47,30 +47,28 @@ function makeErrorMsgEmpty()
 $(document).ready(function()
 {
     inputFields.set("profilePhoto",{id:"profilePhoto", errorMsg:"Select an Image", value:""});
-    inputFields.set("firstName",{id:"firstName", errorMsg:"Please Provide Your Name"});
-    // inputFields.set("middleName",{id:"middleName", errorMsg:""});
-    inputFields.set("lastName",{id:"lastName", errorMsg:"Please Provide Your Last Name"});
-    inputFields.set("emailAddress",{id:"emailAddress", errorMsg:"Mandatory Field!! Provide EmailId"});
-    inputFields.set("primaryPhoneNumber",{id:"primaryPhoneNumber", errorMsg:"Mandatory Field!! Provide Phone Number"});
-    inputFields.set("alternativePhoneNumber",{id:"alternativePhoneNumber", errorMsg:""});
-    inputFields.set("dob",{id:"dob", errorMsg:"Mandatory Field!! Provide Date of Birth"});
-    inputFields.set("username",{id:"username", errorMsg:"Mandatory Field!! Create an username"});
-    inputFields.set("password",{id:"password", errorMsg:"Mandatory Field!! Create a password"});
-    inputFields.set("confirmPassword",{id:"confirmPassword", errorMsg:""});
-    inputFields.set("experience",{id:"experience", errorMsg:""});
-    inputFields.set("currentAddress",{id:"currentAddress", errorMsg:"Mandatory Field!! Provide Current Address"});
-    inputFields.set("currentCountry",{id:"currentCountry", errorMsg:"Mandatory Field!! Provide Current Country"});
-    inputFields.set("currentState",{id:"currentState", errorMsg:"Mandatory Field!! Provide Current State"});
-    inputFields.set("currentCity",{id:"currentCity", errorMsg:"Mandatory Field!! Provide Current City"});
-    inputFields.set("currentPincode",{id:"currentPincode", errorMsg:"Mandatory Field!! Provide Current Pincode"});
-    inputFields.set("alternativeAddress",{id:"alternativeAddress", errorMsg:""});
-    inputFields.set("alternativeCountry",{id:"alternativeCountry", errorMsg:""});
-    inputFields.set("alternativeState",{id:"alternativeState", errorMsg:""});
-    inputFields.set("alternativeCity",{id:"alternativeCity", errorMsg:""});
-    inputFields.set("alternativePincode",{id:"alternativePincode", errorMsg:""});
-    inputFields.set("bio",{id:"bio", errorMsg:""});
-    // inputFields.set("isTeacher",{id:"isTeacher",errorMsg:""})
-    inputFields.set("captcha",{id:"captcha",errorMsg:"Invalid Captcha"});
+    inputFields.set("firstName",{id:"firstName", errorMsg:"Please Provide Your Name", value:""});
+    inputFields.set("lastName",{id:"lastName", errorMsg:"Please Provide Your Last Name", value:""});
+    inputFields.set("emailAddress",{id:"emailAddress", errorMsg:"Mandatory Field!! Provide EmailId", value:""});
+    inputFields.set("primaryPhoneNumber",{id:"primaryPhoneNumber", errorMsg:"Mandatory Field!! Provide Phone Number", value:""});
+    inputFields.set("alternativePhoneNumber",{id:"alternativePhoneNumber", errorMsg:"", value:""});
+    inputFields.set("dob",{id:"dob", errorMsg:"Mandatory Field!! Provide Date of Birth", value:""});
+    inputFields.set("username",{id:"username", errorMsg:"Mandatory Field!! Create an username", value:""});
+    inputFields.set("password",{id:"password", errorMsg:"Mandatory Field!! Create a password", value:""});
+    inputFields.set("confirmPassword",{id:"confirmPassword", errorMsg:"", value:""});
+    inputFields.set("experience",{id:"experience", errorMsg:"", value:""});
+    inputFields.set("currentAddress",{id:"currentAddress", errorMsg:"Mandatory Field!! Provide Current Address", value:""});
+    inputFields.set("currentCountry",{id:"currentCountry", errorMsg:"Mandatory Field!! Provide Current Country", value:""});
+    inputFields.set("currentState",{id:"currentState", errorMsg:"Mandatory Field!! Provide Current State", value:""});
+    inputFields.set("currentCity",{id:"currentCity", errorMsg:"Mandatory Field!! Provide Current City", value:""});
+    inputFields.set("currentPincode",{id:"currentPincode", errorMsg:"Mandatory Field!! Provide Current Pincode", value:""});
+    inputFields.set("alternativeAddress",{id:"alternativeAddress", errorMsg:"", value:""});
+    inputFields.set("alternativeCountry",{id:"alternativeCountry", errorMsg:"", value:""});
+    inputFields.set("alternativeState",{id:"alternativeState", errorMsg:"", value:""});
+    inputFields.set("alternativeCity",{id:"alternativeCity", errorMsg:"", value:""});
+    inputFields.set("alternativePincode",{id:"alternativePincode", errorMsg:"", value:""});
+    inputFields.set("bio",{id:"bio", errorMsg:"", value:""});
+    inputFields.set("captcha",{id:"captcha",errorMsg:"Invalid Captcha", value:""});
     alternativeAddress=["alternativeAddress","alternativeCountry","alternativeState","alternativeCity","alternativePincode"];
     $("#teacherSection").hide()
     $("#isTeacher").click(function(){
@@ -81,11 +79,16 @@ $(document).ready(function()
         else if($(this).prop("checked") == false){
             $("#teacherSection").hide()
             inputFields.get("experience").errorMsg="";
+            $("#experience").val('');
         }
     });
     
     loadCountryStateMap();
     generateCaptcha();
+    // $("#emailAddress").focus(function()
+    // {
+        
+    // });
     $('#submitButton').click(function()
     {
         var successfullySubmitted=true;
@@ -94,6 +97,7 @@ $(document).ready(function()
         {
             if(alternativeAddress.includes(i) && !havingAlternativeAddress)
             {
+                inputFields.get(i).value="";
                 continue;
             }
             if(i=="experience" && $("#isTeacher").prop("checked"))
@@ -106,17 +110,57 @@ $(document).ready(function()
                     successfullySubmitted=false;
                 }
             }
+            if(i.length>7 && i.slice(0,-7)=="Country")
+            {
+                inputFields.get(i).value=countryMap.get($("#"+id).val());
+            }
+            else if(i.length>6 && i.slice(0,-5)=="State")
+            {
+                inputFields.get(i).value=stateMap.get($("#"+id).val());
+            }
+            else if(i!="profilePhoto")
+                inputFields.get(i).value=$("#"+i).val();
             if(inputFields.get(i).errorMsg)
             {
                 setErrorBorder(inputFields.get(i))
                 successfullySubmitted=false;
-
             }
         }
         if(successfullySubmitted)
         {
             alert("Successfully Registered!!");
-            return true;
+             $.ajax({
+                type:"POST",
+                url:"Components/validation.cfc?method=validateForm",
+                cache:false,
+                data:{
+                        "profilePhoto":inputFields.get("profilePhoto").value,
+                        "firstName": $("#firstName").val(),
+                        "lastName": $("#lastName").val(),
+                        "emailAddress": $("#emailAddress").val(),
+                        "primaryPhoneNumber": $("#primaryPhoneNumber").val(),
+                        "alternativePhoneNumber":$("#alternativePhoneNumber").val(),
+                        "dob":$("#bio").val(),
+                        "username":$("#username").val(),
+                        "password":$("#password").val(),
+                        "confirmPassword":$("#confirmPassword").val(),
+                        "experience":$("#experience").val(),
+                        "currentAddress":$("#currentAddress").val(),
+                        "currentCountry":countryMap.get(parseInt($("#currentCountry").val())),
+                        "currentState":stateMap.get($("#currentState").val()).name,
+                        "currentCity":$("#currentCity").val(),
+                        "currentPincode":$("#currentPincode").val(),
+                        "alternativeAddress": havingAlternativeAddress ? $("#alternativeAddress").val() : '',
+                        "alternativeCountry":havingAlternativeAddress ? countryMap.get($("#alternativeCountry").val()) : '',
+                        "alternativeState":havingAlternativeAddress ? stateMap.get($("#alternativeState").val()):'',
+                        "alternativeCity":havingAlternativeAddress ? $("#alternativeCity").val():'',
+                        "alternativePincode":havingAlternativeAddress ? $("#alternativePincode").val():'',
+                        "bio":$("#bio").val()
+                    },
+                success: function(error) {
+                    console.log(error)
+                }
+            });
         }
         return false;
     });
@@ -131,7 +175,7 @@ function loadCountryStateMap()
     { 
         for(let i=0; i<countries.length; i++)
         {
-            countryMap.set(""+countries[i].id , countries[i].name);
+            countryMap.set(countries[i].id , countries[i].name);
         }
     });
     $.getJSON('JsonFiles/states.json',function(states)
@@ -235,6 +279,21 @@ function checkEmailId(element)
         setErrorBorder(object);
         return;
     }
+    $.ajax({
+        type:"POST",
+        url:"Components/validation.cfc?method=validateEmail",
+        data: "usrEmail="+text,
+        cache:false,
+        success: function(error) {
+            if(!JSON.parse(error).msg)
+            {
+                console.log(JSON.parse(error).msg)
+                object.errorMsg="Email Address Already Exists!!"
+                setErrorBorder(object);
+                return;
+            }
+        }
+    });
     setSuccessBorder(object);
 }
 function checkPhoneNumber(element)
@@ -265,6 +324,21 @@ function checkPhoneNumber(element)
         setErrorBorder(inputFields.get('alternativePhoneNumber'));
         return
     }
+    $.ajax({
+        type:"POST",
+        url:"Components/validation.cfc?method=validatePhoneNumber",
+        data: "usrPhoneNumber="+text,
+        cache:false,
+        success: function(error) {
+            if(!JSON.parse(error).msg)
+            {
+                console.log(JSON.parse(error).msg)
+                object.errorMsg="Phone Number Already Exists!!"
+                setErrorBorder(object);
+                return;
+            }
+        }
+    });
     setSuccessBorder(object);
 }   
 function checkAddress(element)
@@ -351,20 +425,18 @@ function checkUsername(element)
     $.ajax({
         type:"POST",
         url:"Components/validation.cfc?method=validateUsername",
-        data: "usrName="+$(element).val(),
+        data: "usrName="+text,
         cache:false,
-        success: function(msg) {
-        console.log(JSON.parse(msg).msg)
+        success: function(error) {
+            if(!JSON.parse(error).msg)
+            {
+                console.log(JSON.parse(error).msg)
+                object.errorMsg="User Already Exists!!"
+                setErrorBorder(object);
+                return;
+            }
         }
     });
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-        console.log(this.responseText);
-        }
-    };
-    xhttp.open("POST", "Components/validation.cfc?method=validateUsername", true);
-    xhttp.send("usrUsername="+$(element).val());
     setSuccessBorder(object);
 }
 function checkPassword(element)

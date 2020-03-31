@@ -1,14 +1,12 @@
 <cfcomponent output="false">
 	<cfset this.name = 'FindOnlineTutor' />
 	<cfset this.applicationTimeout = createtimespan(0,2,0,0) />
-	<cfset this.datasource = 'FindingTutor' />
-<!--- 	<cfset this.customTagPaths = expandPath('/final/customTags') /> --->
+	<cfset this.datasource = 'DatabaseFindOnlineTutor' />
 	<cfset this.sessionManagement = true />
 	<cfset this.sessionTimeout = createTimespan(0,0,30,0) />
 
 	<!---OnApplicationStart() method--->
 	<cffunction name="onApplicationStart" returntype="boolean" >
-		<cfset application.utils = CreateObject("component",'FindOnlineTutor.Components.utils') />
 		<cfreturn true />
 	</cffunction>
 
