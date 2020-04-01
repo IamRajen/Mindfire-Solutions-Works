@@ -1,3 +1,4 @@
+//Initiatization of credential
 var inputFields=new Map();
 var countryMap=new Map();
 var stateMap=new Map();
@@ -11,6 +12,7 @@ var patternPassword=/^(?=.{8,15})(?=.*[a-z])(?=.*[A-Z])(?=.*[@$%^&+=]).*$/;
 var patternPincode=/^[0-9]{6}$/;
 var patternExperience=/^[0-9]+$/;
 
+//function to load image and put it in profile img 
 function loadImage(input)
 {
     if (input.files && input.files[0])
@@ -44,6 +46,7 @@ function makeErrorMsgEmpty()
 {
     setSuccessBorder(inputFields.get("profilePhoto"));
 }
+//document ready function
 $(document).ready(function()
 {
     inputFields.set("profilePhoto",{id:"profilePhoto", errorMsg:"Select an Image", value:""});
@@ -70,7 +73,9 @@ $(document).ready(function()
     inputFields.set("bio",{id:"bio", errorMsg:"", value:""});
     inputFields.set("captcha",{id:"captcha",errorMsg:"Invalid Captcha", value:""});
     alternativeAddress=["alternativeAddress","alternativeCountry","alternativeState","alternativeCity","alternativePincode"];
+    
     $("#teacherSection").hide()
+    
     $("#isTeacher").click(function(){
         if($(this).prop("checked") == true){
             $("#teacherSection").show();
@@ -82,16 +87,14 @@ $(document).ready(function()
             $("#experience").val('');
         }
     });
-    
+    //populate the country and state map
     loadCountryStateMap();
+    //load captcha
     generateCaptcha();
-    // $("#emailAddress").focus(function()
-    // {
-        
-    // });
+    //after submition
     $('#submitButton').click(function()
     {
-        var successfullySubmitted=true;
+        var successfullyValidated=true;
         var havingAlternativeAddress=checkAlternativeAddress(alternativeAddress);
         for(var i of inputFields.keys())
         {
@@ -107,7 +110,7 @@ $(document).ready(function()
                 {
                     inputFields.get("experience").errorMsg="Experience having more than age not allowed!!"
                     setErrorBorder(inputFields.get("experience"));
-                    successfullySubmitted=false;
+                    successfullyValidated=false;
                 }
             }
             if(i.length>7 && i.slice(0,-7)=="Country")
@@ -123,12 +126,12 @@ $(document).ready(function()
             if(inputFields.get(i).errorMsg)
             {
                 setErrorBorder(inputFields.get(i))
-                successfullySubmitted=false;
+                successfullyValidated=false;
             }
         }
-        if(successfullySubmitted)
-        {
-            alert("Successfully Registered!!");
+        if(successfullyValidated)
+        {   
+            successfullyValidated=false;
              $.ajax({
                 type:"POST",
                 url:"Components/validation.cfc?method=validateForm",
@@ -140,35 +143,47 @@ $(document).ready(function()
                         "emailAddress": $("#emailAddress").val(),
                         "primaryPhoneNumber": $("#primaryPhoneNumber").val(),
                         "alternativePhoneNumber":$("#alternativePhoneNumber").val(),
-                        "dob":$("#bio").val(),
+                        "dob":$("#dob").val(),
                         "username":$("#username").val(),
                         "password":$("#password").val(),
                         "confirmPassword":$("#confirmPassword").val(),
-                        "experience":$("#experience").val(),
+                        "isTeacher": $("#isTeacher").prop("checked") ? 1 : 0,
+                        "experience": $("#isTeacher").prop("checked") ? $("#experience").val() : 0,
                         "currentAddress":$("#currentAddress").val(),
                         "currentCountry":countryMap.get(parseInt($("#currentCountry").val())),
                         "currentState":stateMap.get($("#currentState").val()).name,
                         "currentCity":$("#currentCity").val(),
                         "currentPincode":$("#currentPincode").val(),
+                        "havingAlternativeAddress": havingAlternativeAddress,
                         "alternativeAddress": havingAlternativeAddress ? $("#alternativeAddress").val() : '',
                         "alternativeCountry":havingAlternativeAddress ? countryMap.get($("#alternativeCountry").val()) : '',
                         "alternativeState":havingAlternativeAddress ? stateMap.get($("#alternativeState").val()):'',
                         "alternativeCity":havingAlternativeAddress ? $("#alternativeCity").val():'',
                         "alternativePincode":havingAlternativeAddress ? $("#alternativePincode").val():'',
-                        "bio":$("#bio").val()
+                        "bio":$("#bio").val()=="" ? '': $("#bio").val()
+
                     },
                 success: function(error) {
-                    console.log(error)
+                    errorMsgs=JSON.parse(error);
+                    console.log(error.VALIDATEDSUCCESSFULLY);
+                    if(errorMsgs.VALIDATEDSUCCESSFULLY == true)
+                    {
+                        successfullyValidated=true;
+                    }
+                    else
+                    {
+                        console.log(errorMsgs);
+                    }
                 }
             });
         }
-        return false;
-    });
+        console.log(successfullyValidated);
+        return successfullyValidated;
+    });   
 
-    
+});
 
-})
-
+//populate country and state map
 function loadCountryStateMap()
 {
     $.getJSON('JsonFiles/countries.json',function(countries)
@@ -186,6 +201,7 @@ function loadCountryStateMap()
         }
     });    
 }
+//populate countries select input
 function populateCountry(addressType)
 {
     var countryOptions="<option value=''>---Select Country---</option>";
@@ -195,6 +211,7 @@ function populateCountry(addressType)
     }
     $("#"+addressType+"Country").append(countryOptions);
 }
+//populate states on choosing country
 function populateState(element)
 {
     var addressType=element.id.toString().slice(0,-7);
@@ -214,6 +231,26 @@ function populateState(element)
         }  
     }
     $("#"+addressType+"State").html(stateOptions);
+}
+//generate captcha
+function generateCaptcha()
+{
+    canvas.width = canvas.width;
+    var captcha = $("#canvas");
+    var context = captcha[0].getContext("2d");
+    var aChars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'n', 'o', 'p', 'q', 'r', 's', 't',
+                    'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    var maxNum = 35;
+    toReturn = '';
+
+    for(let i=1; i<=5; i++)
+    {
+        var randNum = Math.floor(Math.random() * 35); 
+        var letter = aChars[randNum];
+        toReturn = toReturn+letter;
+    }
+    context.font = "60px Arial";
+    context.fillText(toReturn,40,100);
 }
 
 //border work
@@ -239,8 +276,7 @@ function isEmpty(object)
     return false;
 }
 
-//All Validation Functions Starts here
-
+// All Validation Functions Starts here
 function checkName(element)
 {
     var object = inputFields.get(element.id);
@@ -285,10 +321,10 @@ function checkEmailId(element)
         data: "usrEmail="+text,
         cache:false,
         success: function(error) {
-            if(!JSON.parse(error).msg)
+            if(JSON.parse(error).error)
             {
-                console.log(JSON.parse(error).msg)
-                object.errorMsg="Email Address Already Exists!!"
+                console.log(JSON.parse(error).error)
+                object.errorMsg=JSON.parse(error).error;
                 setErrorBorder(object);
                 return;
             }
@@ -330,10 +366,9 @@ function checkPhoneNumber(element)
         data: "usrPhoneNumber="+text,
         cache:false,
         success: function(error) {
-            if(!JSON.parse(error).msg)
+            if(JSON.parse(error).error)
             {
-                console.log(JSON.parse(error).msg)
-                object.errorMsg="Phone Number Already Exists!!"
+                object.errorMsg=JSON.parse(error).error;
                 setErrorBorder(object);
                 return;
             }
@@ -428,10 +463,10 @@ function checkUsername(element)
         data: "usrName="+text,
         cache:false,
         success: function(error) {
-            if(!JSON.parse(error).msg)
+            if(JSON.parse(error).error)
             {
-                console.log(JSON.parse(error).msg)
-                object.errorMsg="User Already Exists!!"
+                // console.log(JSON.parse(error).msg)
+                object.errorMsg=JSON.parse(error).error;
                 setErrorBorder(object);
                 return;
             }
@@ -540,26 +575,6 @@ function checkCaptcha(element)
         return;
     }
     setSuccessBorder(object);
-}
-
-function generateCaptcha()
-{
-    canvas.width = canvas.width;
-    var captcha = $("#canvas");
-    var context = captcha[0].getContext("2d");
-    var aChars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'n', 'o', 'p', 'q', 'r', 's', 't',
-                    'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    var maxNum = 35;
-    toReturn = '';
-
-    for(let i=1; i<=5; i++)
-    {
-        var randNum = Math.floor(Math.random() * 35); 
-        var letter = aChars[randNum];
-        toReturn = toReturn+letter;
-    }
-    context.font = "60px Arial";
-    context.fillText(toReturn,40,100);
 }
 function checkAlternativeAddress(alternativeAddress)
 {

@@ -11,7 +11,7 @@
 		<h4 class="text-light text-center">REGISTRATION FORM</h4>
 	</div>
 	<!---Form Field--->
-	<form class="pt-4" id="form-registration" method="POST">
+	<form class="pt-4" id="form-registration" method="POST" action="login.cfm">
 	<!---Profile Photo Field--->
 		<div class="row mr-2 ml-2">
 			<div class="col-md-12 text-center">
