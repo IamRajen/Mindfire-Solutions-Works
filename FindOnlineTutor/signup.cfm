@@ -1,17 +1,19 @@
 <!---Including the navibar custom tag--->
-<cf_header homeLink="index.cfm"  logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/formValidation.js">
-
-<!--- <cfif structKeyExists(form, "submit")> --->
-<!---form validation starts here--->
+<cf_header homeLink="index.cfm"  logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/registrationFormValidation.js">
 
 <!--- Registration Page starts here --->
+<noscript>
+	<div class="container  px-5 text-center">
+		<h3 class="mx-5 text-danger">Please enable <strong>JavaScipt</strong> to submit the form!!</h3>
+	</div>
+</noscript>
 <div class="container-fuild w-100 mx-auto pb-4 mb-5 shadow rounded bg-light">
 	<!---Heading Field--->
 	<div class="bg-dark pt-3 pb-3 rounded-top">
 		<h4 class="text-light text-center">REGISTRATION FORM</h4>
 	</div>
 	<!---Form Field--->
-	<form class="pt-4" id="form-registration" method="POST" action="login.cfm">
+	<form class="pt-4 disabledbutton" id="form-registration" method="POST" action="login.cfm">
 	<!---Profile Photo Field--->
 		<div class="row mr-2 ml-2">
 			<div class="col-md-12 text-center">
@@ -112,12 +114,14 @@
 		<div class="row mt-4 mr-2 ml-2 ">
 			<div class="col-md-3"></div>
 			<div class="col-md-4">
-				<select id="currentCountry" class="form-control d-block" onblur="populateState(this)">
+				<select id="currentCountry" name="currentCountry" class="form-control d-block" onblur="populateState(this)">
+					<option value="">---select your country----</option>
 				</select>
 				<span class="text-danger small float-left"></span>
 			</div>
 			<div  class="col-md-4">
-				<select id="currentState" class="form-control d-block" onblur="checkState(this)">
+				<select id="currentState" name="currentState" class="form-control d-block" onblur="checkState(this)">
+					<option value="">---select your state----</option>
 				</select>
 				<span class="text-danger small float-left"></span>
 			</div>
@@ -149,12 +153,14 @@
 		<div class="row mt-4 mr-2 ml-2 ">
 			<div class="col-md-3"></div>
 			<div class="col-md-4">
-				<select id="alternativeCountry" class="form-control d-block" onblur="populateState(this)">
+				<select id="alternativeCountry" name="alternativeCountry" class="form-control d-block" onblur="populateState(this)">
+					<option value="">---select your country----</option>
 				</select>
 				<span class="text-danger small float-left"></span>
 			</div>
 			<div class="col-md-4">
-				<select id="alternativeState" class="form-control d-block" onblur="checkState(this)">
+				<select id="alternativeState" name="alternativeState" class="form-control d-block" onblur="checkState(this)">
+					<option value="">---select your state----</option>
 				</select>
 				<span class="text-danger small float-left"></span>
 			</div>
@@ -185,7 +191,7 @@
 		<div class="row mt-4 mr-2 ml-4">
 			<div class="col-md-3">
 				<label class="form-check-label">
-					<input id="isTeacher" type="checkbox" class="form-check-input" value="1">Are you Teacher??
+					<input id="isTeacher" name="isTeacher" type="checkbox" class="form-check-input" value="1">Are you Teacher??
 				</label>
 			</div>
 		</div>
@@ -216,8 +222,8 @@
 			
 	<!---Submit Section--->
 		<div class="row mt-5 mr-2 ml-2">
-			<div class="col-md-2">
-				<button id="submitButton" type="submit" class="btn btn-danger btn-block" name="submit" value="SUBMIT">Register Me !!</button>
+			<div class="col-md-2" id="buttonDiv">
+
 			</div>
 		</div>
 		

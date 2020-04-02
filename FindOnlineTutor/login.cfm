@@ -1,4 +1,4 @@
-<cf_header homeLink="index.cfm"  logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/formValidation.js">
+<cf_header homeLink="index.cfm"  logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/loginFormValidation.js">
 
 
 <div class="container-fuild w-50 mx-auto pb-4 mb-5 shadow rounded bg-light">
@@ -26,6 +26,19 @@
 			</div>
 			<div class="col-md-8">
 				<input type="password" id="password" name="password" placeholder="Password" class="form-control d-block">
+				<span class="text-danger small float-left"></span>
+			</div>
+		</div>
+		<!---Captcha section--->
+		<div class="row mt-5 mr-2 ml-2">
+			<div class="col-md-3">
+				<label class="control-label"  for="captcha">Captcha:</label>
+			</div>
+			<div class="col-md-4">
+				<canvas class="w-75 rounded" id="canvas"></canvas>
+			</div>
+			<div class="col-md-4">
+				<input type="text" id="captcha" name="captcha" class="form-control d-block" onblur="checkCaptcha(this)">
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>

@@ -74,6 +74,9 @@ $(document).ready(function()
     inputFields.set("captcha",{id:"captcha",errorMsg:"Invalid Captcha", value:""});
     alternativeAddress=["alternativeAddress","alternativeCountry","alternativeState","alternativeCity","alternativePincode"];
     
+    //Adding submit button..
+    $("#buttonDiv").append($("<input>").attr({"id":"submitButton","type":"submit","value":"SUBMIT","name":"submit"}).addClass("btn btn-danger btn-block"));
+    
     $("#teacherSection").hide()
     
     $("#isTeacher").click(function(){
@@ -134,8 +137,15 @@ $(document).ready(function()
             successfullyValidated=false;
              $.ajax({
                 type:"POST",
+                async: "false",
                 url:"Components/validation.cfc?method=validateForm",
-                cache:false,
+                async: false,
+                cache: false,
+                timeout: 30000,
+                error: function(){
+                    successfullyValidated=false;
+                    return false;
+                },
                 data:{
                         "profilePhoto":inputFields.get("profilePhoto").value,
                         "firstName": $("#firstName").val(),
@@ -165,21 +175,29 @@ $(document).ready(function()
                     },
                 success: function(error) {
                     errorMsgs=JSON.parse(error);
-                    console.log(error.VALIDATEDSUCCESSFULLY);
-                    if(errorMsgs.VALIDATEDSUCCESSFULLY == true)
+                    console.log(errorMsgs);
+                    if(errorMsgs["validatedSuccessfully"] == true)
                     {
                         successfullyValidated=true;
                     }
                     else
                     {
-                        console.log(errorMsgs);
+                        successfullyValidated=false;
+                        for (var key in errorMsgs) {
+                            if(key!="validatedSuccessfully" && errorMsgs[key] !="")
+                            {
+                                inputFields.get(key).errorMsg=errorMsgs[key];
+                                setErrorBorder(inputFields.get(key));
+                            }
+                        }
                     }
                 }
             });
         }
-        console.log(successfullyValidated);
+        console.log("vl "+successfullyValidated);
         return successfullyValidated;
-    });   
+    }); 
+     
 
 });
 
@@ -275,6 +293,12 @@ function isEmpty(object)
     }
     return false;
 }
+//function for valid pattern..
+function isValidPattern(text,pattern)
+{
+    return true;
+    return pattern.test(text);
+}
 
 // All Validation Functions Starts here
 function checkName(element)
@@ -285,7 +309,7 @@ function checkName(element)
         return;
     }
     var text = $.trim($(element).val());
-    if(!patternName.test(text))
+    if(!isValidPattern(text,patternName))
     {
         object.errorMsg="Please use only Alphabets";
         setErrorBorder(object);
@@ -309,7 +333,7 @@ function checkEmailId(element)
         return;
     }
     var text = $.trim($(element).val());
-    if(!patternEmail.test(text))
+    if(!isValidPattern(text,patternEmail))
     {
         object.errorMsg="Invalid Email Address.";
         setErrorBorder(object);
@@ -321,10 +345,10 @@ function checkEmailId(element)
         data: "usrEmail="+text,
         cache:false,
         success: function(error) {
-            if(JSON.parse(error).error)
+            if(JSON.parse(error))
             {
-                console.log(JSON.parse(error).error)
-                object.errorMsg=JSON.parse(error).error;
+                console.log(JSON.parse(error))
+                object.errorMsg=JSON.parse(error);
                 setErrorBorder(object);
                 return;
             }
@@ -347,7 +371,7 @@ function checkPhoneNumber(element)
         setSuccessBorder(object);
         return;
     }
-    if(!patternPhone.test(text))
+    if(!isValidPattern(text,patternPhone))
     {
         object.errorMsg="Number should not include 0 or 1 at begining and should contain only number";
         setErrorBorder(object);
@@ -391,7 +415,7 @@ function checkAddress(element)
         }
         return;
     }
-    if(!patternText.test(text))
+    if(!isValidPattern(text,patternText))
     {
         object.errorMsg="Should contain only alphabets, number and ',''/''&' ";
         setErrorBorder(object);
@@ -434,7 +458,7 @@ function checkPincode(element)
         }
         return;
     }
-    else if(!patternPincode.test($(element).val()))
+    else if(!isValidPattern($(element).val(),patternPincode))
     {
         object.errorMsg="Invalid Pincode.Must be Number of 6 digit";
         setErrorBorder(object);
@@ -451,7 +475,7 @@ function checkUsername(element)
         return;
     }
     var text = $.trim($(element).val());
-    if(!patternUserName.test(text) || text.length>8)
+    if(!isValidPattern(text,patternUserName) || text.length>8)
     {
         object.errorMsg="Username should contain only alphabets, numbers, (_ @ .) and 8 characters long";
         setErrorBorder(object);
@@ -479,7 +503,7 @@ function checkPassword(element)
     var object = inputFields.get(element.id);
     var text = $.trim($(element).val());
     var confirmPassword = inputFields.get('confirmPassword');
-    var password = inputFields.get('password');
+    // var password = inputFields.get('password');
     if(object.id == 'password' && text == "")
     {
         object.errorMsg="Create a Password.";
@@ -508,7 +532,7 @@ function checkPassword(element)
         setErrorBorder(object);
         return;
     }
-    if(!patternPassword.test(text) && object.id=="password")
+    if(!isValidPattern(text,patternPassword) && object.id=="password")
     {
         object.errorMsg="Must contain at least 1 UPPERCASE 1 LOWERCASE 1 SPECIAL CHARACTER.";
         setErrorBorder(object);
@@ -543,7 +567,7 @@ function checkExperience(element)
         setSuccessBorder(object)
         return;
     }
-    if(!patternExperience.test(text) || text.toString().length>2)
+    if(!isValidPattern(text,patternExperience) || text.toString().length>2)
     {
         object.errorMsg="Should be Integer of atleast 2 characters long."
         setErrorBorder(object);

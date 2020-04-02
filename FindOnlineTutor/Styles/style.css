@@ -75,7 +75,9 @@ canvas
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
-
+/* .disabledbutton {
+  display: none;
+} */
 
 
 
