@@ -1,6 +1,5 @@
 <!---Including the navibar custom tag--->
 <cf_header homeLink="index.cfm"  logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/registrationFormValidation.js">
-
 <!--- Registration Page starts here --->
 <noscript>
 	<div class="container  px-5 text-center">

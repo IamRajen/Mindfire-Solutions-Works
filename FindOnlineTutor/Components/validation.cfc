@@ -30,25 +30,29 @@
         <cfargument  name="alternativePincode" type="string" required="false"/>
         <cfargument  name="bio" type="string" required="false"/>
 
-        <!---creating a struct for erro messages and calling the required functions--->
+        <!--- creating a struct for error messages and calling the required functions--->
         <cfset errorMsgs={}>
         <cfset errorMsgs["validatedSuccessfully"]=true/>
-<!---         <cfset errorMsg.profilePhoto=validateProfilePhoto(arguments.profilePhoto)> --->
+        <!--- <cfset errorMsg.profilePhoto=validateProfilePhoto(arguments.profilePhoto)> --->
         <cfset errorMsgs["firstName"]=validateName(arguments.firstName)/>
         <cfset errorMsgs["lastName"]=validateName(arguments.lastName)/>
         <cfset errorMsgs["emailAddress"]=validateEmail(arguments.emailAddress)/>
         <cfset errorMsgs["primaryPhoneNumber"]=validatePhoneNumber(arguments.primaryPhoneNumber)/>
+
         <cfif arguments.alternativePhoneNumber NEQ '' and arguments.alternativePhoneNumber NEQ arguments.primaryPhoneNumber>
             <cfset errorMsgs["alternativePhoneNumber"]=validatePhoneNumber(arguments.alternativePhoneNumber)/>
         <cfelseif arguments.alternativePhoneNumber NEQ '' and arguments.alternativePhoneNumber EQ arguments.primaryPhoneNumber>
             <cfset errorMsgs["alternativePhoneNumber"]="Alternative number should not be same.You can keep this blank."/>
         </cfif>
+
         <cfset errorMsgs["dob"]=validateDOB(arguments.dob)/>
         <cfset errorMsgs["username"]=validateUsername(arguments.username)/>
         <cfset errorMsgs["password"]=validatePassword(arguments.password)/>
+
         <cfif arguments.password NEQ arguments.confirmPassword>
             <cfset errorMsgs["confirmPassword"]="password not matched!!"/>
         </cfif>
+
         <cfif arguments.isTeacher EQ 1>
             <cfset errorMsgs["experience"]=validateExperience(arguments.experience)/>
         <cfelse>
@@ -60,6 +64,7 @@
         <cfset errorMsgs["currentState"]=validateText(arguments.currentState)/>
         <cfset errorMsgs["currentCity"]=validateText(arguments.currentCity)/>
         <cfset errorMsgs["currentPincode"]=validatePincode(arguments.currentPincode)/>
+
         <cfif arguments.havingAlternativeAddress>
             <cfset errorMsgs["alternativeAddress"]=validateText(arguments.alternativeAddress)+"Alternative field you can keep this blank!!"/>
             <cfset errorMsgs["alternativeCountry"]=validateText(arguments.alternativeCountry)+"Alternative field you can keep this blank!!"/>
@@ -67,6 +72,7 @@
             <cfset errorMsgs["alternativeCity"]=validateText(arguments.alternativeCity)+"Alternative field you can keep this blank!!"/>
             <cfset errorMsgs["alternativePincode"]=validatePincode(arguments.alternativePincode)+"Alternative field you can keep this blank!!"/>
         </cfif>
+        
         <cfif arguments.bio NEQ ''>
             <cfset errorMsgs["bio"]=validateText(arguments.bio)/>
         </cfif>
@@ -83,14 +89,54 @@
         
         <!---if successfully validated do Registration Work--->
         <cfset errorMsgs["validatedSuccessfully"]=true/>
-        <!--- <cfquery >
-        INSERT INTO [dbo].[User] 
-        (userId,registrationDate,firstName,lastName,emailid,username,password,dob,bio,isTeacher,yearOfExperience,homeLocation,otherLocation,online)
-        VALUES ('15',#now()#,'#arguments.firstName#', '#arguments.lastName#', '#arguments.emailAddress#', 
-                '#arguments.username#', '#arguments.password#', '#arguments.dob#','#arguments.bio#',#arguments.isTeacher#,
-                #arguments.experience#,0,0,0);
 
-        </cfquery> --->
+        <cfquery>
+            <!---Inserting data in the user table--->
+            INSERT INTO [dbo].[User] 
+            (registrationDate,firstName,lastName,emailid,username,password,dob,isTeacher,
+            yearOfExperience,homeLocation,otherLocation,online,bio)
+            VALUES (
+                <cfqueryparam value='#now()#' cfsqltype='cf_sql_date'>,
+                <cfqueryparam value='#arguments.firstName#' cfsqltype='cf_sql_varchar'>, 
+                <cfqueryparam value='#arguments.lastName#' cfsqltype='cf_sql_varchar'>, 
+                <cfqueryparam value='#arguments.emailAddress#' cfsqltype='cf_sql_varchar'>, 
+                <cfqueryparam value='#arguments.username#' cfsqltype='cf_sql_varchar'>, 
+                <cfqueryparam value='#arguments.password#' cfsqltype='cf_sql_varchar'>, 
+                <cfqueryparam value='#arguments.dob#' cfsqltype='cf_sql_date'>,
+                <cfqueryparam value=#arguments.isTeacher# cfsqltype='cf_sql_bit'>,
+                <cfqueryparam value=#arguments.experience# cfsqltype='cf_sql_smallint'>,
+                <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
+                <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
+                <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
+                <cfqueryparam value='#arguments.bio#' cfsqltype='cf_sql_varchar'>
+            );
+
+            <!---getting the userId through username--->
+            <cfset var userId =#getUserId(arguments.username).USERID#/>
+            <!---calling function for inserting the user primary phone number--->
+            <cfset var phoneInsertionError=insertPhoneNumber(userId,arguments.primaryPhoneNumber)/>
+
+            <!---calling function for inserting the user alternatve phone number if exists--->
+            <cfif arguments.alternativePhoneNumber NEQ ''>
+                <cfset var alternativePhoneInsertionError=insertPhoneNumber(userId,arguments.primaryPhoneNumber)/>
+            </cfif>
+            <cfset var phoneInsertionError=insertPhoneNumber(userId,arguments.alternativePhoneNumber)/>
+
+            <!---calling function for inserting user current address in userAdrress table--->
+            <cfset addressInsertionError=insertAddress(
+                userId,arguments.currentAddress,arguments.currentCountry,arguments.currentState,
+                arguments.currentCity,arguments.currentPincode
+            ) />
+            <!---calling function for inserting user alternative address (if exists) in userAdrress table--->
+            <cfif arguments.havingAlternativeAddress>
+                <cfset alternativeAddressInsertionError=insertAddress(
+                    userId,arguments.alternativeAddress,arguments.alternativeCountry,arguments.alternativeState,
+                    arguments.alternativeCity,arguments.alternativePincode
+                ) />
+            </cfif>
+
+        </cfquery>
+
         <cfreturn errorMsgs/>
 
     </cffunction>
@@ -140,7 +186,7 @@
             <cfquery name="emailId">
                 SELECT emailId
                 FROM [dbo].[User]
-                WHERE emailId='#email#';
+                WHERE emailId=<cfqueryparam value="#email#" cfsqltype="cf_sql_varchar">;
             </cfquery>
             <cfif emailId.recordCount GTE 1>
                 <cfset errorMsg="Email Address Already Exists!!">
@@ -162,7 +208,7 @@
             <cfquery name="phoneNumberExists">
                 SELECT phoneNumber
                 FROM [dbo].[UserPhoneNumber] 
-                WHERE phoneNumber='#phoneNumber#'
+                WHERE phoneNumber=<cfqueryparam value='#phoneNumber#' cfsqltype="cf_sql_bigint">
             </cfquery>
             <cfif phoneNumberExists.recordCount EQ 1>
                 <cfset errorMsg="Phone number already exists!!">
@@ -184,10 +230,10 @@
             <cfquery name="users">
                 SELECT username
                 FROM [dbo].[User]
-                WHERE username='#username#';
+                WHERE username=<cfqueryparam value='#username#' cfsqltype='cf_sql_varchar'>;
             </cfquery>
             <cfif users.recordCount EQ 1>
-                <cfset errorMsg="Username already taken!!">
+                <cfset errorMsg='Username already taken!!'>
             </cfif>
         </cfif>
         <cfreturn errorMsg/>
@@ -259,6 +305,59 @@
             <cfset errorMsg="Experience must be within 0 to 99"/>
         </cfif>
         <cfreturn errorMsg/>
+    </cffunction>
+
+    <!---function to insert user address in table--->
+    <cffunction  name="insertAddress" access="public" output="false" returntype="string">
+
+        <cfargument  name="userId" type="numeric" required="true">
+        <cfargument  name="address" type="string" required="true">
+        <cfargument  name="country" type="string" required="true">
+        <cfargument  name="state" type="string" required="true">
+        <cfargument  name="city" type="string" required="true">
+        <cfargument  name="pincode" type="string" required="true">
+
+        <cfquery>
+            INSERT INTO [dbo].[userAddress]
+            (userId,address,country,state,city,pincode)
+            VALUES (
+                <cfqueryparam value='#arguments.userId#' cfsqltype='cf_sql_bigint'>,
+                <cfqueryparam value='#arguments.address#' cfsqltype='cf_sql_varchar'>,
+                <cfqueryparam value='#arguments.country#' cfsqltype='cf_sql_varchar'>,
+                <cfqueryparam value='#arguments.state#' cfsqltype='cf_sql_varchar'>,
+                <cfqueryparam value='#arguments.city#' cfsqltype='cf_sql_varchar'>,
+                <cfqueryparam value='#arguments.pincode#' cfsqltype='cf_sql_date'>,
+            )
+        </cfquery>
+        <cfreturn "executed"/>
+    </cffunction>
+
+    <!---function to get the userId with respect to the username--->
+    <cffunction name="getUserId" access="public" output="false" returntype="query">
+        <cfargument  name="username" type="string" required="true">
+        <cfset var userId = '' />
+        <cfquery name="userId">
+            SELECT userId
+            FROM [dbo].[User]
+            WHERE username=<cfqueryparam value="#arguments.username#" cfsqltype='cf_sql_varchar'>
+        </cfquery>
+        <cfreturn userId />
+    </cffunction>
+
+    <!---function to insert user phone in table--->
+    <cffunction  name="insertPhoneNumber" access="public" output="false" returntype="string">
+        <cfargument  name="userId" type="numeric" required="true">
+        <cfargument  name="phoneNumber" type="string" required="true">
+
+        <cfquery>
+            INSERT INTO [dbo].[UserPhoneNumber]
+            (userId,phoneNumber)
+            VALUES (
+                <cfqueryparam value='#arguments.userId#' cfsqltype='cf_sql_bigint'>,
+                <cfqueryparam value='#arguments.phoneNumber#' cfsqltype='cf_sql_varchar'>
+            )
+        </cfquery>
+        <cfreturn "executed"/>
     </cffunction>
 
 </cfcomponent>

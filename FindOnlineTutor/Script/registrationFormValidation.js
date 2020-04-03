@@ -35,9 +35,10 @@ function loadImage(input)
         }
         var reader = new FileReader();
         reader.onload = function (e) {
+            console.log(file)
             $('#profilePhoto').attr('src', e.target.result);
             inputFields.get("profilePhoto").value=e.target.result;
-            setSuccessBorder(inputFields.get("profilePhoto"));
+            setSuccessBorder(inputFields.get("profilePhoto")); 
         }
         reader.readAsDataURL(input.files[0]);
     }
@@ -75,7 +76,7 @@ $(document).ready(function()
     alternativeAddress=["alternativeAddress","alternativeCountry","alternativeState","alternativeCity","alternativePincode"];
     
     //Adding submit button..
-    $("#buttonDiv").append($("<input>").attr({"id":"submitButton","type":"submit","value":"SUBMIT","name":"submit"}).addClass("btn btn-danger btn-block"));
+    $("#buttonDiv").append($("<input>").attr({"id":"submitButton","type":"submit","value":"SUBMIT","name":"submitButton"}).addClass("btn btn-danger btn-block"));
     
     $("#teacherSection").hide()
     
@@ -178,7 +179,7 @@ $(document).ready(function()
                     console.log(errorMsgs);
                     if(errorMsgs["validatedSuccessfully"] == true)
                     {
-                        successfullyValidated=true;
+                        successfullyValidated=false;
                     }
                     else
                     {
@@ -345,10 +346,10 @@ function checkEmailId(element)
         data: "usrEmail="+text,
         cache:false,
         success: function(error) {
-            if(JSON.parse(error))
+            error=JSON.parse(error);
+            if(error)
             {
-                console.log(JSON.parse(error))
-                object.errorMsg=JSON.parse(error);
+                object.errorMsg=error;
                 setErrorBorder(object);
                 return;
             }
@@ -390,9 +391,10 @@ function checkPhoneNumber(element)
         data: "usrPhoneNumber="+text,
         cache:false,
         success: function(error) {
-            if(JSON.parse(error).error)
+            error=JSON.parse(error)
+            if(error)
             {
-                object.errorMsg=JSON.parse(error).error;
+                object.errorMsg=error;
                 setErrorBorder(object);
                 return;
             }
@@ -487,10 +489,10 @@ function checkUsername(element)
         data: "usrName="+text,
         cache:false,
         success: function(error) {
-            if(JSON.parse(error).error)
+            error=JSON.parse(error);
+            if(error)
             {
-                // console.log(JSON.parse(error).msg)
-                object.errorMsg=JSON.parse(error).error;
+                object.errorMsg=error;
                 setErrorBorder(object);
                 return;
             }

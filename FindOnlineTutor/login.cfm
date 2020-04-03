@@ -44,8 +44,8 @@
 		</div>
 
 		<div class="row mt-3 ml-2 mr-2">
-			<div class="col-md-3">
-				<button type="submit" class="btn btn-danger btn-block">Log In</button>
+			<div class="col-md-3" id="buttonDiv">
+<!--- 				<button type="submit" class="btn btn-danger btn-block">Log In</button> --->
 			</div>
 		</div>
 	</form>

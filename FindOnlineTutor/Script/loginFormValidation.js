@@ -1,5 +1,8 @@
 $(document).ready(function(){
     generateCaptcha();
+    //adding login button..
+    $("#buttonDiv").append($("<input>").attr({"id":"submitButton","type":"submit","value":"SUBMIT","name":"submitButton"}).addClass("btn btn-danger btn-block"));
+    
 });
 
 
