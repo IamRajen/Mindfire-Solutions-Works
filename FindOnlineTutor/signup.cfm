@@ -1,20 +1,30 @@
+<!---if user already logged in--->
+<cfif structKeyExists(session, "stLoggedInUser")>
+	<cflocation  url="/assignments_mindfire/FindOnlineTutor">
+</cfif>
 <!---Including the navibar custom tag--->
 <cf_header homeLink="index.cfm"  logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/registrationFormValidation.js">
-<!--- Registration Page starts here --->
+
 <noscript>
 	<div class="container  px-5 text-center">
 		<h3 class="mx-5 text-danger">Please enable <strong>JavaScipt</strong> to submit the form!!</h3>
 	</div>
 </noscript>
+
 <div class="container-fuild w-100 mx-auto pb-4 mb-5 shadow rounded bg-light">
+
 	<!---Heading Field--->
 	<div class="bg-dark pt-3 pb-3 rounded-top">
 		<h4 class="text-light text-center">REGISTRATION FORM</h4>
 	</div>
+
+
 	<!---Form Field--->
 	<form class="pt-4 disabledbutton" id="form-registration" method="POST" action="login.cfm">
-	<!---Profile Photo Field--->
-		<div class="row mr-2 ml-2">
+
+
+	<!--Profile Photo Field-->
+		<!--<div class="row mr-2 ml-2">
 			<div class="col-md-12 text-center">
 				<img id="profilePhoto" class="profile_photo rounded-circle" src="Images/profile.jpg" >
 				<span class="text-danger small"></span>
@@ -24,7 +34,9 @@
 			<div class="col-md-12 text-center">
 				<input accept="image/*" id="img" type="file" name="files[]" onChange="loadImage(this);" onclick="makeErrorMsgEmpty()" /> 
 			</div>
-		</div>
+		</div>-->
+
+
 	<!---Name Field--->
 		<div class="row mt-4 mr-2 ml-2">
 			<div class="col-md-3">
@@ -39,6 +51,8 @@
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>
+
+
 	<!---Email Address Field--->
 		<div class="row mt-4 mr-2 ml-2">
 			<div class="col-md-3">
@@ -50,6 +64,8 @@
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>
+
+
 	<!---Phone Number Field--->
 		<div class="row mt-4 mr-2 ml-2 ">
 			<div class="col-md-3">
@@ -64,6 +80,8 @@
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>
+
+
 	<!---Username Field--->
 		<div class="row mt-4 mr-2 ml-2 ">
 			<div class="col-md-3">
@@ -75,6 +93,8 @@
 			</div>
 			
 		</div>
+
+
 	<!---Password Field--->
 		<div class="row mt-4 mr-2 ml-2 ">
 			<div class="col-md-3">
@@ -89,6 +109,8 @@
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>
+
+
 	<!---DOB Field--->
 		<div class="row mt-4 mr-2 ml-2 ">
 			<div class="col-md-3">
@@ -99,6 +121,8 @@
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>
+
+
 	<!---Current Address Field--->
 		<div class="row mt-4 mr-2 ml-2">
 			<div class="col-md-3">
@@ -109,7 +133,6 @@
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>
-		
 		<div class="row mt-4 mr-2 ml-2 ">
 			<div class="col-md-3"></div>
 			<div class="col-md-4">
@@ -125,7 +148,6 @@
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>
-		
 		<div class="row mt-4 mr-2 ml-2 ">
 			<div class="col-md-3"></div>
 			<div class="col-md-4">
@@ -137,6 +159,7 @@
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>
+
 
 	<!---Alternative Address Field--->
 		<div class="row mt-4 mr-2 ml-2">
@@ -176,6 +199,8 @@
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>
+
+
 	<!---Bio field--->
 		<div class="row mt-4 mr-2 ml-2">
 			<div class="col-md-3">
@@ -186,6 +211,8 @@
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>
+
+
 	<!---Teacher Section--->
 		<div class="row mt-4 mr-2 ml-4">
 			<div class="col-md-3">
@@ -204,7 +231,7 @@
 			</div>
 		</div>
 	
-	
+
 	<!---Captcha section--->
 		<div class="row mt-5 mr-2 ml-2">
 			<div class="col-md-3">
@@ -233,7 +260,7 @@
 	</div>
 	
 </div>
-<!--- </cfif> --->
+
 </cf_header>
         
 	

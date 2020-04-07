@@ -22,6 +22,10 @@
 		</head>
 
 		<body>
+			<cfif structKeyExists(URL,'logout')>
+				<cfset createObject("component",'FindOnlineTutor.Components.authenticationService').doLogout() />
+				<cflocation  url="/assignments_mindfire/FindOnlineTutor/index.cfm">
+			</cfif>
 			<nav class="navbar navbar-expand-lg navbar-fixed-top navbar-dark shadow-sm p-3 mb-5 bg-dark">
 				<div class="container-fluid">
 					<div class="navbar-header">
@@ -36,13 +40,22 @@
 						<li class="nav-item mx-2">
 							<a class="nav-link text-light" href="index.cfm">Home</a>
 						</li>
-						<li class="nav-item mx-2">
-							<a class="nav-link text-light" href="login.cfm">LogIn</a>
-						</li>
-						<li class="nav-item mx-2">
-							<a class="btn btn-danger my-2 my-sm-0 pl-3 pr-3" href="signup.cfm">Register</a>
-						</li>
-
+						<cfif structKeyExists(session, "stLoggedInUser") >
+							<li class="nav-item mx-2">
+								<a class="nav-link text-light" href="profile.cfm">Profile</a>
+							</li>
+							<li class="nav-item mx-2">
+								<a class="btn btn-danger my-2 my-sm-0 pl-3 pr-3" href="/assignments_mindfire/FindOnlineTutor/index.cfm?logout">Logout</a>
+							</li>
+						<cfelse>
+							<li class="nav-item mx-2">
+								<a class="nav-link text-light" href="login.cfm">LogIn</a>
+							</li>
+							<li class="nav-item mx-2">
+								<a class="btn btn-danger my-2 my-sm-0 pl-3 pr-3" href="signup.cfm">Register</a>
+							</li>
+						</cfif>
+					
 					</ul>
 					</div>
 				</div>

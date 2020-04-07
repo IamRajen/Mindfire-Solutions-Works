@@ -1,11 +1,11 @@
-<cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/formValidation.js">
+<cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/loginFormValidation.js">
 
-	<div class="container center-container" style="margin-top:50px">
-		<form class="form-block">
-	      <input type="text" class="form-control w-75 mx-auto" placeholder="Search for Teachers" aria-label="Search">
-	      <input type="submit" class="btn btn-block mx-auto mt-2 btn-danger btn-round-lg" value="Search">
-	    </form>
-   	</div>
+<div class="container center-container" style="margin-top:50px">
+	<form class="form-block">
+		<input type="text" class="form-control w-75 mx-auto" placeholder="Search for Teachers" aria-label="Search">
+		<input type="submit" class="btn btn-block mx-auto mt-2 btn-danger btn-round-lg" value="Search">
+	</form>
+</div>
 
 	
 </cf_header>	

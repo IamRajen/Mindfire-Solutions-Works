@@ -102,11 +102,6 @@ $(document).ready(function()
         var havingAlternativeAddress=checkAlternativeAddress(alternativeAddress);
         for(var i of inputFields.keys())
         {
-            if(alternativeAddress.includes(i) && !havingAlternativeAddress)
-            {
-                inputFields.get(i).value="";
-                continue;
-            }
             if(i=="experience" && $("#isTeacher").prop("checked"))
             {   
                 var dob = new Date($("#dob").val());
@@ -126,7 +121,9 @@ $(document).ready(function()
                 inputFields.get(i).value=stateMap.get($("#"+id).val());
             }
             else if(i!="profilePhoto")
+            {
                 inputFields.get(i).value=$("#"+i).val();
+            }
             if(inputFields.get(i).errorMsg)
             {
                 setErrorBorder(inputFields.get(i))
@@ -145,7 +142,6 @@ $(document).ready(function()
                 timeout: 30000,
                 error: function(){
                     successfullyValidated=false;
-                    return false;
                 },
                 data:{
                         "profilePhoto":inputFields.get("profilePhoto").value,
@@ -166,20 +162,19 @@ $(document).ready(function()
                         "currentCity":$("#currentCity").val(),
                         "currentPincode":$("#currentPincode").val(),
                         "havingAlternativeAddress": havingAlternativeAddress,
-                        "alternativeAddress": havingAlternativeAddress ? $("#alternativeAddress").val() : '',
-                        "alternativeCountry":havingAlternativeAddress ? countryMap.get($("#alternativeCountry").val()) : '',
-                        "alternativeState":havingAlternativeAddress ? stateMap.get($("#alternativeState").val()):'',
-                        "alternativeCity":havingAlternativeAddress ? $("#alternativeCity").val():'',
-                        "alternativePincode":havingAlternativeAddress ? $("#alternativePincode").val():'',
+                        "alternativeAddress": havingAlternativeAddress == true ? $("#alternativeAddress").val() : '',
+                        "alternativeCountry":havingAlternativeAddress == true ? countryMap.get(parseInt($("#alternativeCountry").val())) : '',
+                        "alternativeState":havingAlternativeAddress == true ? stateMap.get($("#alternativeState").val()).name:'',
+                        "alternativeCity":havingAlternativeAddress == true ? $("#alternativeCity").val():'',
+                        "alternativePincode":havingAlternativeAddress == true ? $("#alternativePincode").val():'',
                         "bio":$("#bio").val()=="" ? '': $("#bio").val()
 
                     },
                 success: function(error) {
                     errorMsgs=JSON.parse(error);
-                    console.log(errorMsgs);
                     if(errorMsgs["validatedSuccessfully"] == true)
                     {
-                        successfullyValidated=false;
+                        successfullyValidated=true;
                     }
                     else
                     {
@@ -195,7 +190,6 @@ $(document).ready(function()
                 }
             });
         }
-        console.log("vl "+successfullyValidated);
         return successfullyValidated;
     }); 
      
@@ -607,7 +601,7 @@ function checkAlternativeAddress(alternativeAddress)
     var havingAlternativeAddress=true;
     for(let i=0;i<alternativeAddress.length;i++)
     {
-        if($("#"+alternativeAddress[i]).val()!="" || !$("#"+alternativeAddress[i]).val())
+        if($("#"+alternativeAddress[i]).val() == "")
         {
             havingAlternativeAddress=false;
         }
