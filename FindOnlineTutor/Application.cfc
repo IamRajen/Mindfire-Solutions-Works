@@ -1,9 +1,16 @@
+<!---
+Project Name: FindOnlineTutor.
+File Name: Application.cfc.
+Created In: 27th Mar 2020
+Created By: Rajendra Mishra.
+Functionality: This page get first executed whenever a request comes to the website.Includes some of the essential functions.
+--->
 <cfcomponent output="false">
 	<cfset this.name = 'FindOnlineTutor' />
 	<cfset this.applicationTimeout = createtimespan(0,2,0,0) />
 	<cfset this.datasource = 'DBFindOnlineTutor' />
 	<cfset this.sessionManagement = true />
-	<cfset this.sessionTimeout = createTimespan(0,0,30,0) />
+	<cfset this.sessionTimeout = createTimespan(1,0,0,0) />
 
 	<!---OnApplicationStart() method--->
 	<cffunction name="onApplicationStart" returntype="boolean" >

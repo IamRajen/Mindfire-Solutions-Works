@@ -1,3 +1,10 @@
+<!---
+Project Name: FindOnlineTutor.
+File Name: login.cfm.
+Created In: 30th Mar 2020
+Created By: Rajendra Mishra.
+Functionality: login page for non logged-In user.
+--->
 <!---if user already logged in--->
 <cfif structKeyExists(session, "stLoggedInUser")>
 	<cflocation  url="/assignments_mindfire/FindOnlineTutor">
@@ -21,7 +28,7 @@
 				<label class="control-label"  for="username">Username<span class="text-danger">*</span></label>
 			</div>
 			<div class="col-md-8">
-				<input type="text" id="username" name="username" placeholder="Username" class="form-control d-block">
+				<input type="text" id="username" name="username" placeholder="Username" class="form-control d-block" onblur="checkEmptyField(this)">
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>
@@ -32,7 +39,7 @@
 				<label class="control-label"  for="password">Password<span class="text-danger">*</span></label>
 			</div>
 			<div class="col-md-8">
-				<input type="password" id="password" name="password" placeholder="Password" class="form-control d-block">
+				<input type="password" id="password" name="password" placeholder="Password" class="form-control d-block" onblur="checkEmptyField(this)">
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>
@@ -46,7 +53,7 @@
 				<canvas class="w-75 rounded" id="canvas"></canvas>
 			</div>
 			<div class="col-md-4">
-				<input type="text" id="captcha" name="captcha" class="form-control d-block">
+				<input type="text" id="captcha" name="captcha" class="form-control d-block" onblur="checkEmptyField(this)">
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>

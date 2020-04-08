@@ -103,13 +103,18 @@ $(document).ready(function()
             successfullyValidated=false;
              $.ajax({
                 type:"POST",
-                async: "false",
                 url:"Components/validation.cfc?method=validateForm",
                 async: false,
                 cache: false,
                 timeout: 30000,
                 error: function(){
                     successfullyValidated=false;
+                    swal({
+                        title: "Registration Fails!!",
+                        text: "Some of the internal function fails to register. Please try after some time!!",
+                        icon: "error",
+                        button: "Ok",
+                    });
                 },
                 data:{
                         "firstName": $("#firstName").val(),

@@ -1,3 +1,10 @@
+<!---
+Project Name: FindOnlineTutor.
+File Name: signup.cfm.
+Created In: 28th Mar 2020
+Created By: Rajendra Mishra.
+Functionality: This is the signup page helps the user to validate and register in the website.
+--->
 <!---if user already logged in--->
 <cfif structKeyExists(session, "stLoggedInUser")>
 	<cflocation  url="/assignments_mindfire/FindOnlineTutor">

@@ -19,28 +19,18 @@ Functionality: This file show the profile data to user and allows to modify it.
     <cfset databaseObj = createObject("Component","FindOnlineTutor/Components/databaseService")/>
     <!---calling the function for profile data--->
     <cfset profileInfo = databaseObj.getMyProfile(#session.stloggedinuser.userID#)/>
+    <cfdump  var="#profileInfo#">
     <!---Initializing the primary phone number--->
-    <cfset  primaryPhoneNumber = #profileInfo.USERPHONENUMBER.phoneNumber[1]#/>
-    <cfset  alternativePhoneNumber = #profileInfo.USERPHONENUMBER.phoneNumber[2]#/>
+    <cfset  primaryPhoneNumber = #profileInfo.USERPHONENUMBER.PHONENUMBER.phoneNumber[1]#/>
     <!---Initializing the alternative phone number--->
-    <cfset  currentAddress = #profileInfo.USERADDRESS.ADDRESS[1]#/>
-    <cfset  currentCountry = #profileInfo.USERADDRESS.COUNTRY[1]#/>
-    <cfset  currentState = #profileInfo.USERADDRESS.STATE[1]#/>
-    <cfset  currentCity = #profileInfo.USERADDRESS.CITY[1]#/>
-    <cfset  currentPincode = #profileInfo.USERADDRESS.PINCODE[1]#/>
-    <!---Initializing the alternative address--->
-    <cfset  alternativeAddress = #profileInfo.USERADDRESS.ADDRESS[2]#/>
-    <cfset  alternativeCountry = #profileInfo.USERADDRESS.COUNTRY[2]#/>
-    <cfset  alternativeState = #profileInfo.USERADDRESS.STATE[2]#/>
-    <cfset  alternativeCity = #profileInfo.USERADDRESS.CITY[2]#/>
-    <cfset  alternativePincode = #profileInfo.USERADDRESS.PINCODE[2]#/>
+    <cfset  alternativePhoneNumber = #profileInfo.USERPHONENUMBER.PHONENUMBER.phoneNumber[2]#/>
     
-
     <div class="container-fuild w-100 mx-auto mb-5 shadow rounded bg-light">
 
         <!---Heading Field--->
-        <div class="bg-dark pt-3 pb-3 rounded-top">
-            <h4 class="text-light text-center">Your Profile</h4>
+        <div class="bg-dark pt-3 pb-3 rounded-top text-center">
+            <h2 id="headingUsername" class="text-light text-capitalize d-inline"><cfoutput>#profileInfo.USERDETAILS.USERNAME#</cfoutput></h2>
+            <p class="text-light d-inline">   Your Profile</p>
         </div>
 
         <!---Profile Loading Error--->
@@ -141,7 +131,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                         </div>
 
                         <div class="col-md-8">
-                            <textarea type="text" id="currentAddress" name="currentAddress" placeholder="Current Adrress" class="form-control d-block" onblur="checkAddress(this)"><cfoutput>#currentAddress#</cfoutput></textarea>
+                            <textarea type="text" id="currentAddress" name="currentAddress" placeholder="Current Adrress" class="form-control d-block" onblur="checkAddress(this)"></textarea>
                             <span class="text-danger small float-left"></span>
                         </div>
                     </div>
@@ -163,11 +153,11 @@ Functionality: This file show the profile data to user and allows to modify it.
                     <div class="row mt-4 mr-2 ml-2 ">
                         <div class="col-md-3"></div>
                         <div class="col-md-4">
-                            <input type="text" id="currentCity" name="currentCity" placeholder="Current City" class="form-control d-block" onblur="checkAddress(this)" value="<cfoutput>#currentCity#</cfoutput>">
+                            <input type="text" id="currentCity" name="currentCity" placeholder="Current City" class="form-control d-block" onblur="checkAddress(this)">
                             <span class="text-danger small float-left"></span>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" id="currentPincode" name="currentPincode" placeholder="Current Pincode" class="form-control d-block" onblur="checkPincode(this)" value="<cfoutput>#currentPincode#</cfoutput>">
+                            <input type="text" id="currentPincode" name="currentPincode" placeholder="Current Pincode" class="form-control d-block" onblur="checkPincode(this)" >
                             <span class="text-danger small float-left"></span>
                         </div>
                     </div>
@@ -179,7 +169,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                             <label class="control-label"  for="alternativeAddress">Alternative Address:</label>
                         </div>
                         <div class="col-md-8">
-                            <textarea type="text" id="alternativeAddress" name="alternativeAddress" placeholder="Alternative Adrress" class="form-control d-block" onblur="checkAddress(this)"><cfoutput>#alternativeAddress#</cfoutput></textarea>
+                            <textarea type="text" id="alternativeAddress" name="alternativeAddress" placeholder="Alternative Adrress" class="form-control d-block" onblur="checkAddress(this)"></textarea>
                             <span class="text-danger small float-left"></span>
                         </div>
                     </div>
@@ -203,11 +193,11 @@ Functionality: This file show the profile data to user and allows to modify it.
                     <div class="row mt-4 mr-2 ml-2 ">
                         <div class="col-md-3"></div>
                         <div class="col-md-4">
-                            <input type="text" id="alternativeCity" name="alternativeCity" placeholder="Alternative City" class="form-control d-block" onblur="checkAddress(this)" value="<cfoutput>#alternativeCity#</cfoutput>">
+                            <input type="text" id="alternativeCity" name="alternativeCity" placeholder="Alternative City" class="form-control d-block" onblur="checkAddress(this)">
                             <span class="text-danger small float-left"></span>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" id="alternativePincode" name="alternativePincode" placeholder="Alternative Pincode" class="form-control d-block" onblur="checkPincode(this)" value="<cfoutput>#alternativePincode#</cfoutput>">
+                            <input type="text" id="alternativePincode" name="alternativePincode" placeholder="Alternative Pincode" class="form-control d-block" onblur="checkPincode(this)">
                             <span class="text-danger small float-left"></span>
                         </div>
                     </div>
@@ -219,7 +209,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                             <label class="control-label"  for="bio">Bio (optional):</label>
                         </div>
                         <div class="col-md-8">
-                            <textarea type="text" id="bio" name="bio" placeholder="" class="form-control d-block" rows="4" onblur="checkBio(this)" value="<cfoutput>#profileInfo.USERDETAILS.bio#</cfoutput>"></textarea>
+                            <textarea type="text" id="bio" name="bio" placeholder="" class="form-control d-block" rows="4" onblur="checkBio(this)"><cfoutput>#profileInfo.USERDETAILS.BIO#</cfoutput></textarea>
                             <span class="text-danger small float-left"></span>
                         </div>
                     </div>
@@ -232,6 +222,8 @@ Functionality: This file show the profile data to user and allows to modify it.
 
                         </div>
                     </div>
+                <!---Interested location field--->
+                    
                 
             </form>
         </cfif> 

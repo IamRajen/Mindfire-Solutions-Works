@@ -19,12 +19,16 @@ $(document).ready(function(){
     $("#submitButton").click(function()
     {
         var successfullyLoggedIn=false;
-        for(key of inputFields.keys())
+        for(var key of inputFields.keys())
         {
             if($("#"+key).val()=='')
             {
                 inputFields.get(key).errorMsg="Field can't be empty!!"
                 setErrorBorder(inputFields.get(key));
+            }
+            else 
+            {
+                setSuccessBorder(inputFields.get(key));
             }
         }
         if(toReturn!=$("#captcha").val())
@@ -87,6 +91,7 @@ function setErrorBorder(object)
 }
 function setSuccessBorder(object)
 {
+    console.log(object)
     $("#"+object.id).css({"border-color": "#ddd", "border-width":"1px"}); 
     object.errorMsg=""
     $('#'+object.id).next().text(object.errorMsg);
@@ -121,4 +126,16 @@ function validCaptcha(element)
         return;
     }
     setSuccessBorder(object);
+}
+function checkEmptyField(element)
+{
+    if($(element).val()=='')
+    {
+        inputFields.get(element.id).errorMsg="Field can't be empty!!";
+        setErrorBorder(inputFields.get(element.id));
+    }
+    else
+    {
+        setSuccessBorder(inputFields.get(element.id));
+    }
 }
