@@ -1,11 +1,17 @@
-
+<!---
+Project Name: FindOnlineTutor.
+File Name: validation.cfc.
+Created In: 5th Apr 2020
+Created By: Rajendra Mishra.
+Functionality: This file has function that validated the registration form and inserted 
+                the user data to the database if successfully validated .
+--->
 
 <cfcomponent output="false">
     <!---onsubmit validation--->
     <cffunction  name="validateForm" access="remote" output="false" returnformat="json" returntype="struct">
 
         <!---defining arguments--->
-        <cfargument  name="profilePhoto" type="string" required="true"/>
         <cfargument  name="firstName" type="string" required="true"/>
         <cfargument  name="lastName" type="string" required="true"/>
         <cfargument  name="emailAddress" type="string" required="true"/>
@@ -89,53 +95,69 @@
         
         <!---if successfully validated do Registration Work--->
         <cfset errorMsgs["validatedSuccessfully"]=true/>
-
-        <cfquery>
-            <!---Inserting data in the user table--->
-            INSERT INTO [dbo].[User] 
-            (registrationDate,firstName,lastName,emailid,username,password,dob,isTeacher,
-            yearOfExperience,homeLocation,otherLocation,online,bio)
-            VALUES (
-                <cfqueryparam value='#now()#' cfsqltype='cf_sql_date'>,
-                <cfqueryparam value='#arguments.firstName#' cfsqltype='cf_sql_varchar'>, 
-                <cfqueryparam value='#arguments.lastName#' cfsqltype='cf_sql_varchar'>, 
-                <cfqueryparam value='#arguments.emailAddress#' cfsqltype='cf_sql_varchar'>, 
-                <cfqueryparam value='#arguments.username#' cfsqltype='cf_sql_varchar'>, 
-                <cfqueryparam value='#hash(arguments.password, "SHA-1", "UTF-8")#' cfsqltype='cf_sql_varchar'>, 
-                <cfqueryparam value='#arguments.dob#' cfsqltype='cf_sql_date'>,
-                <cfqueryparam value=#arguments.isTeacher# cfsqltype='cf_sql_bit'>,
-                <cfqueryparam value=#arguments.experience# cfsqltype='cf_sql_smallint'>,
-                <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
-                <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
-                <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
-                <cfqueryparam value='#arguments.bio#' cfsqltype='cf_sql_varchar'>
-            );
-        </cfquery>
+        <cfset errorMsgs.database= {}/>
+        <cftry>
+            <cfquery>
+                <!---Inserting data in the user table--->
+                INSERT INTO [dbo].[User] 
+                (registrationDate,firstName,lastName,emailid,username,password,dob,isTeacher,
+                yearOfExperience,homeLocation,otherLocation,online,bio)
+                VALUES (
+                    <cfqueryparam value='#now()#' cfsqltype='cf_sql_date'>,
+                    <cfqueryparam value='#arguments.firstName#' cfsqltype='cf_sql_varchar'>, 
+                    <cfqueryparam value='#arguments.lastName#' cfsqltype='cf_sql_varchar'>, 
+                    <cfqueryparam value='#arguments.emailAddress#' cfsqltype='cf_sql_varchar'>, 
+                    <cfqueryparam value='#arguments.username#' cfsqltype='cf_sql_varchar'>, 
+                    <cfqueryparam value='#hash(arguments.password, "SHA-1", "UTF-8")#' cfsqltype='cf_sql_varchar'>, 
+                    <cfqueryparam value='#arguments.dob#' cfsqltype='cf_sql_date'>,
+                    <cfqueryparam value=#arguments.isTeacher# cfsqltype='cf_sql_bit'>,
+                    <cfqueryparam value=#arguments.experience# cfsqltype='cf_sql_smallint'>,
+                    <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
+                    <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
+                    <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
+                    <cfqueryparam value='#arguments.bio#' cfsqltype='cf_sql_varchar'>
+                );
+            </cfquery>
+        <cfcatch type="any">
+            <cfset errorMsgs["validatedSuccessfully"]=false/>
+            <cflog text="error: #cfcatch.detail#">
+            <cfset errorMsgs.database.userRegistrationError = "Failed to register due to some Internal process. Please, Try after some time..!!">
+        </cfcatch>
+        </cftry>
+        <!---if registration fails the user will notified by an error msg provided in the errorMsgs struct--->
+        <cfif structKeyExists(errorMsgs, "userRegistrationError")>
+            <cfreturn errorMsgs/>
+        </cfif>
+        
 
         <!---getting the userId through username--->
-        <cfset var userId =#getUserId(arguments.username).USERID#/>
+        <cfset var userId=''/>
+        <cfset userId =#getUserId(arguments.username).USERID#/>
 
-        <!---calling function for inserting the user primary phone number--->
-        <cfset var errorMsgs.phoneInsertionError=insertPhoneNumber(userId,arguments.primaryPhoneNumber)/>
+        <cfif userId NEQ ''>
+            <!---calling function for inserting the user primary phone number--->
+            <cfset var errorMsgs.database.phoneInsertionError=insertPhoneNumber(userId,arguments.primaryPhoneNumber)/>
 
-        <!---calling function for inserting the user alternatve phone number if exists--->
-        <cfif arguments.alternativePhoneNumber NEQ ''>
-            <cfset var errorMsgs.alternativePhoneInsertionError=insertPhoneNumber(userId,arguments.alternativePhoneNumber)/>
-        </cfif>
+            <!---calling function for inserting the user alternatve phone number if exists--->
+            <cfif arguments.alternativePhoneNumber NEQ ''>
+                <cfset var errorMsgs.database.alternativePhoneInsertionError=insertPhoneNumber(userId,arguments.alternativePhoneNumber)/>
+            </cfif>
 
-        <!---calling function for inserting user current address in userAdrress table--->
-        <cfset errorMsgs.addressInsertionError=insertAddress(
-            userId,arguments.currentAddress,arguments.currentCountry,arguments.currentState,
-            arguments.currentCity,arguments.currentPincode
-        ) />
-
-        <!---calling function for inserting user alternative address (if exists) in userAdrress table--->
-        <cfif arguments.havingAlternativeAddress == true>
-            <cfset errorMsgs.alternativeAddressInsertionError=insertAddress(
-                userId,arguments.alternativeAddress,arguments.alternativeCountry,arguments.alternativeState,
-                arguments.alternativeCity,arguments.alternativePincode
+            <!---calling function for inserting user current address in userAdrress table--->
+            <cfset errorMsgs.database.addressInsertionError=insertAddress(
+                userId,arguments.currentAddress,arguments.currentCountry,arguments.currentState,
+                arguments.currentCity,arguments.currentPincode
             ) />
+
+            <!---calling function for inserting user alternative address (if exists) in userAdrress table--->
+            <cfif arguments.havingAlternativeAddress == true>
+                <cfset errorMsgs.database.alternativeAddressInsertionError=insertAddress(
+                    userId,arguments.alternativeAddress,arguments.alternativeCountry,arguments.alternativeState,
+                    arguments.alternativeCity,arguments.alternativePincode
+                ) />
+            </cfif>
         </cfif>
+        
 
         <cfreturn errorMsgs/>
     </cffunction>
@@ -147,12 +169,6 @@
             <cfreturn true/>
         </cfif>  
         <cfreturn false/>
-    </cffunction>
-
-    <!---function to validate valid photo--->
-    <cffunction  name="validateProfilePhoto" access="remote" returnformat="json" returntype="string" output="false"> 
-        <cfargument  name="profilePhoto" type="string" required="true"/>
-        
     </cffunction>
 
     <!---function to validate name--->
@@ -330,9 +346,12 @@
                 )
             </cfquery>
         <cfcatch type="database">
-            <cfset error = #cfcatch.detail#/>
+            <cflog  text=#cfcatch.detail#>
+            <cfset error = "Due to some technical issues the addresses cannot be added to your profile. 
+                            You can add it from your profile section!!"/>
         </cfcatch>
         <cfcatch type="any">
+            <cflog  text=#cfcatch.detail#>
             <cfset error = #cfcatch.detail#>
         </cfcatch>
         </cftry>
@@ -344,11 +363,17 @@
     <cffunction name="getUserId" access="public" output="false" returntype="query">
         <cfargument  name="username" type="string" required="true">
         <cfset var userId = '' />
-        <cfquery name="userId">
-            SELECT userId
-            FROM [dbo].[User]
-            WHERE username=<cfqueryparam value="#arguments.username#" cfsqltype='cf_sql_varchar'>
-        </cfquery>
+        <cftry>
+            <cfquery name="userId">
+                SELECT userId
+                FROM [dbo].[User]
+                WHERE username=<cfqueryparam value="#arguments.username#" cfsqltype='cf_sql_varchar'>
+            </cfquery>
+        <cfcatch type="any">
+            <cflog text="#arguments.username# : #cfcatch.detail#">
+        </cfcatch>
+        </cftry>
+        
         <cfreturn userId />
     </cffunction>
 
@@ -367,7 +392,9 @@
                 )
             </cfquery>
         <cfcatch type="database">
-            <cfset error="#cfcatch.message#"/>
+            <cflog  text=#cfcatch.detail#>
+            <cfset error = "Due to some technical issues the phone Number cannot be added to your profile. 
+                            You can add it from your profile section!!"/>
         </cfcatch>
         </cftry>
         

@@ -1,3 +1,11 @@
+/*
+Project Name: FindOnlineTutor.
+File Name: loginFormValidation.js.
+Created In: 6th Apr 2020
+Created By: Rajendra Mishra.
+Functionality: This javascript file helps the login page to validated and log the user in.
+*/
+
 //Initiatization of credential
 var inputFields=new Map();
 $(document).ready(function(){

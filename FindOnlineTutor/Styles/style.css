@@ -75,9 +75,9 @@ canvas
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
-/* .disabledbutton {
-  display: none;
-} */
-
+.bg-error-div
+{
+  background-color: rgba(255, 0, 0, 0.616);
+}
 
 

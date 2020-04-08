@@ -1,3 +1,11 @@
+/*
+Project Name: FindOnlineTutor.
+File Name: registrationFormValidation.js.
+Created In: 3rd Apr 2020
+Created By: Rajendra Mishra.
+Functionality: This javascript file helps the registration page to validated and register the user to our website.
+*/
+
 //Initiatization of credential
 var inputFields=new Map();
 var countryMap=new Map();
@@ -12,45 +20,9 @@ var patternPassword=/^(?=.{8,15})(?=.*[a-z])(?=.*[A-Z])(?=.*[@$%^&+=]).*$/;
 var patternPincode=/^[0-9]{6}$/;
 var patternExperience=/^[0-9]+$/;
 
-//function to load image and put it in profile img 
-function loadImage(input)
-{
-    if (input.files && input.files[0])
-    {
-        var formData = new FormData();
-        var file = document.getElementById("img").files[0];
-        formData.append("Filedata", file);
-        var t = file.type.split('/').pop().toLowerCase();
-        if (t != "jpeg" && t != "jpg" && t != "png") {
-            inputFields.get("profilePhoto").errorMsg="Image should be only JPEG/JPG/PNG format.";
-            setErrorBorder(inputFields.get("profilePhoto"));
-            document.getElementById("img").value = '';
-            return false;
-        }
-        if (file.size > 512000) {
-            inputFields.get("profilePhoto").errorMsg="Image should be less than 512 KB";
-            setErrorBorder(inputFields.get("profilePhoto"));
-            document.getElementById("img").value = '';
-            return false;
-        }
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            console.log(file)
-            $('#profilePhoto').attr('src', e.target.result);
-            inputFields.get("profilePhoto").value=e.target.result;
-            setSuccessBorder(inputFields.get("profilePhoto")); 
-        }
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-function makeErrorMsgEmpty()
-{
-    setSuccessBorder(inputFields.get("profilePhoto"));
-}
 //document ready function
 $(document).ready(function()
 {
-    inputFields.set("profilePhoto",{id:"profilePhoto", errorMsg:"Select an Image", value:""});
     inputFields.set("firstName",{id:"firstName", errorMsg:"Please Provide Your Name", value:""});
     inputFields.set("lastName",{id:"lastName", errorMsg:"Please Provide Your Last Name", value:""});
     inputFields.set("emailAddress",{id:"emailAddress", errorMsg:"Mandatory Field!! Provide EmailId", value:""});
@@ -120,10 +92,6 @@ $(document).ready(function()
             {
                 inputFields.get(i).value=stateMap.get($("#"+id).val());
             }
-            else if(i!="profilePhoto")
-            {
-                inputFields.get(i).value=$("#"+i).val();
-            }
             if(inputFields.get(i).errorMsg)
             {
                 setErrorBorder(inputFields.get(i))
@@ -144,7 +112,6 @@ $(document).ready(function()
                     successfullyValidated=false;
                 },
                 data:{
-                        "profilePhoto":inputFields.get("profilePhoto").value,
                         "firstName": $("#firstName").val(),
                         "lastName": $("#lastName").val(),
                         "emailAddress": $("#emailAddress").val(),
@@ -174,17 +141,52 @@ $(document).ready(function()
                     errorMsgs=JSON.parse(error);
                     if(errorMsgs["validatedSuccessfully"] == true)
                     {
-                        successfullyValidated=true;
+                        successfullyValidated=true;  
                     }
                     else
                     {
-                        successfullyValidated=false;
                         for (var key in errorMsgs) {
-                            if(key!="validatedSuccessfully" && errorMsgs[key] !="")
+                            if(key!="validatedSuccessfully" && key!="DATABASE" && errorMsgs[key] !="")
                             {
                                 inputFields.get(key).errorMsg=errorMsgs[key];
                                 setErrorBorder(inputFields.get(key));
                             }
+                            swal({
+                                title: "Registration Fails!!",
+                                text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
+                                icon: "error",
+                                button: "Ok",
+                            });
+                        }
+                        //if registration fails the if block gets executed...!!
+                        if("DATABASE" in errorMsgs && "USERREGISTRATIONERROR" in errorMsgs.DATABASE)
+                        {
+                            swal({
+                                title: "Registration Fails!!",
+                                text: errorMsgs.DATABASE.USERREGISTRATIONERROR,
+                                icon: "error",
+                                button: "Ok",
+                              });
+                        }
+                        // console.log(Object.keys(errorMsgs.DATABASE).length);
+                        //else if registration is successfull but phone number and address data entries fails else block
+                        //get executed!!!
+                        else if("DATABASE" in errorMsgs)
+                        {
+                            var s="";
+                            successfullyValidated=true;
+                            //collects all the error messages in the key database..
+                            for(var key in errorMsgs.DATABASE)
+                            {
+                                s+=errorMsgs.DATABASE[key];
+                            }
+                            swal({
+                                title: "Registration Successful!!",
+                                text: s+"Please, click Ok and proceed to login page!!",
+                                icon: "success",
+                                buttons: true,
+                                dangerMode: true,
+                            });
                         }
                     }
                 }
@@ -192,7 +194,6 @@ $(document).ready(function()
         }
         return successfullyValidated;
     }); 
-     
 
 });
 

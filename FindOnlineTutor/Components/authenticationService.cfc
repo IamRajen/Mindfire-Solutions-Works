@@ -1,3 +1,11 @@
+<!---
+Project Name: FindOnlineTutor.
+File Name: authenticationService.cfc.
+Created In: 6th Apr 2020
+Created By: Rajendra Mishra.
+Functionality: This file contains the functions which help to login the user in our website..!!
+--->
+
 <cfcomponent output="false">
 
 	<!---validateUser() method--->
@@ -40,7 +48,7 @@
 
 		<!---Get the user data from the database--->
 		<cfquery name="rsLoginUser">
-			SELECT firstName, lastName, username, emailId, password , isTeacher
+			SELECT firstName, lastName, username, emailId, password , isTeacher, userId
 			FROM [dbo].[User]
 			WHERE username = <cfqueryparam value="#arguments.username#" cfsqltype="cf_sql_varchar" /> AND password = <cfqueryparam value="#hashPassword#" cfsqltype="cf_sql_varchar" />
 		</cfquery>
@@ -51,7 +59,7 @@
 				<cfloginuser name="#rsLoginUser.USERNAME# #rsLoginUser.FIRSTNAME#" password="#rsLoginUser.PASSWORD#" roles="#rsLoginUser.ISTEACHER#">
 			</cflogin>
 			<!---Save user data in the session scope--->
-			<cfset session.stLoggedInUser = {'firstName' = rsLoginUser.FIRSTNAME, 'lastName' = rsLoginUser.LASTNAME, 'username' = rsLoginUser.USERNAME} />
+			<cfset session.stLoggedInUser = {'firstName' = rsLoginUser.FIRSTNAME, 'lastName' = rsLoginUser.LASTNAME, 'username' = rsLoginUser.USERNAME, 'userId' = rsLoginUser.USERId} />
 			<!---change the isUserLoggedIn variable to true--->
 			<cfset var isUserLoggedIn = true />
 		</cfif>

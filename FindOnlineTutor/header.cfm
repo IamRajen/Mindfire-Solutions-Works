@@ -1,10 +1,16 @@
-<!--- <cfparam name="attributes.home" default="index.cfm" > --->
+<!---
+Project Name: FindOnlineTutor.
+File Name: header.cfm.
+Created In: 28th Mar 2020
+Created By: Rajendra Mishra.
+Functionality: It is a header file which is included probably in every pages.
+--->
 <cfif thistag.executionMode EQ 'start'>
 	<!DOCTYPE html>
 	<html lang="en" >
 		<head>
 			<title>FindOnlineTutor</title>
-
+			
 			<meta charset="utf-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -17,7 +23,11 @@
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 			<script type = "text/javascript" src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-       		<script src="<cfoutput>#attributes.scriptPath#</cfoutput>"></script>
+			<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+			<cfif  structKeyExists(attributes, "scriptPath")>
+				<script src="<cfoutput>#attributes.scriptPath#</cfoutput>"></script>
+			</cfif>
+       		
 
 		</head>
 

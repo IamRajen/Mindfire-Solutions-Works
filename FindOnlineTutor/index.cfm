@@ -1,4 +1,5 @@
-<cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/loginFormValidation.js">
+
+<cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css">
 
 <div class="container center-container" style="margin-top:50px">
 	<form class="form-block">

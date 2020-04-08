@@ -19,6 +19,21 @@
 		<cfreturn true />
 	</cffunction>
 
+	<cffunction name="onMissingTemplate" returntype="boolean">
+		<cfargument name="targetPage" type="string" required=true/>
+		<!--- Using a try block to catch errors. --->
+		<cftry>
+		<!--- Log all errors. --->
+			<cflog type="error" text="Missing template: #Arguments.targetPage#">
 
-	
+			<!--- Display an error message. --->
+			<cfinclude  template="missingTemplate.cfm">
+			<cfreturn true />
+			
+			<cfcatch>
+				<cfreturn false />
+			</cfcatch>
+		</cftry>
+	</cffunction>
+
 </cfcomponent>
