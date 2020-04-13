@@ -16,15 +16,16 @@ $(document).ready(function(){
     inputFields.set("password",{id:"password", errorMsg:"Enter your password", value:""});
     inputFields.set("captcha",{id:"captcha", errorMsg:"Mandatory Field", value:""});
     
-    $("#submitButton").click(function()
+    $("form").submit(function(e)
     {
-        var successfullyLoggedIn=false;
+        var successfullyValidated=true;
         for(var key of inputFields.keys())
         {
             if($("#"+key).val()=='')
             {
                 inputFields.get(key).errorMsg="Field can't be empty!!"
                 setErrorBorder(inputFields.get(key));
+                successfullyValidated=false
             }
             else 
             {
@@ -35,51 +36,60 @@ $(document).ready(function(){
         {
             inputFields.get("captcha").errorMsg="Captcha not matched!!";
             setErrorBorder(inputFields.get("captcha"));
-            return successfullyLoggedIn;
+            successfullyValidated=false;
         }
         else
         {
             setSuccessBorder(inputFields.get("captcha"));
         }
-        $.ajax({
-            type:"POST",
-            async: "false",
-            url:"Components/authenticationService.cfc?method=validateUser",
-            async: false,
-            cache: false,
-            timeout: 30000,
-            error: function(){
-                successfullyLoggedIn=false;
-            },
-            data:{
-                    "username":$("#username").val(),
-                    "password": $("#password").val()
+        e.preventDefault();
+        var self=this;
+        if(successfullyValidated)
+        {
+            $.ajax({
+                type:"POST",
+                async: "false",
+                url:"Components/authenticationService.cfc?method=validateUser",
+                cache: false,
+                timeout: 30000,
+                error: function(){
+                    swal({
+                        title: "Failed to loggedIn!!",
+                        text: "Some error occured. Please try after sometime",
+                        icon: "error",
+                        button: "Ok",
+                    });
                 },
-            success: function(error) {
-                errorMsgs=JSON.parse(error);
-                console.log(errorMsgs);
-                if(errorMsgs["loggedInSuccessfully"] == true)
-                {
-                    successfullyLoggedIn=true;
-                }
-                else
-                {
-                    successfullyLoggedIn=false;
-                    if(errorMsgs["username"])
+                data:{
+                        "username":$("#username").val(),
+                        "password": $("#password").val()
+                    },
+                success: function(error) {
+                    errorMsgs=JSON.parse(error);
+                    console.log(errorMsgs);
+                    if(errorMsgs["loggedInSuccessfully"] == true)
                     {
-                        inputFields.get("username").errorMsg=errorMsgs["username"];
-                        setErrorBorder(inputFields.get("username"));
+                        swal({
+                            title: "LoggedIn Successfully!!",
+                            text: "welcome "+$("#username").val(),
+                            icon: "success",
+                            buttons: false,
+                        })
+                        setTimeout(function(){self.submit()},3000)
                     }
-                    if(errorMsgs["password"])
+                    else
                     {
-                        inputFields.get("password").errorMsg=errorMsgs["password"];
-                        setErrorBorder(inputFields.get("password"));
+                        $("#loginError").text(errorMsgs['loginError']);
+                        swal({
+                            title: "Failed to loggedIn!!",
+                            text: "Incorrect username or password",
+                            icon: "error",
+                            button: "Ok",
+                        });
                     }
-                    $("#loginError").text(errorMsgs['loginError']);
                 }
-            }
-        });
-        return successfullyLoggedIn;
+            });
+        }
     });
 });
 

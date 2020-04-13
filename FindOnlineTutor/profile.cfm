@@ -5,6 +5,7 @@ Created In: 7th Apr 2020
 Created By: Rajendra Mishra.
 Functionality: This file show the profile data to user and allows to modify it.
 --->
+
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/updateProfile.js">
 
 <!---if the user is logged in this if block will get executed--->
@@ -15,6 +16,7 @@ Functionality: This file show the profile data to user and allows to modify it.
             <h3 class="mx-5 text-danger">Please enable <strong>JavaScipt</strong> to submit the form!!</h3>
         </div>
     </noscript>
+  
     <!---creating a databaseService object for retriving user profile--->
     <cfset databaseObj = createObject("Component","FindOnlineTutor/Components/databaseService")/>
     <!---calling the function for profile data--->
@@ -29,7 +31,7 @@ Functionality: This file show the profile data to user and allows to modify it.
 
         <!---Heading Field--->
         <div class="bg-dark pt-3 pb-3 rounded-top text-center">
-            <h2 id="headingUsername" class="text-light text-capitalize d-inline"><cfoutput>#profileInfo.USERDETAILS.USERNAME#</cfoutput></h2>
+            <h2 id="headingUserId" class="text-light text-capitalize d-inline"><cfoutput>#session.stloggedinuser.userID#</cfoutput></h2>
             <p class="text-light d-inline">   Your Profile</p>
         </div>
 
@@ -135,7 +137,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                             <span class="text-danger small float-left"></span>
                         </div>
                     </div>
-                    <div class="row mt-4 mr-2 ml-2 ">
+                    <div  class="row mt-4 mr-2 ml-2">
                         <div class="col-md-3"></div>
                         <div class="col-md-4">
                             <select id="currentCountry" name="currentCountry" class="form-control d-block" onblur="populateState(this)">

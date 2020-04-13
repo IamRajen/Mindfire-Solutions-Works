@@ -68,8 +68,9 @@ $(document).ready(function()
     //load captcha
     generateCaptcha();
     //after submition
-    $('#submitButton').click(function()
+    $('form').submit(function(e)
     {
+        
         var successfullyValidated=true;
         var havingAlternativeAddress=checkAlternativeAddress(alternativeAddress);
         for(var i of inputFields.keys())
@@ -98,23 +99,26 @@ $(document).ready(function()
                 successfullyValidated=false;
             }
         }
+        //after validating the default settings is prevented for ajax call
+        e.preventDefault();
+        //creating an object of this form 
+        var self=this;
+        //if successfully validated then we make an ajax call
         if(successfullyValidated)
-        {   
-            successfullyValidated=false;
-             $.ajax({
+        {
+            //ajax call 
+            $.ajax({
                 type:"POST",
                 url:"Components/validation.cfc?method=validateForm",
-                async: false,
                 cache: false,
-                timeout: 30000,
                 error: function(){
-                    successfullyValidated=false;
                     swal({
                         title: "Registration Fails!!",
                         text: "Some of the internal function fails to register. Please try after some time!!",
                         icon: "error",
                         button: "Ok",
                     });
+                
                 },
                 data:{
                         "firstName": $("#firstName").val(),
@@ -143,19 +147,33 @@ $(document).ready(function()
 
                     },
                 success: function(error) {
-                    errorMsgs=JSON.parse(error);
+                    var errorMsgs=JSON.parse(error);
+                    //if everything goes fine then user if registered by giving a success message
                     if(errorMsgs["validatedSuccessfully"] == true)
-                    {
-                        successfullyValidated=true;  
+                    { 
+                        swal({
+                            title: "Registration Successfull!!",
+                            text: "Thank you for Registering",
+                            icon: "success",
+                            buttons: false,
+                        })
+                        setTimeout(function(){self.submit()},3000);
                     }
+                    //else the error is been rectified and message been shown 
                     else
                     {
+                        var showErrorModel=false;
+                        console.log("called 2");
                         for (var key in errorMsgs) {
-                            if(key!="validatedSuccessfully" && key!="DATABASE" && errorMsgs[key] !="")
+                            if(key!="validatedSuccessfully" && errorMsgs[key] !="")
                             {
                                 inputFields.get(key).errorMsg=errorMsgs[key];
                                 setErrorBorder(inputFields.get(key));
-                            }
+                                showErrorModel=true;
+                            } 
+                        }
+                        if(showErrorModel)
+                        {
                             swal({
                                 title: "Registration Fails!!",
                                 text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
@@ -163,41 +181,29 @@ $(document).ready(function()
                                 button: "Ok",
                             });
                         }
-                        //if registration fails the if block gets executed...!!
-                        if("DATABASE" in errorMsgs && "USERREGISTRATIONERROR" in errorMsgs.DATABASE)
+                        else 
                         {
                             swal({
                                 title: "Registration Fails!!",
-                                text: errorMsgs.DATABASE.USERREGISTRATIONERROR,
+                                text: "Registration fails due to some server problem. Please, try after some time!!",
                                 icon: "error",
                                 button: "Ok",
-                              });
-                        }
-                        // console.log(Object.keys(errorMsgs.DATABASE).length);
-                        //else if registration is successfull but phone number and address data entries fails else block
-                        //get executed!!!
-                        else if("DATABASE" in errorMsgs)
-                        {
-                            var s="";
-                            successfullyValidated=true;
-                            //collects all the error messages in the key database..
-                            for(var key in errorMsgs.DATABASE)
-                            {
-                                s+=errorMsgs.DATABASE[key];
-                            }
-                            swal({
-                                title: "Registration Successful!!",
-                                text: s+"Please, click Ok and proceed to login page!!",
-                                icon: "success",
-                                buttons: true,
-                                dangerMode: true,
                             });
                         }
                     }
                 }
             });
         }
-        return successfullyValidated;
+        //if successfully js validation is not validated then error msg is shown
+        else 
+        {
+            swal({
+                title: "Registration Fails!!",
+                text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
+                icon: "error",
+                button: "Ok",
+            });
+        }
     }); 
 
 });
@@ -483,21 +489,21 @@ function checkUsername(element)
         setErrorBorder(object);
         return
     }
-    $.ajax({
-        type:"POST",
-        url:"Components/validation.cfc?method=validateUsername",
-        data: "usrName="+text,
-        cache:false,
-        success: function(error) {
-            error=JSON.parse(error);
-            if(error)
-            {
-                object.errorMsg=error;
-                setErrorBorder(object);
-                return;
-            }
-        }
-    });
+    // $.ajax({
+    //     type:"POST",
+    //     url:"Components/validation.cfc?method=validateUsername",
+    //     data: "usrName="+text,
+    //     cache:false,
+    //     success: function(error) {
+    //         error=JSON.parse(error);
+    //         if(error)
+    //         {
+    //             object.errorMsg=error;
+    //             setErrorBorder(object);
+    //             return;
+    //         }
+    //     }
+    // });
     setSuccessBorder(object);
 }
 function checkPassword(element)

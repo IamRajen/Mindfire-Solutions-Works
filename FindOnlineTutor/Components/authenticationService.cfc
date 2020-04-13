@@ -28,7 +28,7 @@ Functionality: This file contains the functions which help to login the user in 
         <cfelse>
             <cfset var isUserLoggedIn=doLogin(arguments.username,arguments.password)/>
             <cfif NOT isUserLoggedIn>
-                <cfset errorMsgs['loginError']="User not found. Please try again!!" />
+                <cfset errorMsgs['loginError']="Invalid User Credential. Please try again!!" />
             <cfelseif structKeyExists(session,'stLoggedInUser')>
                 <cfset errorMsgs['loggedInSuccessfully']=true/>
             </cfif>
@@ -47,11 +47,17 @@ Functionality: This file contains the functions which help to login the user in 
 		<cfset var isUserLoggedIn = false />
 
 		<!---Get the user data from the database--->
-		<cfquery name="rsLoginUser">
-			SELECT firstName, lastName, username, emailId, password , isTeacher, userId
-			FROM [dbo].[User]
-			WHERE username = <cfqueryparam value="#arguments.username#" cfsqltype="cf_sql_varchar" /> AND password = <cfqueryparam value="#hashPassword#" cfsqltype="cf_sql_varchar" />
-		</cfquery>
+		<cftry>
+			<cfquery name="rsLoginUser">
+				SELECT firstName, lastName, username, emailId, password , isTeacher, userId
+				FROM [dbo].[User]
+				WHERE username = <cfqueryparam value="#arguments.username#" cfsqltype="cf_sql_varchar" /> AND password = <cfqueryparam value="#hashPassword#" cfsqltype="cf_sql_varchar" />
+			</cfquery>
+		<cfcatch type="any">
+            <cflog text="error: #cfcatch.detail#">
+        </cfcatch>
+        </cftry>
+		
 		<!---Check if the query returns one and only one user--->
 		<cfif rsLoginUser.recordCount EQ 1>
 			<!---Log the user in--->
