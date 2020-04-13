@@ -75,7 +75,7 @@ $(document).ready(function(){
                             icon: "success",
                             buttons: false,
                         })
-                        setTimeout(function(){self.submit()},3000)
+                        setTimeout(function(){self.submit()},2000)
                     }
                     else
                     {

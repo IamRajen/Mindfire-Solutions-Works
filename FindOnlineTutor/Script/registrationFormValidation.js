@@ -489,21 +489,21 @@ function checkUsername(element)
         setErrorBorder(object);
         return
     }
-    // $.ajax({
-    //     type:"POST",
-    //     url:"Components/validation.cfc?method=validateUsername",
-    //     data: "usrName="+text,
-    //     cache:false,
-    //     success: function(error) {
-    //         error=JSON.parse(error);
-    //         if(error)
-    //         {
-    //             object.errorMsg=error;
-    //             setErrorBorder(object);
-    //             return;
-    //         }
-    //     }
-    // });
+    $.ajax({
+        type:"POST",
+        url:"Components/validation.cfc?method=validateUsername",
+        data: "usrName="+text,
+        cache:false,
+        success: function(error) {
+            error=JSON.parse(error);
+            if(error)
+            {
+                object.errorMsg=error;
+                setErrorBorder(object);
+                return;
+            }
+        }
+    });
     setSuccessBorder(object);
 }
 function checkPassword(element)

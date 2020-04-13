@@ -21,19 +21,13 @@ Functionality: This file show the profile data to user and allows to modify it.
     <cfset databaseObj = createObject("Component","FindOnlineTutor/Components/databaseService")/>
     <!---calling the function for profile data--->
     <cfset profileInfo = databaseObj.getMyProfile(#session.stloggedinuser.userID#)/>
-    <cfdump  var="#profileInfo#">
-    <!---Initializing the primary phone number--->
-    <cfset  primaryPhoneNumber = #profileInfo.USERPHONENUMBER.PHONENUMBER.phoneNumber[1]#/>
-    <!---Initializing the alternative phone number--->
-    <cfset  alternativePhoneNumber = #profileInfo.USERPHONENUMBER.PHONENUMBER.phoneNumber[2]#/>
-    
-    <div class="container-fuild w-100 mx-auto mb-5 shadow rounded bg-light">
+    <cfdump  var="#(profileInfo)#">
 
-        <!---Heading Field--->
-        <div class="bg-dark pt-3 pb-3 rounded-top text-center">
-            <h2 id="headingUserId" class="text-light text-capitalize d-inline"><cfoutput>#session.stloggedinuser.userID#</cfoutput></h2>
-            <p class="text-light d-inline">   Your Profile</p>
-        </div>
+     <cfset AddressInfo = databaseObj.getMyAddress(#session.stloggedinuser.userID#)/>
+    <cfdump  var="#(AddressInfo.address.useraddressid[1])#">
+   
+    <!---container containing all required data--->
+    <div class="container-fuild w-100 mx-auto mb-5 shadow rounded bg-light">
 
         <!---Profile Loading Error--->
         <cfif structKeyExists(profileInfo, "error")>
@@ -47,9 +41,26 @@ Functionality: This file show the profile data to user and allows to modify it.
 
         <!---if profile perfectly get loaded else part will get executed--->
         <cfelse>
-        <!---Form Field--->
-            <form class="disabledbutton pb-5" id="form-update" method="POST">
 
+            <!---Initializing the primary phone number--->
+            <cfset  primaryPhoneNumber = #profileInfo.USERPHONENUMBER.PHONENUMBER.phoneNumber[1]#/>
+            <!---Initializing the alternative phone number--->
+            <cfset  alternativePhoneNumber = #profileInfo.USERPHONENUMBER.PHONENUMBER.phoneNumber[2]#/>
+
+            <!---Heading Field--->
+            <div class="bg-dark pt-3 pb-3 rounded-top text-center">
+                <span id="headingUserId" class="text-light text-capitalize d-inline"><cfoutput>#session.stloggedinuser.userID#</cfoutput></span>
+                <p class="text-light d-inline" >   Your Profile</p>
+            </div>
+
+            <!---Form Field--->
+            <form id="user<cfoutput>#session.stloggedinuser.userID#</cfoutput>" class="disabledbutton pb-5" id="form-update" method="POST">
+
+                <div class="alert alert-info pt-3">
+                    <p class="text-info text-center font-weight-bold">
+                        If you want to REMOVE the ALTERNATIVE fields just keep it BLANK.
+                    </p>
+                </div>
                 <!---Name Field--->
                     <div class="row mt-4 mr-2 ml-2">
                         <div class="col-md-3">
@@ -140,7 +151,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                     <div  class="row mt-4 mr-2 ml-2">
                         <div class="col-md-3"></div>
                         <div class="col-md-4">
-                            <select id="currentCountry" name="currentCountry" class="form-control d-block" onblur="populateState(this)">
+                            <select id="currentCountry" name="currentCountry" class="form-control d-block" onblur="checkCountry(this)">
                                 <option value="">---select your country----</option>
                             </select>
                             <span class="text-danger small float-left"></span>
@@ -163,8 +174,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                             <span class="text-danger small float-left"></span>
                         </div>
                     </div>
-
-
+                       
                 <!---Alternative Address Field--->
                     <div class="row mt-4 mr-2 ml-2">
                         <div class="col-md-3">
@@ -179,7 +189,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                     <div class="row mt-4 mr-2 ml-2 ">
                         <div class="col-md-3"></div>
                         <div class="col-md-4">
-                            <select id="alternativeCountry" name="alternativeCountry" class="form-control d-block" onblur="populateState(this)">
+                            <select id="alternativeCountry" name="alternativeCountry" class="form-control d-block" onblur="checkCountry(this)">
                                 <option value="">---select your country----</option>
                             </select>
                             <span class="text-danger small float-left"></span>
@@ -221,11 +231,9 @@ Functionality: This file show the profile data to user and allows to modify it.
                 <!---Submit Section--->
                     <div class="row mt-5 mr-2 ml-2">
                         <div class="col-md-2" id="buttonDiv">
-
                         </div>
                     </div>
                 <!---Interested location field--->
-                    
                 
             </form>
         </cfif> 

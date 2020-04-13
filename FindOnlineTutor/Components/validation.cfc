@@ -9,6 +9,7 @@ Functionality: This file has function that validated the registration form and i
 
 <cfcomponent output="false">
     <!---onsubmit validation--->
+    <cfset patternValidationObj = createObject("component","patternValidation")/>
     <cffunction  name="validateForm" access="remote" output="false" returnformat="json" returntype="struct">
 
         <!---defining arguments--->
@@ -87,9 +88,6 @@ Functionality: This file has function that validated the registration form and i
         <cfloop collection="#errorMsgs#" item="key">
             <cfif key NEQ 'validatedSuccessfully' and errorMsgs[key] NEQ ''>
                 <cfset errorMsgs["validatedSuccessfully"]=false/>
-                <!---<cfif errorMsgs[key] NEQ ''>
-                    <cfreturn errorMsgs/>
-                </cfif> --->
                 <cfbreak>
             </cfif>
         </cfloop>
@@ -221,7 +219,7 @@ Functionality: This file has function that validated the registration form and i
         <cfset errorMsg=""/>
         <cfif email EQ ''>
             <cfset errorMsg="Mandatory Field!!"/>
-        <cfelseif NOT isValid("regex", email,"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")>
+        <cfelseif NOT patternValidationObj.validEmail(arguments.usrEmail)>
             <cfset errorMsg="Invalid Email Address."/>
         <cfelse>    
             <cfquery name="emailId">

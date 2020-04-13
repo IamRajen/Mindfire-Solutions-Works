@@ -34,7 +34,7 @@ $(document).ready(function()
     inputFields.set("dob",{id:"dob", errorMsg:"", value:""});
     inputFields.set("password",{id:"password", errorMsg:"", value:""});
     inputFields.set("confirmPassword",{id:"confirmPassword", errorMsg:"", value:""});
-    inputFields.set("experience",{id:"experience", errorMsg:"", value:""});
+    // inputFields.set("experience",{id:"experience", errorMsg:"", value:""});
     inputFields.set("currentAddress",{id:"currentAddress", errorMsg:"", value:""});
     inputFields.set("currentCountry",{id:"currentCountry", errorMsg:"", value:""});
     inputFields.set("currentState",{id:"currentState", errorMsg:"", value:""});
@@ -46,9 +46,10 @@ $(document).ready(function()
     inputFields.set("alternativeCity",{id:"alternativeCity", errorMsg:"", value:""});
     inputFields.set("alternativePincode",{id:"alternativePincode", errorMsg:"", value:""});
     inputFields.set("bio",{id:"bio", errorMsg:"", value:""});
+    var alternativeAddress=["alternativeAddress","alternativeCountry","alternativeState","alternativeCity","alternativePincode"];
     
     var userId = $('#headingUserId').text();
-
+    $("h2").hide();
     //ajax call been made if we successfully retrieve the userId
     if(userId != '')
     {
@@ -80,41 +81,33 @@ $(document).ready(function()
                 else 
                 {
                     addressArray = message.ADDRESS.DATA;
+                    console.log(addressArray)
                     //populate the country and state maps
                     loadCountryStateMap();
                     //populating the current address fields
-                    $("#currentAddress").val(addressArray[0][0]);
-                    $("#currentCity").val(addressArray[0][3]);
-                    $("#currentPincode").val(addressArray[0][4]);
+                    $("#currentAddress").val(addressArray[0][1]);
+                    $("#currentCity").val(addressArray[0][4]);
+                    $("#currentPincode").val(addressArray[0][5]);
 
                     if(addressArray.length==2)
                     {
                         //populating the alternative address fields
-                        $("#alternativeAddress").val(addressArray[1][0]);
-                        $("#alternativeCity").val(addressArray[1][3]);
-                        $("#alternativePincode").val(addressArray[1][4]);
+                        $("#alternativeAddress").val(addressArray[1][1]);
+                        $("#alternativeCity").val(addressArray[1][4]);
+                        $("#alternativePincode").val(addressArray[1][5]);
                     }
                 }
             }
         });
     }
 
-    $("#submitButton").click(function()
+    $("form").submit(function(e)
     {
         var successfullyValidated=true;
         var havingAlternativeAddress=checkAlternativeAddress(alternativeAddress);
+
         for(var i of inputFields.keys())
         {
-            if(i=="experience" && $("#isTeacher").prop("checked"))
-            {   
-                var dob = new Date($("#dob").val());
-                if(dob.getFullYear()+10+parseInt($("#experience").val()) > (new Date()).getFullYear())
-                {
-                    inputFields.get("experience").errorMsg="Experience having more than age not allowed!!"
-                    setErrorBorder(inputFields.get("experience"));
-                    successfullyValidated=false;
-                }
-            }
             if(i.length>7 && i.slice(0,-7)=="Country")
             {
                 inputFields.get(i).value=countryMap.get($("#"+id).val());
@@ -125,11 +118,14 @@ $(document).ready(function()
             }
             if(inputFields.get(i).errorMsg)
             {
-                console.log(i+" "+inputFields.get(i).errorMsg)
-                setErrorBorder(inputFields.get(i))
+                // console.log(i+" "+inputFields.get(i).errorMsg)
+                setErrorBorder(inputFields.get(i));
                 successfullyValidated=false;
             }
         }
+        //after validating the default settings is prevented for ajax call
+        e.preventDefault();
+        var self=this;
         if(!successfullyValidated)
         {
             swal({
@@ -138,12 +134,92 @@ $(document).ready(function()
                 icon: "warning",
                 button: "Ok",
             });
-            return successfullyValidated;
         }
         //
-        if(successfullyValidated)
+        else
         {
             //ajax call made to validate and update the user profile...
+            $.ajax({
+                type:"POST",
+                url:"Components/databaseService.cfc?method=updateUserProfile",
+                cache: false,
+                error: function(){
+                    swal({
+                        title: "Registration Fails!!",
+                        text: "Some of the internal function fails to register. Please try after some time!!",
+                        icon: "error",
+                        button: "Ok",
+                    });
+                
+                },
+                data:{
+                        "firstName": $("#firstName").val(),
+                        "lastName": $("#lastName").val(),
+                        "emailAddress": $("#emailAddress").val(),
+                        "primaryPhoneNumber": $("#primaryPhoneNumber").val(),
+                        "alternativePhoneNumber":$("#alternativePhoneNumber").val(),
+                        "dob":$("#dob").val(),
+                        "password":$("#password").val(),
+                        "confirmPassword":$("#confirmPassword").val(), 
+                        "currentAddress":$("#currentAddress").val(),
+                        "currentCountry":countryMap.get(parseInt($("#currentCountry").val())),
+                        "currentState":stateMap.get($("#currentState").val()).name,
+                        "currentCity":$("#currentCity").val(),
+                        "currentPincode":$("#currentPincode").val(),
+                        "havingAlternativeAddress": havingAlternativeAddress,
+                        "alternativeAddress": havingAlternativeAddress == true ? $("#alternativeAddress").val() : '',
+                        "alternativeCountry":havingAlternativeAddress == true ? countryMap.get(parseInt($("#alternativeCountry").val())) : '',
+                        "alternativeState":havingAlternativeAddress == true ? stateMap.get($("#alternativeState").val()).name:'',
+                        "alternativeCity":havingAlternativeAddress == true ? $("#alternativeCity").val():'',
+                        "alternativePincode":havingAlternativeAddress == true ? $("#alternativePincode").val():'',
+                        "bio":$("#bio").val()=="" ? '': $("#bio").val()
+                    },
+                success: function(error) {
+                    var errorMsgs=JSON.parse(error);
+                    //if everything goes fine then user if registered by giving a success message
+                    if(errorMsgs["validatedSuccessfully"] == true)
+                    { 
+                        swal({
+                            title: "Registration Successfull!!",
+                            text: "Thank you for Registering",
+                            icon: "success",
+                            buttons: false,
+                        })
+                        setTimeout(function(){self.submit()},3000);
+                    }
+                    //else the error is been rectified and message been shown 
+                    else
+                    {
+                        var showErrorModel=false;
+                        for (var key in errorMsgs) {
+                            if(key!="validatedSuccessfully" && !errorMsgs[key])
+                            {
+                                inputFields.get(key).errorMsg=errorMsgs[key];
+                                setErrorBorder(inputFields.get(key));
+                                showErrorModel=true;
+                            } 
+                        }
+                        if(showErrorModel)
+                        {
+                            swal({
+                                title: "Registration Fails!!",
+                                text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
+                                icon: "error",
+                                button: "Ok",
+                            });
+                        }
+                        else 
+                        {
+                            swal({
+                                title: "Registration Fails!!",
+                                text: "Registration fails due to some server problem. Please, try after some time!!",
+                                icon: "error",
+                                button: "Ok",
+                            });
+                        }
+                    }
+                }
+            });
         }
     });
 });
@@ -183,12 +259,12 @@ function loadCountryStateMap()
             countryMap.set(countries[i].id , countries[i].name);
         }
         populateCountry($("#currentCountry"));
-        var countryCode = getCountryKeyByValue(countryMap,addressArray[0][1]);
+        var countryCode = getCountryKeyByValue(countryMap,addressArray[0][2]);
         $('#currentCountry').find('option[value="'+countryCode+'"]').attr("selected",true);
         if(addressArray.length==2)
         {
             populateCountry($("#alternativeCountry"));
-            countryCode = getCountryKeyByValue(countryMap,addressArray[1][1]);
+            countryCode = getCountryKeyByValue(countryMap,addressArray[1][2]);
             $('#alternativeCountry').find('option[value="'+countryCode+'"]').attr("selected",true);
         }
 
@@ -200,29 +276,31 @@ function loadCountryStateMap()
             stateMap.set(states[i].id ,{"name":states[i].name,"countryId":states[i].country_id});
         }
         populateState($("#currentState"),$("#currentCountry").val());
-        $('#currentState').find('option[value="'+getStateKeyByValue(stateMap,addressArray[0][2])+'"]').attr("selected",true);
+        $('#currentState').find('option[value="'+getStateKeyByValue(stateMap,addressArray[0][3])+'"]').attr("selected",true);
         if(addressArray.length==2)
         {
             populateState($("#alternativeState"),$("#alternativeCountry").val());
-            $('#alternativeState').find('option[value="'+getStateKeyByValue(stateMap,addressArray[1][2])+'"]').attr("selected",true);
+            $('#alternativeState').find('option[value="'+getStateKeyByValue(stateMap,addressArray[1][3])+'"]').attr("selected",true);
         }
     });  
 }
 //populate countries select input
 function populateCountry(element)
 {
-    var countryOptions="<option value=''>---Select Country---</option>";
-    for(var id of countryMap.keys())
+    if($(element).val()=='')
     {
-        countryOptions+="<option value='"+id+"'>"+countryMap.get(id)+"</option>";
+        var countryOptions="<option value=''>---Select Country---</option>";
+        for(var id of countryMap.keys())
+        {
+            countryOptions+="<option value='"+id+"'>"+countryMap.get(id)+"</option>";
+        }
+        $("#"+element.attr('id')).html(countryOptions); 
     }
-    $("#"+element.attr('id')).html(countryOptions);
 }
 //populate states on choosing country
 function populateState(element,countryCode)
 {
     let stateOptions="";
-    
     stateOptions="<option value=''>---Select State---</option>";
     for(var id of stateMap.keys())
     {
@@ -371,7 +449,7 @@ function checkPhoneNumber(element)
 function checkAddress(element)
 {
     var addressType=element.id.toString().slice(0,-7);
-    populateCountry(addressType);
+    populateCountry($("#"+addressType+"Country"));
     var object = inputFields.get(element.id);
     var text = $.trim($("#"+object.id).val());
     if(text == "")
@@ -393,7 +471,10 @@ function checkAddress(element)
 }
 function checkCountry(element)
 {
+    var addressType=element.id.toString().slice(0,-7);
     var object=inputFields.get(element.id);
+
+    populateState($("#"+addressType+"State"),$(element).val());
     if($(element).val()!="")
     {
         setSuccessBorder(object);
@@ -438,9 +519,9 @@ function checkPincode(element)
 
 function checkPassword(element)
 {
-    console.log(element)
     var object = inputFields.get(element.id);
     var text = $.trim($(element).val());
+    console.log(text)
     var confirmPassword = inputFields.get('confirmPassword');
     if(object.id == 'password' && text == "")
     {
