@@ -81,8 +81,7 @@ $(document).ready(function()
                 else 
                 {
                     addressArray = message.ADDRESS.DATA;
-                    console.log(addressArray)
-                    //populate the country and state maps
+                    // populate the country and state maps
                     loadCountryStateMap();
                     //populating the current address fields
                     $("#currentAddress").val(addressArray[0][1]);
@@ -141,7 +140,7 @@ $(document).ready(function()
             //ajax call made to validate and update the user profile...
             $.ajax({
                 type:"POST",
-                url:"Components/databaseService.cfc?method=updateUserProfile",
+                url:"Components/updateUserProfile.cfc?method=updateUserProfile",
                 cache: false,
                 error: function(){
                     swal({
@@ -386,17 +385,18 @@ function checkEmailId(element)
     }
     $.ajax({
         type:"POST",
-        url:"Components/validation.cfc?method=validateEmail",
-        data: "usrEmail="+text,
+        url:"Components/updateUserProfile.cfc?method=validateEmail",
+        data: "emailId="+text,
         cache:false,
         success: function(error) {
             error=JSON.parse(error);
-            if(error)
-            {
-                object.errorMsg=error;
-                setErrorBorder(object);
-                return;
-            }
+            console.log(error);
+            // if(error.has)
+            // {
+            //     object.errorMsg=error;
+            //     setErrorBorder(object);
+            //     return;
+            // }
         }
     });
     setSuccessBorder(object);

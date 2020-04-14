@@ -96,19 +96,103 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn userId />
     </cffunction>
 
+    <!---update user information--->
+    <cffunction  name="updateUser" access="public" output="false" returntype="struct" >
+        <!---defining arguments--->
+        <cfargument  name="firstName" type="string" required="true"/>
+        <cfargument  name="lastName" type="string" required="true"/>
+        <cfargument  name="emailAddress" type="string" required="true"/>
+        <cfargument  name="dob" type="string" required="true"/>
+        <cfargument  name="password" type="string" required="true"/>
+        <cfargument  name="bio" type="string" required="false"/>
+        <!---creating a structure for returning purpose. which contains the update error msg if occurred--->
+        <cfset var updatedSuccessfully={}/>
+        <!---update query starts here--->
+        <cftry>
+            <cfquery>
+                UPDATE [dbo].[User]
+                SET firstName = <cfqueryparam value='#arguments.firstName#' cfsqltype='cf_sql_varchar'>,
+                    lastName = <cfqueryparam value='#arguments.lastName#' cfsqltype='cf_sql_varchar'>,
+                    emailId = <cfqueryparam value='#arguments.emailAddress#' cfsqltype='cf_sql_varchar'>,
+                    dob = <cfqueryparam value='#arguments.dob#' cfsqltype='cf_sql_date'>, 
+                    password = <cfqueryparam value = '#hash(arguments.password, "SHA-1", "UTF-8")#' cfsqltype='cf_sql_varchar'>,
+                    bio = <cfqueryparam value='#arguments.bio#' cfsqltype='cf_sql_varchar'>
+                WHERE userId=#session.stloggedinuser.userID#
+            </cfquery>
+        <cfcatch type="any">
+            <cfset updatedSuccessfully.error="#cfcatch.detail#"/>
+        </cfcatch>
+        </cftry>
+        <cfreturn updatedSuccessfully/>
+    </cffunction>
 
-    <!---update user profile--->
-    <cffunction  name="updateUserProfile" access="remote" output="false" returnformat="json" returntype="struct">
-        <!---arguments declaration--->
 
+    <!---update user address information--->
+    <cffunction  name="updateAddress" access="public" output="false" returntype="struct">
+        <!---defining arguments--->
+        <cfargument  name="userAddressId" type="any" required="true">
+        <cfargument  name="address" type="string" required="true">
+        <cfargument  name="country" type="string" required="true">
+        <cfargument  name="state" type="string" required="true">
+        <cfargument  name="city" type="string" required="true">
+        <cfargument  name="pincode" type="string" required="true">
+        <!---creating a structure for returning purpose. which contains the inserted result and error msg if occurred--->
+        <cfset var updatedSuccessfully={}/>
+        <!---updation starts here--->
+        <cftry>
+            <cfquery>
+                UPDATE [dbo].[UserAddress]
+                SET address = <cfqueryparam value='#arguments.address#' cfsqltype='cf_sql_varchar'>,
+                    country = <cfqueryparam value='#arguments.country#' cfsqltype='cf_sql_varchar'>,
+                    state = <cfqueryparam value='#arguments.state#' cfsqltype='cf_sql_varchar'>,
+                    city = <cfqueryparam value='#arguments.city#' cfsqltype='cf_sql_varchar'>,
+                    pincode = <cfqueryparam value='#arguments.pincode#' cfsqltype='cf_sql_varchar'>
+                WHERE userAddressId = <cfqueryparam value=#arguments.userAddressId# cfsqltype='cf_sql_bigint'>;
+            </cfquery>
+        <cfcatch type="any">
+            <cfset updatedSuccessfully.error="#cfcatch.detail#"/>
+        </cfcatch>
+        </cftry>
+        <cfreturn updatedSuccessfully/>
+    </cffunction>
+
+
+    <!---update user phone information--->
+    <cffunction  name="updatephoneNumber" access="remote" output="false" returntype="struct">
+        <!---defining arguments--->
+        <cfargument  name="userPhoneNumberId" type="any" required="true">
+        <cfargument  name="phoneNumber" type="string"  required="true">
+        <!---creating a structure for returning purpose. which contains the update error msg if occurred--->
+        <cfset var updatedSuccessfully={}/>
+        <!---updating process starts here--->
+        <cftry>
+            <cfquery>
+                UPDATE [dbo].[UserPhoneNumber]
+                SET phoneNumber = <cfqueryparam value='#arguments.phoneNumber#' cfsqltype='cf_sql_varchar'>
+                WHERE userPhoneNumberId = <cfqueryparam value=#arguments.userPhoneNumberId# cfsqltype='cf_sql_bigint'>
+            </cfquery>
+        <cfcatch type="any">
+            <cfset updatedSuccessfully.error="#cfcatch.detail#"/>
+        </cfcatch>
+        </cftry>
+        <cfreturn updatedSuccessfully/>
+    </cffunction>
+
+
+    <!---insert user information--->
+    <cffunction  name="insertUser" access="public" output="false" returntype="boolean">
+
+        <!---defining arguments--->
         <cfargument  name="firstName" type="string" required="true"/>
         <cfargument  name="lastName" type="string" required="true"/>
         <cfargument  name="emailAddress" type="string" required="true"/>
         <cfargument  name="primaryPhoneNumber" type="string" required="true"/>
         <cfargument  name="alternativePhoneNumber" type="string" required="false"/>
         <cfargument  name="dob" type="string" required="true"/>
+        <cfargument  name="username" type="string" required="true"/>
         <cfargument  name="password" type="string" required="true"/>
-        <cfargument  name="confirmPassword" type="string" required="true"/>
+        <cfargument  name="isTeacher" type="string" required="true"/>
+        <cfargument  name="experience" type="string" required="false"/>
         <cfargument  name="currentAddress" type="string" required="true"/>
         <cfargument  name="currentCountry" type="string" required="true"/>
         <cfargument  name="currentState" type="string" required="true"/>
@@ -122,160 +206,226 @@ Functionality: This file has services/functions related to the data in the datab
         <cfargument  name="alternativePincode" type="string" required="false"/>
         <cfargument  name="bio" type="string" required="false"/>
 
-        <!---creating object of validation.cfc for validation--->
-        <cfset var patternValidationObj = createObject("component","patternValidation")/>
+        <cfset var isCommit=false/>
+        <cftransaction>
+            <cftry>
+                <cfset var queryUserCredential=''/>
+                <!---inserting the user credentials in user table--->
+                <cfquery result="queryUserCredential">
+                    <!---Inserting data in the user table--->
+                    INSERT INTO [dbo].[User] 
+                    (registrationDate,firstName,lastName,emailid,username,password,dob,isTeacher,
+                        yearOfExperience,homeLocation,otherLocation,online,bio)
+                    VALUES (
+                        <cfqueryparam value='#now()#' cfsqltype='cf_sql_date'>,
+                        <cfqueryparam value='#arguments.firstName#' cfsqltype='cf_sql_varchar'>, 
+                        <cfqueryparam value='#arguments.lastName#' cfsqltype='cf_sql_varchar'>, 
+                        <cfqueryparam value='#arguments.emailAddress#' cfsqltype='cf_sql_varchar'>, 
+                        <cfqueryparam value='#arguments.username#' cfsqltype='cf_sql_varchar'>, 
+                        <cfqueryparam value='#hash(arguments.password, "SHA-1", "UTF-8")#' cfsqltype='cf_sql_varchar'>, 
+                        <cfqueryparam value='#arguments.dob#' cfsqltype='cf_sql_date'>,
+                        <cfqueryparam value=#arguments.isTeacher# cfsqltype='cf_sql_bit'>,
+                        <cfqueryparam value=#arguments.experience# cfsqltype='cf_sql_smallint'>,
+                        <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
+                        <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
+                        <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
+                        <cfqueryparam value='#arguments.bio#' cfsqltype='cf_sql_varchar'>
+                        );
+                </cfquery>
+                <!---initializing the primary key generated while inserting the user--->
+                <cfset var userId = #queryUserCredential.GENERATEDKEY#/> 
+                <!---primary phone number is inserted by calling insertPhoneNumber--->
+                <cfset var insertPhone = insertPhoneNumber(userId,arguments.primaryPhoneNumber)/>
+                <cfif structKeyExists(insertPhone, "error")>
+                    <cfthrow detail = '#insertPhone.error#'/> 
+                </cfif>
+                <!---if alternative phone number exists then this bolck of code will get executed--->
+                <cfif arguments.alternativePhoneNumber NEQ ''>
+                    <cfset var insertAlternativePhone = insertPhoneNumber(userId,arguments.alternativePhoneNumber)/>
+                    <cfif structKeyExists(insertAlternativePhone, "error")>
+                        <cfthrow detail = '#insertAlternativePhone.error#'/> 
+                    </cfif>
+                </cfif>
+                <!---current address is inserted by calling insertaddress()--->
+                <cfset var insertCurrentAddress = insertAddress(
+                    userId,arguments.currentAddress, arguments.currentCountry, arguments.currentState,
+                    arguments.currentCity, arguments.currentPincode)/>
+                <cfif structKeyExists(insertCurrentAddress, "error")>
+                    <cfthrow detail = '#insertCurrentAddress.error#'/>
+                </cfif>
+                <!---if alternative address exists then this bolck of code will get executed--->
+                <cfif arguments.havingAlternativeAddress>
+                    <cfset var insertAlternativeAddress = insertAddress(
+                        userId,arguments.alternativeAddress, arguments.alternativeCountry, arguments.alternativeState,
+                        arguments.alternativeCity, arguments.alternativePincode)/>
+                    <cfif structKeyExists(insertAlternativeAddress, "error")>
+                        <cfthrow detail = '#insertAlternativeAddress.error#'/>
+                    </cfif>
+                </cfif>
+                <!---if every query get successfully executed then commit actoin get called--->
+                <cftransaction action="commit" />
+                <cfset isCommit=true />
+            <cfcatch type="any">
+                <!---if some error occured while transaction then the whole transaction will be rollback--->
+                <cftransaction action="rollback" />
+                <cflog text="#cfcatch.detail#">
+            </cfcatch>
+            </cftry>
+        </cftransaction>
+        <!---returning the commit message--->
+        <cfreturn isCommit/>  
+    </cffunction>
 
-        <!--- creating a struct for error messages and calling the required functions--->
-        <cfset errorMsgs={}>
-        <cfset errorMsgs["validatedSuccessfully"]=true/>
 
-        <cfset errorMsgs["firstName"]=patternValidationObj.validName(arguments.firstName)/>
-        <cfset errorMsgs["lastName"]=patternValidationObj.validName(arguments.lastName)/>
-        <cfset errorMsgs["emailAddress"]=patternValidationObj.validEmail(arguments.emailAddress)/>
-        <cfset errorMsgs["primaryPhoneNumber"]=patternValidationObj.validNumber(arguments.primaryPhoneNumber)/>
+    <!---insert user phone number--->
+    <cffunction  name="insertPhoneNumber" access="public" returntype="struct" output="false">
+        <!---defining arguments--->
+        <cfargument  name="userId" type="any" required="true"/>
+        <cfargument  name="phoneNumber" type="string" required="true"/>
+        <!---creating a structure for returning purpose. which contains the inserted result and error msg if occurred--->
+        <cfset var insertedSuccessfully={}/>
+        <!---declaring a variable for result of query execution--->
+        <cfset var phoneId=''/>
 
-        <cfif arguments.alternativePhoneNumber NEQ '' and arguments.alternativePhoneNumber NEQ arguments.primaryPhoneNumber>
-            <cfset errorMsgs["alternativePhoneNumber"]=patternValidationObj.validNumber(arguments.alternativePhoneNumber)/>
-        <cfelseif arguments.alternativePhoneNumber NEQ '' and arguments.alternativePhoneNumber EQ arguments.primaryPhoneNumber>
-            <cfset errorMsgs["alternativePhoneNumber"]="Alternative number should not be same.You can keep this blank."/>
-        </cfif>
+        <cftry>
+            <cfquery result="phoneId">
+                INSERT INTO [dbo].[UserPhoneNumber]
+                (userId,phoneNumber)
+                VALUES (
+                    <cfqueryparam value=#arguments.userId# cfsqltype='cf_sql_bigint'>,
+                    <cfqueryparam value='#arguments.phoneNumber#' cfsqltype='cf_sql_varchar'>
+                )
+            </cfquery>
+        <cfcatch type="any">
+            <!---if an error occurred while inserting then it will be store in the error key of returning structure for
+            further execution--->
+            <cfset insertedSuccessfully.error='#cfcatch.detail#'/>
+        </cfcatch>
+        </cftry>
 
-        <!---<cfset errorMsgs["dob"]=validationObj.validateDOB(arguments.dob)/> --->
-        <cfset errorMsgs["password"]=patternValidationObj.validPassword(arguments.password)/>
+        <cfset insertedSuccessfully.phoneId=phoneId/>
+        <cfreturn insertedSuccessfully/>
+    </cffunction>
 
-        <cfif arguments.password NEQ arguments.confirmPassword>
-            <cfset errorMsgs["confirmPassword"]="password not matched!!"/>
-        </cfif>
 
-        
-        <cfset errorMsgs["currentAddress"]=patternValidationObj.validText(arguments.currentAddress)/>
-        <cfset errorMsgs["currentCountry"]=patternValidationObj.validText(arguments.currentCountry)/>
-        <cfset errorMsgs["currentState"]=patternValidationObj.validText(arguments.currentState)/>
-        <cfset errorMsgs["currentCity"]=patternValidationObj.validText(arguments.currentCity)/>
-        <cfset errorMsgs["currentPincode"]=patternValidationObj.validNumber(arguments.currentPincode)/>
+    <!---insert user address--->
+    <cffunction  name="insertAddress" access="public" returntype="struct" output="false">
+        <!---defining arguments--->
+        <cfargument  name="userId" type="any" required="true">
+        <cfargument  name="address" type="string" required="true">
+        <cfargument  name="country" type="string" required="true">
+        <cfargument  name="state" type="string" required="true">
+        <cfargument  name="city" type="string" required="true">
+        <cfargument  name="pincode" type="string" required="true">
+        <!---creating a structure for returning purpose. which contains the inserted result and error msg if occurred--->
+        <cfset var insertedSuccessfully={}/>
+        <!---declaring a variable for result of query execution--->
+        <cfset var addressId=''/>
 
-        <cfif arguments.havingAlternativeAddress>
-            <cfset errorMsgs["alternativeAddress"]=patternValidationObj.validText(arguments.alternativeAddress)/>
-            <cfset errorMsgs["alternativeCountry"]=patternValidationObj.validText(arguments.alternativeCountry)/>
-            <cfset errorMsgs["alternativeState"]=patternValidationObj.validText(arguments.alternativeState)/>
-            <cfset errorMsgs["alternativeCity"]=patternValidationObj.validText(arguments.alternativeCity)/>
-            <cfset errorMsgs["alternativePincode"]=patternValidationObj.validNumber(arguments.alternativePincode)/>
-        </cfif>
-        
-        <cfif arguments.bio NEQ ''>
-            <cfset errorMsgs["bio"]=patternValidationObj.validText(arguments.bio)/>
-        </cfif>
-        
-        <!---looping the errorMsgs struct for validation--->
-        <cfloop collection="#errorMsgs#" item="key">
-            <cfif key NEQ 'validatedSuccessfully' and errorMsgs[key] NEQ true>
-                <cfset errorMsgs["validatedSuccessfully"]=false/>
-                <cfbreak>
-            </cfif>
-        </cfloop>
+        <cftry>
+            <cfquery result="addressId">
+                INSERT INTO [dbo].[UserAddress]
+                (userId,address,country,state,city,pincode)
+                VALUES (
+                    <cfqueryparam value=#arguments.userId# cfsqltype='cf_sql_bigint'>,
+                    <cfqueryparam value='#arguments.address#' cfsqltype='cf_sql_varchar'>,
+                    <cfqueryparam value='#arguments.country#' cfsqltype='cf_sql_varchar'>,
+                    <cfqueryparam value='#arguments.state#' cfsqltype='cf_sql_varchar'>,
+                    <cfqueryparam value='#arguments.city#' cfsqltype='cf_sql_varchar'>,
+                    <cfqueryparam value='#arguments.pincode#' cfsqltype='cf_sql_varchar'>
+                )
+            </cfquery>
+        <cfcatch type="any">
+            <!---if an error occurred while inserting then it will be store in the error key of returning structure for
+            further execution--->
+            <cfset insertedSuccessfully.error='#cfcatch.detail#'/>
+        </cfcatch>
+        </cftry>
 
-        <cfif errorMsgs["validatedSuccessfully"]>
-            <cfset var isCommit=''/>
-            <cftransaction>
-                <cftry>
-                    <cfset var updateUserInfo=''/>
-                    <cfquery name="updateUserInfo">
-                        UPDATE [dbo].[User]
-                        SET firstName = <cfqueryparam value='#arguments.firstName#' cfsqltype='cf_sql_varchar'>,
-                            lastName = <cfqueryparam value='#arguments.lastName#' cfsqltype='cf_sql_varchar'>,
-                            emailId = <cfqueryparam value='#arguments.emailAddress#' cfsqltype='cf_sql_varchar'>,
-                            dob = <cfqueryparam value='#arguments.dob#' cfsqltype='cf_sql_date'>, 
-                            password = <cfqueryparam value = '#hash(arguments.password, "SHA-1", "UTF-8")#' cfsqltype='cf_sql_varchar'>,
-                            bio = <cfqueryparam value='#arguments.bio#' cfsqltype='cf_sql_varchar'>
-                        WHERE userId=#session.stloggedinuser.userID#
-                    </cfquery>
+        <cfset insertedSuccessfully.addressId=addressId/>
+        <cfreturn insertedSuccessfully/>
+    </cffunction>
 
-                    <!---updating phone numbers--->
-                    <cfset var updateUserPhoneInfo=''/>
-                    <!---gettting the phone numbers of user--->
-                    <cfset userPhoneNumbers = getMyPhoneNumber(session.stLoggedinuser.userID)/> 
-                    <!---updating the primary phone number--->
-                    <cfquery name='updateUserPhoneInfo'>
-                        UPDATE [dbo].[UserPhoneNumber]
-                        SET phoneNumber = <cfqueryparam value='#arguments.primaryPhoneNumber#' cfsqltype='cf_sql_varchar'>
-                        WHERE userPhoneNumberId = <cfqueryparam value=#userPhoneNumbers.phoneNumber.userPhoneNumberId[1]# cfsqltype='cf_sql_bigint'>
-                    </cfquery>
-                    <!---checking if user have the alternative phone number if yes, will update or insert--->
-                    <cfif userPhoneNumbers.phoneNumber.RecordCount EQ 2> 
-                        <cfquery name='updateUserPhoneInfo'>
-                            UPDATE [dbo].[UserPhoneNumber]
-                            SET phoneNumber = <cfqueryparam value='#arguments.alternativePhoneNumber#' cfsqltype='cf_sql_varchar'>
-                            WHERE userPhoneNumberId =  <cfqueryparam value=#userPhoneNumbers.phoneNumber.userPhoneNumberId[2]# cfsqltype='cf_sql_bigint'>
-                        </cfquery>
-                    <cfelseif arguments.alternativePhoneNumber NEQ ''>
-                        <cfquery name="queryPhoneCredential">
-                            INSERT INTO [dbo].[UserPhoneNumber]
-                            (userId,phoneNumber)
-                            VALUES (
-                                <cfqueryparam value=#session.stLoggedinuser.UserID# cfsqltype='cf_sql_bigint'>,
-                                <cfqueryparam value='#arguments.alternativePhoneNumber#' cfsqltype='cf_sql_varchar'>
-                            )
-                        </cfquery>
-                    </cfif>  
-
-                    <!---updating addresses--->
-                    <cfset var updateUserAddressInfo=''/>
-                    <!---getting the addresses of user--->
-                    <cfset userAddresses = getMyAddress(session.stLoggedinuser.userID)/>
-                    <!---updating the current address--->
-                    <cfquery name='updateUserAddressInfo'>
-                        UPDATE [dbo].[UserAddress]
-                        SET address = <cfqueryparam value='#arguments.currentAddress#' cfsqltype='cf_sql_varchar'>,
-                            country = <cfqueryparam value='#arguments.currentCountry#' cfsqltype='cf_sql_varchar'>,
-                            state = <cfqueryparam value='#arguments.currentState#' cfsqltype='cf_sql_varchar'>,
-                            city = <cfqueryparam value='#arguments.currentCity#' cfsqltype='cf_sql_varchar'>,
-                            pincode = <cfqueryparam value='#arguments.currentPincode#' cfsqltype='cf_sql_varchar'>
-                        WHERE userAddressId = <cfqueryparam value=#userAddresses.address.userAddressId[1]# cfsqltype='cf_sql_bigint'>;
-                    </cfquery>
-                    <cfset errorMsgs.userAddress = userAddresses/>
-                    <cfif userAddresses.address.RecordCount EQ 2>
-                        <cfquery name='updateUserAddressInfo'>
-                            UPDATE [dbo].[UserAddress]
-                            SET address = <cfqueryparam value='#arguments.alternativeAddress#' cfsqltype='cf_sql_varchar'>,
-                                country = <cfqueryparam value='#arguments.alternativeCountry#' cfsqltype='cf_sql_varchar'>,
-                                state = <cfqueryparam value='#arguments.alternativeState#' cfsqltype='cf_sql_varchar'>,
-                                city = <cfqueryparam value='#arguments.alternativeCity#' cfsqltype='cf_sql_varchar'>,
-                                pincode = <cfqueryparam value='#arguments.alternativePincode#' cfsqltype='cf_sql_varchar'>
-                            WHERE userAddressId = <cfqueryparam value=#userAddresses.address.userAddressId[2]# cfsqltype='cf_sql_bigint'>;
-                        </cfquery>
-                    <cfelseif arguments.alternativeAddress NEQ ''>
-                        <cfquery name="queryAddressCredential">
-                            INSERT INTO [dbo].[UserAddress]
-                            (userId,address,country,state,city,pincode)
-                            VALUES (
-                                <cfqueryparam value=#session.stLoggedinuser.UserID# cfsqltype='cf_sql_bigint'>,
-                                <cfqueryparam value='#arguments.alternativeAddress#' cfsqltype='cf_sql_varchar'>,
-                                <cfqueryparam value='#arguments.alternativeCountry#' cfsqltype='cf_sql_varchar'>,
-                                <cfqueryparam value='#arguments.alternativeState#' cfsqltype='cf_sql_varchar'>,
-                                <cfqueryparam value='#arguments.alternativeCity#' cfsqltype='cf_sql_varchar'>,
-                                <cfqueryparam value='#arguments.alternativePincode#' cfsqltype='cf_sql_varchar'>
-                            )
-                        </cfquery>
-                    </cfif> 
-                --->
-
-                    <cftransaction action="commit" />
-                    <cfset isCommit=true />
-                <cfcatch type="any">
-                    <cflog  text="#cfcatch.detail#">
-                </cfcatch>
-                </cftry>
-            </cftransaction>
-		    <cfif isCommit==true>
-                <cfset errorMsgs["validatedSuccessfully"]=true/> 
-                <cfset errorMsgs.commit = isCommit>  
+    <!---function to check if an email address is present or not--->
+    <cffunction  name="isEmailPresent" access="public" output="false" returntype="struct">
+        <!---defining argument--->
+        <cfargument  name="emailId" type="string" required="true"/>
+        <cfset var queryEmail=''/>
+        <cfset isEmailAddressPresent={}/>
+        <cftry>
+            <cfquery name=queryEmail>
+                SELECT userId,emailId
+                FROM [dbo].[User]
+                WHERE emailId=<cfqueryparam value="#arguments.emailId#" cfsqltype="cf_sql_varchar">;
+            </cfquery>
+        <cfcatch type="any">
+            <cfset isEmailAddressPresent.error=#cfcatch.detail#/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(isEmailAddressPresent, "error")>
+            <cfif queryEmail.recordCount GTE 1>
+                <cfset isEmailAddressPresent.isPresent=true/>
+                <cfset isEmailAddressPresent.info=queryEmail/>
             <cfelse>
-                <cfset errorMsgs["validatedSuccessfully"]=false/>
-                <cfset errorMsgs.commit = isCommit>  
-            </cfif>  
+                <cfset isEmailAddressPresent.isPresent=false/>
+            </cfif>
         </cfif>
+        
+        <cfreturn isEmailAddressPresent/>
+    </cffunction>
 
-        <cfreturn errorMsgs/>
+    <!---function to check if an email address is present or not--->
+    <cffunction  name="isPhonePresent" access="public" output="false" returntype="struct">
+        <!---defining argument--->
+        <cfargument name="phoneNumber" type="string" required="true"/>
+        <cfset var queryPhone=''/>
+        <cfset isPhoneNumberPresent={}/>
+        <cftry>
+            <cfquery name=queryPhone>
+                SELECT phoneNumber
+                FROM [dbo].[UserPhoneNumber]
+                WHERE phoneNumber=<cfqueryparam value="#arguments.phoneNumber#" cfsqltype="cf_sql_varchar">;
+            </cfquery>
+        <cfcatch type="any">
+            <cfset isPhoneNumberPresent.error=#cfcatch.detail#/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(isPhoneNumberPresent, "error")>
+            <cfif queryPhone.recordCount GTE 1>
+                <cfset isPhoneNumberPresent.isPresent=true/>
+            <cfelse>
+                <cfset isPhoneNumberPresent.isPresent=false/>
+            </cfif>
+        </cfif>
+        
+        <cfreturn isPhoneNumberPresent/>
+    </cffunction>
+
+    <!---function to check if an email address is present or not--->
+    <cffunction  name="isUserPresent" access="public" output="false" returntype="struct">
+        <!---defining argument--->
+        <cfargument name="username" type="string" required="true"/>
+        <cfset var queryUser=''/>
+        <cfset isUsernamePresent={}/>
+        <cftry>
+            <cfquery name=queryUser>
+                SELECT username
+                FROM [dbo].[User]
+                WHERE username=<cfqueryparam value="#arguments.username#" cfsqltype="cf_sql_varchar">;
+            </cfquery>
+        <cfcatch type="any">
+            <cfset isUsernamePresent.error=#cfcatch.detail#/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(isUsernamePresent, "error")>
+            <cfif queryUser.recordCount GTE 1>
+                <cfset isUsernamePresent.isPresent=true/>
+            <cfelse>
+                <cfset isUsernamePresent.isPresent=false/>
+            </cfif>
+        </cfif>
+        
+        <cfreturn isUsernamePresent/>
     </cffunction>
 
 

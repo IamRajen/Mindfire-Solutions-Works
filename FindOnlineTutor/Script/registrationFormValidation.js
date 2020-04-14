@@ -117,8 +117,7 @@ $(document).ready(function()
                         text: "Some of the internal function fails to register. Please try after some time!!",
                         icon: "error",
                         button: "Ok",
-                    });
-                
+                    }); 
                 },
                 data:{
                         "firstName": $("#firstName").val(),
@@ -162,30 +161,31 @@ $(document).ready(function()
                     //else the error is been rectified and message been shown 
                     else
                     {
-                        var showErrorModel=false;
-                        console.log("called 2");
-                        for (var key in errorMsgs) {
-                            if(key!="validatedSuccessfully" && errorMsgs[key] !="")
-                            {
-                                inputFields.get(key).errorMsg=errorMsgs[key];
-                                setErrorBorder(inputFields.get(key));
-                                showErrorModel=true;
-                            } 
-                        }
-                        if(showErrorModel)
-                        {
-                            swal({
-                                title: "Registration Fails!!",
-                                text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
-                                icon: "error",
-                                button: "Ok",
-                            });
-                        }
-                        else 
+                        delete errorMsgs['validatedSuccessfully'];
+                        if(errorMsgs.hasOwnProperty("serverError"))
                         {
                             swal({
                                 title: "Registration Fails!!",
                                 text: "Registration fails due to some server problem. Please, try after some time!!",
+                                icon: "error",
+                                button: "Ok",
+                            });
+                        }
+                        else
+                        {
+                            delete errorMsgs['serverError'];
+                            for(var key in errorMsgs) 
+                            {
+                                if(errorMsgs[key].hasOwnProperty("MSG"))
+                                {
+                                    inputFields.get(key).errorMsg=errorMsgs[key]["MSG"];
+                                    setErrorBorder(inputFields.get(key));
+                                    showErrorModel=true;
+                                } 
+                            }
+                            swal({
+                                title: "Registration Fails!!",
+                                text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
                                 icon: "error",
                                 button: "Ok",
                             });
@@ -351,13 +351,30 @@ function checkEmailId(element)
         url:"Components/validation.cfc?method=validateEmail",
         data: "usrEmail="+text,
         cache:false,
+        error: function(){
+            swal({
+                title: "validation Fails!!",
+                text: "Some of the server's function fails to vaidate. Please try after some time!!",
+                icon: "error",
+                button: "Ok",
+            }); 
+        },
         success: function(error) {
             error=JSON.parse(error);
-            if(error)
+            if(error.hasOwnProperty("ERROR"))
             {
-                object.errorMsg=error;
+                swal({
+                    title: "failed to validate Email address!!",
+                    text: "Some of the server's function fails to validate. Please try after some time!!",
+                    icon: "error",
+                    button: "Ok",
+                }); 
+            }
+            else if(error.hasOwnProperty("MSG"))
+            {
+                object.errorMsg=error.MSG;
                 setErrorBorder(object);
-                return;
+                return;  
             }
         }
     });
@@ -396,13 +413,30 @@ function checkPhoneNumber(element)
         url:"Components/validation.cfc?method=validatePhoneNumber",
         data: "usrPhoneNumber="+text,
         cache:false,
+        error: function(){
+            swal({
+                title: "validation Fails!!",
+                text: "Some of the server's function fails to vaidate. Please try after some time!!",
+                icon: "error",
+                button: "Ok",
+            });  
+        },
         success: function(error) {
-            error=JSON.parse(error)
-            if(error)
+            error=JSON.parse(error);
+            if(error.hasOwnProperty("ERROR"))
             {
-                object.errorMsg=error;
+                swal({
+                    title: "failed to validate Phone Number!!",
+                    text: "Some of the server's function fails to validate. Please try after some time!!",
+                    icon: "error",
+                    button: "Ok",
+                }); 
+            }
+            else if(error.hasOwnProperty("MSG"))
+            {
+                object.errorMsg=error.MSG;
                 setErrorBorder(object);
-                return;
+                return;  
             }
         }
     });
@@ -492,15 +526,32 @@ function checkUsername(element)
     $.ajax({
         type:"POST",
         url:"Components/validation.cfc?method=validateUsername",
-        data: "usrName="+text,
+        data: "usrUsername="+text,
         cache:false,
+        error: function(){
+            swal({
+                title: "validation Fails!!",
+                text: "Some of the server's function fails to vaidate. Please try after some time!!",
+                icon: "error",
+                button: "Ok",
+            });  
+        },
         success: function(error) {
             error=JSON.parse(error);
-            if(error)
+            if(error.hasOwnProperty("ERROR"))
             {
-                object.errorMsg=error;
+                swal({
+                    title: "failed to validate username!!",
+                    text: "Some of the server's function fails to validate. Please try after some time!!",
+                    icon: "error",
+                    button: "Ok",
+                }); 
+            }
+            else if(error.hasOwnProperty("MSG"))
+            {
+                object.errorMsg=error.MSG;
                 setErrorBorder(object);
-                return;
+                return;  
             }
         }
     });
