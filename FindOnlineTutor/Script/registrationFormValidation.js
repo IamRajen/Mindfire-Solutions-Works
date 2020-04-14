@@ -23,6 +23,14 @@ var patternExperience=/^[0-9]+$/;
 //document ready function
 $(document).ready(function()
 {
+    window.addEventListener("pageshow", function ( event ) {
+        var historyTraversal = event.persisted || 
+                               (typeof window.performance!="undefined" && window.performance.navigation.type===2);
+        if (historyTraversal) {
+          // Handle page restore.
+          window.location.reload(true);
+        }
+    });
     inputFields.set("firstName",{id:"firstName", errorMsg:"Please Provide Your Name", value:""});
     inputFields.set("lastName",{id:"lastName", errorMsg:"Please Provide Your Last Name", value:""});
     inputFields.set("emailAddress",{id:"emailAddress", errorMsg:"Mandatory Field!! Provide EmailId", value:""});

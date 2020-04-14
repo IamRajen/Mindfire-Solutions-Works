@@ -133,7 +133,7 @@ Functionality: This file helps to validate and update the user profile.
                     <!---updating addresses--->
 
                     <!---getting the addresses of user--->
-                    <cfset userAddresses = getMyAddress(session.stLoggedinuser.userID)/>
+                    <cfset userAddresses = databaseServiceObj.getMyAddress(session.stLoggedinuser.userID)/>
                     <!---updating the current address--->
                     <cfset var addressInfoUpdate=databaseServiceObj.updateAddress(
                         userAddresses.address.userAddressId[1], arguments.currentAddress, arguments.currentCountry,
@@ -165,7 +165,7 @@ Functionality: This file helps to validate and update the user profile.
                     <cftransaction action="commit" />
                     <cfset isCommit=true />
                 <cfcatch type="any">
-                    <cflog  text="#cfcatch.detail#">
+                    <cflog  text="#cfcatch#">
                 </cfcatch>
                 </cftry>
             </cftransaction>
@@ -181,8 +181,8 @@ Functionality: This file helps to validate and update the user profile.
         <cfreturn errorMsgs/>
     </cffunction>
 
-    <!---validating the email address for updation--->
-    <cffunction  name="validateEmail" access="remote" output="false" returntype="struct">
+    <!---validating the email address for update--->
+    <cffunction  name="validateEmail" access="remote" output="false" returntype="struct" returnformat="json">
         <!---defining arguments--->
         <cfargument  name="emailId" type="string" required="true"/>
         <!---declaring a structure for returing error msgs--->
@@ -195,14 +195,50 @@ Functionality: This file helps to validate and update the user profile.
         <cfelseif NOT patternValidationObj.validEmail(email)>
             <cfset errorMsg.msg="Invalid Email Address"/>
         <cfelse>
-            <cfset var emailPresent = databaseServiceObj.isEmailPresent(email)/>
-            <cfif structKeyExists(emailPresent, "error")>
-                <cfthrow detail = '#emailPresent.error#'>
-            <cfelseif emailPresent.isPresent=true and emailPresent.info.userId[1] NEQ #session.stLoggedinUser.userID#>
-                <cfset errorMsg.msg="Email address already present"/>
-            </cfif>
+            <cftry>
+                <cfset var emailPresent = databaseServiceObj.isEmailPresent(email)/>
+                <cfif structKeyExists(emailPresent, "error")>
+                    <cfthrow detail = '#emailPresent.error#'>
+                <cfelseif (emailPresent.isPresent) and (emailPresent.info.userId[1] NEQ #session.stLoggedinuser.userID#)>
+                    <cfset errorMsg.msg="Email address already present"/>
+                </cfif>
+            <cfcatch type="any">
+                <cfset errorMsg.error="#cfcatch#"/>
+            </cfcatch>
+            </cftry>
         </cfif>
+
         <cfreturn errorMsg/> 
+    </cffunction>
+
+    <!---validating the phone Number for update--->
+    <cffunction  name="validatePhone" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---defining the argument--->
+        <cfargument  name="phoneNumber" type="string" required="true"/>
+        <!---declaring a structure for returning error msgs--->
+        <cfset var errorMsg={}/>
+        <!---declaring a variable for further usage--->
+        <cfset var phone=trim(arguments.phoneNumber)/>
+        <!---validation starts here--->
+        <cfif patternValidationObj.isEmpty(phone)>
+            <cfset errorMsg.msg="Mandatory Field!!"/>
+        <cfelseif NOT patternValidationObj.validNumber(phone)>
+            <cfset errormsg.msg="Invalid Phone Number.Only numbers allowed.">
+        <cfelse>
+            <cftry>
+                <cfset var phonePresent = databaseServiceObj.isPhonePresent(phone)/>
+                <cfif structKeyExists(phonePresent, "error")>
+                    <cfthrow detail = #phonePresent.error#/>
+                <cfelseif (phonePresent.isPresent) and (phonePresent.info.userId[1] NEQ #session.stLoggedinuser.userID#)>
+                    <cfset errorMsg.msg = "Phone number already exists"/>
+                </cfif>
+            <cfcatch type="any">
+                <cfset errorMsg.error="#cfcatch#"/>
+            </cfcatch>
+            </cftry>
+        </cfif>
+
+        <cfreturn errorMsg/>
     </cffunction>
 </cfcomponent>
     

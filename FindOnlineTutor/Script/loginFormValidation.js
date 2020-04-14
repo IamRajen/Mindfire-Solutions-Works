@@ -8,7 +8,8 @@ Functionality: This javascript file helps the login page to validated and log th
 
 //Initiatization of credential
 var inputFields=new Map();
-$(document).ready(function(){
+$(document).ready(function()
+{
     generateCaptcha();
     //adding login button..
     $("#buttonDiv").append($("<input>").attr({"id":"submitButton","type":"submit","value":"SUBMIT","name":"submitButton"}).addClass("btn btn-danger btn-block"));

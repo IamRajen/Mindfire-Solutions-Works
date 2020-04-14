@@ -11,6 +11,7 @@ Functionality: This file has function that validated the registration form and i
     <!---onsubmit validation--->
     <cfset patternValidationObj = createObject("component","patternValidation")/>
     <cfset databaseServiceObj = createObject("component","databaseService")/>
+    
     <cffunction  name="validateForm" access="remote" output="false" returnformat="json" returntype="struct">
 
         <!---defining arguments--->
@@ -160,7 +161,7 @@ Functionality: This file has function that validated the registration form and i
                     </cfif>
                 </cfif>
             <cfcatch type="any">
-                <cflog text = "Email validation error: #cfcatch.detail#"/>
+                <cflog text = "Email validation error: #cfcatch#"/>
             </cfcatch>
             </cftry>   
         </cfif>
@@ -194,7 +195,7 @@ Functionality: This file has function that validated the registration form and i
                     </cfif>
                 </cfif>
             <cfcatch type="any">
-                <cflog text = "Phone Number validation error: #cfcatch.detail#"/>
+                <cflog text = "Phone Number validation error: #cfcatch#"/>
             </cfcatch>
             </cftry>   
         </cfif>
@@ -228,7 +229,7 @@ Functionality: This file has function that validated the registration form and i
                     </cfif>
                 </cfif>
             <cfcatch type="any">
-                <cflog text = "Username validation error: #cfcatch.detail#"/>
+                <cflog text = "Username validation error: #cfcatch#"/>
             </cfcatch>
             </cftry>   
         </cfif>

@@ -18,13 +18,9 @@ Functionality: This file show the profile data to user and allows to modify it.
     </noscript>
   
     <!---creating a databaseService object for retriving user profile--->
-    <cfset databaseObj = createObject("Component","FindOnlineTutor/Components/databaseService")/>
+    <cfset databaseServiceObj = createObject("Component","FindOnlineTutor/Components/databaseService")/>
     <!---calling the function for profile data--->
-    <cfset profileInfo = databaseObj.getMyProfile(#session.stloggedinuser.userID#)/>
-    <cfdump  var="#(profileInfo)#">
-
-     <cfset AddressInfo = databaseObj.getMyAddress(#session.stloggedinuser.userID#)/>
-    <cfdump  var="#(AddressInfo.address.useraddressid[1])#">
+    <cfset profileInfo = databaseServiceObj.getMyProfile(#session.stloggedinuser.userID#)/>
    
     <!---container containing all required data--->
     <div class="container-fuild w-100 mx-auto mb-5 shadow rounded bg-light">
@@ -54,7 +50,7 @@ Functionality: This file show the profile data to user and allows to modify it.
             </div>
 
             <!---Form Field--->
-            <form id="user<cfoutput>#session.stloggedinuser.userID#</cfoutput>" class="disabledbutton pb-5" id="form-update" method="POST">
+            <form id="user<cfoutput>#session.stloggedinuser.userID#</cfoutput>" class="disabledbutton pb-5" id="form-update" method="POST" action="profile.cfm">
 
                 <div class="alert alert-info pt-3">
                     <p class="text-info text-center font-weight-bold">

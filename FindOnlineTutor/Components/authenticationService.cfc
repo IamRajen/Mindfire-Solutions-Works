@@ -54,7 +54,7 @@ Functionality: This file contains the functions which help to login the user in 
 				WHERE username = <cfqueryparam value="#arguments.username#" cfsqltype="cf_sql_varchar" /> AND password = <cfqueryparam value="#hashPassword#" cfsqltype="cf_sql_varchar" />
 			</cfquery>
 		<cfcatch type="any">
-            <cflog text="error: #cfcatch.detail#">
+            <cflog text="error: #cfcatch#">
         </cfcatch>
         </cftry>
 		

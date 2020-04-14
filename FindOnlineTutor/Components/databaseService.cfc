@@ -22,9 +22,12 @@ Functionality: This file has services/functions related to the data in the datab
             </cfquery>
 
             <cfset userPhoneNumber = getMyPhoneNumber(#arguments.userId#)/>
+            <cfif structKeyExists(userPhoneNumber, "error")>
+                <cfthrow detail='#userPhoneNumber.error#'/>
+            </cfif>
 
         <cfcatch type="any">
-            <cflog  text="#arguments.userId# : #cfcatch.detail#">
+            <cflog  text="#arguments.userId# : #cfcatch#">
             <cfset profileInfo.error="Some Error occurred while fetching the profile data. Please, try after sometimes!!"/>
         </cfcatch>
 
@@ -49,7 +52,7 @@ Functionality: This file has services/functions related to the data in the datab
                 WHERE userId = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_bigint" />
             </cfquery>
         <cfcatch type="any">
-            <cflog  text="#arguments.userId# : #cfcatch.detail#">
+            <cflog  text="#arguments.userId# : #cfcatch#">
             <cfset userAddress.error="Some Error occurred while fetching the data. Please, try after sometimes!!"/>
         </cfcatch>
         </cftry>
@@ -69,7 +72,7 @@ Functionality: This file has services/functions related to the data in the datab
                 WHERE userId = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_bigint" />
             </cfquery>
         <cfcatch type="any">
-            <cflog  text="#arguments.userId# : #cfcatch.detail#">
+            <cflog  text="#arguments.userId# : #cfcatch#">
             <cfset userPhoneNumber.error="Some Error occurred while fetching the phone numbers. Please, try after sometimes!!"/>
         </cfcatch>
         </cftry>
@@ -88,7 +91,7 @@ Functionality: This file has services/functions related to the data in the datab
                 WHERE username=<cfqueryparam value="#arguments.username#" cfsqltype='cf_sql_varchar'>
             </cfquery>
         <cfcatch type="any">
-            <cflog text="#arguments.username# : #cfcatch.detail#">
+            <cflog text="#arguments.username# : #cfcatch#">
             <cfset userId.error="failed to retrieve user id. Please, try after sometime!!"/>
         </cfcatch>
         </cftry>
@@ -120,7 +123,7 @@ Functionality: This file has services/functions related to the data in the datab
                 WHERE userId=#session.stloggedinuser.userID#
             </cfquery>
         <cfcatch type="any">
-            <cfset updatedSuccessfully.error="#cfcatch.detail#"/>
+            <cfset updatedSuccessfully.error="#cfcatch#"/>
         </cfcatch>
         </cftry>
         <cfreturn updatedSuccessfully/>
@@ -150,7 +153,7 @@ Functionality: This file has services/functions related to the data in the datab
                 WHERE userAddressId = <cfqueryparam value=#arguments.userAddressId# cfsqltype='cf_sql_bigint'>;
             </cfquery>
         <cfcatch type="any">
-            <cfset updatedSuccessfully.error="#cfcatch.detail#"/>
+            <cfset updatedSuccessfully.error="#cfcatch#"/>
         </cfcatch>
         </cftry>
         <cfreturn updatedSuccessfully/>
@@ -172,7 +175,7 @@ Functionality: This file has services/functions related to the data in the datab
                 WHERE userPhoneNumberId = <cfqueryparam value=#arguments.userPhoneNumberId# cfsqltype='cf_sql_bigint'>
             </cfquery>
         <cfcatch type="any">
-            <cfset updatedSuccessfully.error="#cfcatch.detail#"/>
+            <cfset updatedSuccessfully.error="#cfcatch#"/>
         </cfcatch>
         </cftry>
         <cfreturn updatedSuccessfully/>
@@ -268,7 +271,7 @@ Functionality: This file has services/functions related to the data in the datab
             <cfcatch type="any">
                 <!---if some error occured while transaction then the whole transaction will be rollback--->
                 <cftransaction action="rollback" />
-                <cflog text="#cfcatch.detail#">
+                <cflog text="#cfcatch#">
             </cfcatch>
             </cftry>
         </cftransaction>
@@ -299,7 +302,7 @@ Functionality: This file has services/functions related to the data in the datab
         <cfcatch type="any">
             <!---if an error occurred while inserting then it will be store in the error key of returning structure for
             further execution--->
-            <cfset insertedSuccessfully.error='#cfcatch.detail#'/>
+            <cfset insertedSuccessfully.error='#cfcatch#'/>
         </cfcatch>
         </cftry>
 
@@ -338,7 +341,7 @@ Functionality: This file has services/functions related to the data in the datab
         <cfcatch type="any">
             <!---if an error occurred while inserting then it will be store in the error key of returning structure for
             further execution--->
-            <cfset insertedSuccessfully.error='#cfcatch.detail#'/>
+            <cfset insertedSuccessfully.error='#cfcatch#'/>
         </cfcatch>
         </cftry>
 
@@ -359,7 +362,7 @@ Functionality: This file has services/functions related to the data in the datab
                 WHERE emailId=<cfqueryparam value="#arguments.emailId#" cfsqltype="cf_sql_varchar">;
             </cfquery>
         <cfcatch type="any">
-            <cfset isEmailAddressPresent.error=#cfcatch.detail#/>
+            <cfset isEmailAddressPresent.error=#cfcatch#/>
         </cfcatch>
         </cftry>
         <cfif NOT structKeyExists(isEmailAddressPresent, "error")>
@@ -382,17 +385,18 @@ Functionality: This file has services/functions related to the data in the datab
         <cfset isPhoneNumberPresent={}/>
         <cftry>
             <cfquery name=queryPhone>
-                SELECT phoneNumber
+                SELECT userId,phoneNumber
                 FROM [dbo].[UserPhoneNumber]
                 WHERE phoneNumber=<cfqueryparam value="#arguments.phoneNumber#" cfsqltype="cf_sql_varchar">;
             </cfquery>
         <cfcatch type="any">
-            <cfset isPhoneNumberPresent.error=#cfcatch.detail#/>
+            <cfset isPhoneNumberPresent.error=#cfcatch#/>
         </cfcatch>
         </cftry>
         <cfif NOT structKeyExists(isPhoneNumberPresent, "error")>
             <cfif queryPhone.recordCount GTE 1>
                 <cfset isPhoneNumberPresent.isPresent=true/>
+                <cfset isPhoneNumberpresent.info=queryPhone/>
             <cfelse>
                 <cfset isPhoneNumberPresent.isPresent=false/>
             </cfif>
@@ -414,7 +418,7 @@ Functionality: This file has services/functions related to the data in the datab
                 WHERE username=<cfqueryparam value="#arguments.username#" cfsqltype="cf_sql_varchar">;
             </cfquery>
         <cfcatch type="any">
-            <cfset isUsernamePresent.error=#cfcatch.detail#/>
+            <cfset isUsernamePresent.error=#cfcatch#/>
         </cfcatch>
         </cftry>
         <cfif NOT structKeyExists(isUsernamePresent, "error")>

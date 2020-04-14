@@ -23,6 +23,14 @@ var patternExperience=/^[0-9]+$/;
 //document ready function
 $(document).ready(function()
 {
+    window.addEventListener("pageshow", function ( event ) {
+        var historyTraversal = event.persisted || 
+                               (typeof window.performance!="undefined" && window.performance.navigation.type===2);
+        if (historyTraversal) {
+          // Handle page restore.
+          window.location.reload(true);
+        }
+      });
     //Adding submit button..
     $("#buttonDiv").html($("<input>").attr({"id":"submitButton","type":"submit","value":"UPDATE","name":"submitButton"}).addClass("btn btn-danger btn-block"));
     //setting the inputfields keys and values..
@@ -179,8 +187,8 @@ $(document).ready(function()
                     if(errorMsgs["validatedSuccessfully"] == true)
                     { 
                         swal({
-                            title: "Registration Successfull!!",
-                            text: "Thank you for Registering",
+                            title: "Successfully Updated!!",
+                            text: "Your profile has been successfully updated",
                             icon: "success",
                             buttons: false,
                         })
@@ -390,13 +398,21 @@ function checkEmailId(element)
         cache:false,
         success: function(error) {
             error=JSON.parse(error);
-            console.log(error);
-            // if(error.has)
-            // {
-            //     object.errorMsg=error;
-            //     setErrorBorder(object);
-            //     return;
-            // }
+            if(error.hasOwnProperty("ERROR"))
+            {
+                swal({
+                    title: "failed to validate Email address!!",
+                    text: "Some of the server's function fails to validate. Please try after some time!!",
+                    icon: "error",
+                    button: "Ok",
+                })
+            }
+            else if(error.hasOwnProperty("MSG"))
+            {
+                object.errorMsg=error['MSG'];
+                setErrorBorder(object);
+                return;
+            }
         }
     });
     setSuccessBorder(object);
@@ -431,14 +447,23 @@ function checkPhoneNumber(element)
     }
     $.ajax({
         type:"POST",
-        url:"Components/validation.cfc?method=validatePhoneNumber",
-        data: "usrPhoneNumber="+text,
+        url:"Components/updateUserProfile.cfc?method=validatePhone",
+        data: "phoneNumber="+text,
         cache:false,
         success: function(error) {
             error=JSON.parse(error)
-            if(error)
+            if(error.hasOwnProperty("ERROR"))
             {
-                object.errorMsg=error;
+                swal({
+                    title: "failed to validate Phone Number!!",
+                    text: "Some of the server's function fails to validate. Please try after some time!!",
+                    icon: "error",
+                    button: "Ok",
+                })
+            }
+            else if(error.hasOwnProperty("MSG"))
+            {
+                object.errorMsg=error['MSG'];
                 setErrorBorder(object);
                 return;
             }
