@@ -80,4 +80,18 @@ canvas
   background-color: rgba(255, 0, 0, 0.616);
 }
 
+.section-div
+{
+  background-color: #101820FF;
+  height: 170px;
+  border-radius: 25px;
+  padding: 20px;
+}
+a:hover{
+  text-decoration: none;
+}
+.heading-color
+{
+  color: #F2AA4CFF;
+}
 

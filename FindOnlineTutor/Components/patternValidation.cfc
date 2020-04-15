@@ -17,6 +17,16 @@ Functionality: This file contains some functions which validate a specific patte
         </cfif>  
         <cfreturn valid/>
     </cffunction>
+
+    <!---function for checking empty string--->
+    <cffunction  name="isBit" access="public" returntype="boolean">
+        <cfargument  name="number" type="numeric" required="true">
+        <cfset var valid=false/>
+        <cfif arguments.number EQ 1 OR arguments.number EQ 0>
+            <cfset valid=true/>
+        </cfif>  
+        <cfreturn valid/>
+    </cffunction>
     <!---function to validate email pattern--->
     <cffunction  name="validEmail"  access="public" output="false" returntype="boolean">
         <cfargument  name="email" type="string" required="true"/>

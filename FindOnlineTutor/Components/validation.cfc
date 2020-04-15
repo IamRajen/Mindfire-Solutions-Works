@@ -11,7 +11,7 @@ Functionality: This file has function that validated the registration form and i
     <!---onsubmit validation--->
     <cfset patternValidationObj = createObject("component","patternValidation")/>
     <cfset databaseServiceObj = createObject("component","databaseService")/>
-    
+
     <cffunction  name="validateForm" access="remote" output="false" returnformat="json" returntype="struct">
 
         <!---defining arguments--->
@@ -322,7 +322,7 @@ Functionality: This file has function that validated the registration form and i
         <!---declaring variable for error msg--->
         <cfset var errorMsg ={}/>
         <!---validation starts here--->
-        <cfif NOT patterValidationObj.validNumber(experience)>
+        <cfif NOT patternValidationObj.validNumber(experience)>
             <cfset errorMsg.msg="Invalid Experience. Only Integer allowed."/>
         <cfelseif experience GT 99 and experience LT 0>
             <cfset errorMsg.msg="Experience must be within 0 to 99"/>

@@ -1,9 +1,9 @@
 <!---
 Project Name: FindOnlineTutor.
 File Name: header.cfm.
-Created In: 28th Mar 2020
+Created In: 15th Apr 2020
 Created By: Rajendra Mishra.
-Functionality: It is a header file which is included probably in every pages.
+Functionality: It is a header file which is included probably in Teacher section pages.
 --->
 <cfif thistag.executionMode EQ 'start'>
 	<!DOCTYPE html>
@@ -48,21 +48,14 @@ Functionality: It is a header file which is included probably in every pages.
 					<div class="collapse navbar-collapse " id="navbarSupportedContent">
 					<ul class="navbar-nav ml-auto">
 						<li class="nav-item mx-2">
-							<a class="nav-link text-light" href="index.cfm">Home</a>
+							<a class="nav-link text-light" href="../index.cfm">Home</a>
 						</li>
 						<cfif structKeyExists(session, "stLoggedInUser") >
 							<li class="nav-item mx-2">
-								<a class="nav-link text-light" href="profile.cfm">Profile</a>
+								<a class="nav-link text-light" href="../profile.cfm">Profile</a>
 							</li>
 							<li class="nav-item mx-2">
 								<a class="nav-link text-light" href="/assignments_mindfire/FindOnlineTutor/index.cfm?logout">Logout</a>
-							</li>
-						<cfelse>
-							<li class="nav-item mx-2">
-								<a class="nav-link text-light" href="login.cfm">LogIn</a>
-							</li>
-							<li class="nav-item mx-2">
-								<a class="btn btn-danger my-2 my-sm-0 pl-3 pr-3" href="signup.cfm">Register</a>
 							</li>
 						</cfif>
 					

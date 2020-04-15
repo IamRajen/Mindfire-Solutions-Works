@@ -21,36 +21,33 @@ Functionality: This file show the profile data to user and allows to modify it.
     <cfset databaseServiceObj = createObject("Component","FindOnlineTutor/Components/databaseService")/>
     <!---calling the function for profile data--->
     <cfset profileInfo = databaseServiceObj.getMyProfile(#session.stloggedinuser.userID#)/>
-   
-    <!---container containing all required data--->
-    <div class="container-fuild w-100 mx-auto mb-5 shadow rounded bg-light">
+    <!---Profile Loading Error--->
+    <cfif structKeyExists(profileInfo, "error")>
+        <div class="alert alert-danger pt-3 pb-3 rounded-top">
+            <p class="text-danger text-center">
+                <cfoutput>
+                    #profileInfo.error#
+                </cfoutput>
+            </p>
+        </div>
 
-        <!---Profile Loading Error--->
-        <cfif structKeyExists(profileInfo, "error")>
-            <div class="alert alert-danger pt-3 pb-3 rounded-top">
-                <p class="text-danger text-center">
-                    <cfoutput>
-                        #profileInfo.error#
-                    </cfoutput>
-                </p>
-            </div>
+    <!---if profile perfectly get loaded else part will get executed--->
+    <cfelse>
 
-        <!---if profile perfectly get loaded else part will get executed--->
-        <cfelse>
+        <!---Initializing the primary phone number--->
+        <cfset  primaryPhoneNumber = #profileInfo.USERPHONENUMBER.PHONENUMBER.phoneNumber[1]#/>
+        <!---Initializing the alternative phone number--->
+        <cfset  alternativePhoneNumber = #profileInfo.USERPHONENUMBER.PHONENUMBER.phoneNumber[2]#/>
 
-            <!---Initializing the primary phone number--->
-            <cfset  primaryPhoneNumber = #profileInfo.USERPHONENUMBER.PHONENUMBER.phoneNumber[1]#/>
-            <!---Initializing the alternative phone number--->
-            <cfset  alternativePhoneNumber = #profileInfo.USERPHONENUMBER.PHONENUMBER.phoneNumber[2]#/>
-
+        <!---container containing all required user details data--->
+        <div class="container-fuild w-100 mx-auto mb-5 shadow rounded bg-light">
             <!---Heading Field--->
             <div class="bg-dark pt-3 pb-3 rounded-top text-center">
                 <span id="headingUserId" class="text-light text-capitalize d-inline"><cfoutput>#session.stloggedinuser.userID#</cfoutput></span>
                 <p class="text-light d-inline" >   Your Profile</p>
             </div>
-
-            <!---Form Field--->
-            <form id="user<cfoutput>#session.stloggedinuser.userID#</cfoutput>" class="disabledbutton pb-5" id="form-update" method="POST" action="profile.cfm">
+            <!---Form Field for user details--->
+            <form id="formUserDetail" class="disabledbutton pb-5 mb-5" id="form-update" method="POST" action="profile.cfm">
 
                 <div class="alert alert-info pt-3">
                     <p class="text-info text-center font-weight-bold">
@@ -85,41 +82,6 @@ Functionality: This file show the profile data to user and allows to modify it.
                         </div>
                     </div>
 
-
-                
-                <!---Phone Number Field--->
-                    <div class="row mt-4 mr-2 ml-2 ">
-                        <div class="col-md-3">
-                            <label class="control-label"  for="primaryPhoneNumber">Phone Number:<span class="text-danger">*</span></label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" id="primaryPhoneNumber" name="primaryPhoneNumber" placeholder="Primary Phone Number" class="form-control d-block" onblur="checkPhoneNumber(this)" value="<cfoutput>#primaryPhoneNumber#</cfoutput>">
-                            <span class="text-danger small float-left"></span>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" id="alternativePhoneNumber" name="alternativePhoneNumber" placeholder="Alternative Phone Number" class="form-control d-block" onblur="checkPhoneNumber(this)" value="<cfoutput>#alternativePhoneNumber#</cfoutput>">
-                            <span class="text-danger small float-left"></span>
-                        </div>
-                    </div>
-
-
-                
-                <!---Password Field--->
-                    <div class="row mt-4 mr-2 ml-2 ">
-                        <div class="col-md-3">
-                            <label class="control-label"  for="password">Create Password:<span class="text-danger">*</span></label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="password" id="password" name="password" placeholder="Create Password" class="form-control d-block" onblur="checkPassword(this)" value="<cfoutput>#profileInfo.USERDETAILS.password#</cfoutput>">
-                            <span class="text-danger small float-left"></span>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter Password" class="form-control d-block" onblur="checkPassword(this)" value="<cfoutput>#profileInfo.USERDETAILS.password#</cfoutput>">
-                            <span class="text-danger small float-left"></span>
-                        </div>
-                    </div>
-
-
                 <!---DOB Field--->
                     <div class="row mt-4 mr-2 ml-2 ">
                         <div class="col-md-3">
@@ -131,8 +93,174 @@ Functionality: This file show the profile data to user and allows to modify it.
                         </div>
                     </div>
 
+                <!---Bio field--->
+                    <div class="row mt-4 mr-2 ml-2">
+                        <div class="col-md-3">
+                            <label class="control-label"  for="bio">Bio (optional):</label>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea type="text" id="bio" name="bio" placeholder="" class="form-control d-block" rows="4" onblur="checkBio(this)"><cfoutput>#profileInfo.USERDETAILS.BIO#</cfoutput></textarea>
+                            <span class="text-danger small float-left"></span>
+                        </div>
+                    </div>
 
-                <!---Current Address Field--->
+
+                
+                <!---Submit Section--->
+                    <div class="row mt-5 mr-2 ml-2">
+                        <div class="col-md-12" id="buttonUserDetailDiv">
+                        </div>
+                    </div>
+                <!---Interested location field--->
+                
+            </form>
+
+        </div>
+        
+        <div class="row mt-4 mr-2 ml-2 ">
+            <div class="col-md-6">
+                <!---container containing all user phone data--->
+                <div class="container-fuild w-100 mx-auto mb-5 shadow-lg rounded bg-light">
+                    <!---Heading Field--->
+                    <div class="bg-dark pt-3 pb-3 mt-5 rounded-top text-center">
+                        <span id="headingUserId" class="text-light text-capitalize d-inline" ><cfoutput>#session.stloggedinuser.userID#</cfoutput></span>
+                        <p class="text-light d-inline" >   Your Phone Numbers</p>
+                    </div>
+                    <!---Form Field for phone details--->
+                    <form id="formUserPhoneDetail" class="disabledbutton pb-5 mb-5" id="form-update" method="POST" action="profile.cfm">
+
+                        <div class="alert alert-info pt-3">
+                            <p class="text-info text-center font-weight-bold">
+                                If you want to REMOVE the ALTERNATIVE fields just keep it BLANK.
+                            </p>
+                        </div>
+                        
+                        <!---Phone Number Field--->
+                            <div class="row mt-4 mr-2 ml-2 ">
+                                <div class="col-md-6">
+                                    <label class="control-label"  for="primaryPhoneNumber">Primary Phone Number:<span class="text-danger">*</span></label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" id="primaryPhoneNumber" name="primaryPhoneNumber" placeholder="Primary Phone Number" class="form-control d-block" onblur="checkPhoneNumber(this)" value="<cfoutput>#primaryPhoneNumber#</cfoutput>">
+                                    <span class="text-danger small float-left"></span>
+                                </div>
+                                
+                            </div>
+                            <div class="row mt-4 mr-2 ml-2 ">
+                                <div class="col-md-6">
+                                    <label class="control-label"  for="primaryPhoneNumber">Alternative Phone Number:<span class="text-danger">*</span></label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" id="alternativePhoneNumber" name="alternativePhoneNumber" placeholder="Alternative Phone Number" class="form-control d-block" onblur="checkPhoneNumber(this)" value="<cfoutput>#alternativePhoneNumber#</cfoutput>">
+                                    <span class="text-danger small float-left"></span>
+                                </div>
+                            </div>
+
+                        
+                        <!---Submit Section--->
+                            <div class="row mt-5 mr-2 ml-2">
+                                <div class="col-md-12" id="buttonUserPhoneDetailDiv">
+                                </div>
+                            </div>
+                        <!---Interested location field--->
+                        
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <!---container containing all user Interest or falicities--->
+                <div class="container-fuild w-100 mx-auto mb-5 shadow rounded bg-light">
+
+                    <!---Heading Field--->
+                    <div class="bg-dark pt-3 pb-3 mt-5 rounded-top text-center">
+                        <span id="headingUserId" class="text-light text-capitalize d-inline"><cfoutput>#session.stloggedinuser.userID#</cfoutput></span>
+                        <p class="text-light d-inline" >
+                            <cfif isUserInRole('Teacher')>
+                                <cfoutput>Facilities You Provided</cfoutput>
+                            <cfelseif isUserInRole('student')>
+                                <cfoutput>Interest You Provided</cfoutput>
+                            </cfif>
+                        </p>
+                    </div>
+                    <!---Form contains all Interest or teaching details--->
+                    <form id="formUserInterestDetail" class="disabledbutton pb-5 mb-5" id="form-update" method="POST" action="profile.cfm">
+                        <cfset homeLocationExists = ''/>
+                        <cfset otherLocationExists = ''/>
+                        <cfset onlineLocationExists = ''/>
+                        <cfif profileInfo.USERDETAILS.homeLocation EQ 1>
+                            <cfset homeLocationExists = 'checked'/>
+                        </cfif>
+                        <cfif profileInfo.USERDETAILS.otherLocation EQ 1>
+                            <cfset otherLocationExists = 'checked'/>
+                        </cfif>
+                        <cfif profileInfo.USERDETAILS.online EQ 1>
+                            <cfset onlineLocationExists = 'checked'/>
+                        </cfif>
+                        <div class="alert alert-info pt-3">
+                            <p class="text-info text-center font-weight-bold">
+                                These fields are not mandatory but it helps in recommandation.
+                            </p>
+                        </div>
+                        <div class="form-check ml-5 mb-2 mt-4">
+                            <label class="form-check-label">
+                                <input id="otherLocation" type="checkbox" class="form-check-input" <cfoutput>#otherLocationExists#</cfoutput> >
+                                <cfif isUserInRole('Teacher')>
+                                    <cfoutput>Having a Coaching Center</cfoutput>
+                                <cfelseif isUserInRole('Student')>
+                                    <cfoutput>Looking for studying at Coaching center</cfoutput>
+                                </cfif>
+                            </label>
+                        </div>
+                        <div class="form-check ml-5 mb-2">
+                            <label class="form-check-label">
+                                <input id="homeLocation" type="checkbox" class="form-check-input" <cfoutput>#homeLocationExists#</cfoutput>>
+                                <cfif isUserInRole('Teacher')>
+                                    <cfoutput>Can Teach Student at Home</cfoutput>
+                                <cfelseif isUserInRole('Student')>
+                                    <cfoutput>Looking for Home Teacher</cfoutput>
+                                </cfif>
+                            </label>
+                        </div>
+                        <div class="form-check ml-5 mb-2">
+                            <label class="form-check-label">
+                                <input id="online" type="checkbox" class="form-check-input" <cfoutput>#onlineLocationExists#</cfoutput>>
+                                <cfif isUserInRole('Teacher')>
+                                    <cfoutput>Having a Online Teaching Facility</cfoutput>
+                                <cfelseif isUserInRole('Student')>
+                                    <cfoutput>Looking for teacher having Online teaching facility</cfoutput>
+                                </cfif>
+                            </label>
+                        </div>
+                        <!---Submit Section--->
+                        <div class="row mt-5 mr-2 ml-2">
+                            <div class="col-md-12" id="buttonUserInterestDetailDiv">
+                            </div>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        
+        <!---container containing all user address data--->
+        <div class="container-fuild w-100 mx-auto mb-5 shadow rounded bg-light">
+
+            <!---Heading Field--->
+            <div class="bg-dark pt-3 pb-3 mt-5 rounded-top text-center">
+                <span id="headingUserId" class="text-light text-capitalize d-inline"><cfoutput>#session.stloggedinuser.userID#</cfoutput></span>
+                <p class="text-light d-inline" >   Your Addresses</p>
+            </div>
+            <!---Form Field for Address details--->
+            <form id="formUserAddressDetail" class="disabledbutton pb-5 mb-5" id="form-update" method="POST" action="profile.cfm">
+
+                <div class="alert alert-info pt-3">
+                    <p class="text-info text-center font-weight-bold">
+                        If you want to REMOVE the ALTERNATIVE fields just keep it BLANK.
+                    </p>
+                </div>
+                
+                    <!---Current Address Field--->
 
                     <div class="row mt-4 mr-2 ml-2">
                         <div class="col-md-3">
@@ -170,7 +298,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                             <span class="text-danger small float-left"></span>
                         </div>
                     </div>
-                       
+                        
                 <!---Alternative Address Field--->
                     <div class="row mt-4 mr-2 ml-2">
                         <div class="col-md-3">
@@ -211,28 +339,21 @@ Functionality: This file show the profile data to user and allows to modify it.
                     </div>
 
 
-                <!---Bio field--->
-                    <div class="row mt-4 mr-2 ml-2">
-                        <div class="col-md-3">
-                            <label class="control-label"  for="bio">Bio (optional):</label>
-                        </div>
-                        <div class="col-md-8">
-                            <textarea type="text" id="bio" name="bio" placeholder="" class="form-control d-block" rows="4" onblur="checkBio(this)"><cfoutput>#profileInfo.USERDETAILS.BIO#</cfoutput></textarea>
-                            <span class="text-danger small float-left"></span>
-                        </div>
-                    </div>
-
-
+                
                 
                 <!---Submit Section--->
                     <div class="row mt-5 mr-2 ml-2">
-                        <div class="col-md-2" id="buttonDiv">
+                        <div class="col-md-12" id="buttonUserAddressDetailDiv">
                         </div>
                     </div>
                 <!---Interested location field--->
                 
             </form>
-        </cfif> 
+        </div>
+
+        
+
+    </cfif> 
 
     </div>
 <!---if user not logged in he/she will be redirected to homepage--->

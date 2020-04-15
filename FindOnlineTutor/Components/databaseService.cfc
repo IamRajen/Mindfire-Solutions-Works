@@ -106,7 +106,6 @@ Functionality: This file has services/functions related to the data in the datab
         <cfargument  name="lastName" type="string" required="true"/>
         <cfargument  name="emailAddress" type="string" required="true"/>
         <cfargument  name="dob" type="string" required="true"/>
-        <cfargument  name="password" type="string" required="true"/>
         <cfargument  name="bio" type="string" required="false"/>
         <!---creating a structure for returning purpose. which contains the update error msg if occurred--->
         <cfset var updatedSuccessfully={}/>
@@ -118,7 +117,6 @@ Functionality: This file has services/functions related to the data in the datab
                     lastName = <cfqueryparam value='#arguments.lastName#' cfsqltype='cf_sql_varchar'>,
                     emailId = <cfqueryparam value='#arguments.emailAddress#' cfsqltype='cf_sql_varchar'>,
                     dob = <cfqueryparam value='#arguments.dob#' cfsqltype='cf_sql_date'>, 
-                    password = <cfqueryparam value = '#hash(arguments.password, "SHA-1", "UTF-8")#' cfsqltype='cf_sql_varchar'>,
                     bio = <cfqueryparam value='#arguments.bio#' cfsqltype='cf_sql_varchar'>
                 WHERE userId=#session.stloggedinuser.userID#
             </cfquery>
@@ -181,6 +179,30 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn updatedSuccessfully/>
     </cffunction>
 
+    <!---update user phone information--->
+    <cffunction  name="updateInterest" access="remote" output="false" returntype="struct">
+        <!---defining arguments--->
+        <cfargument  name="otherLocation" type="string" required="true"/>
+        <cfargument  name="homeLocation" type="string" required="true"/>
+        <cfargument  name="online" type="string" required="true"/>
+        <!---creating a structure for returning purpose. which contains the update error msg if occurred--->
+        <cfset var updatedSuccessfully={}/>
+        <!---updating process starts here--->
+        <cftry>
+            <cfquery>
+                UPDATE [dbo].[User]
+                SET otherLocation = <cfqueryparam value='#arguments.otherLocation#' cfsqltype='cf_sql_bit'>,
+                    homeLocation = <cfqueryparam value='#arguments.homeLocation#' cfsqltype='cf_sql_bit'>,
+                    online = <cfqueryparam value='#arguments.online#' cfsqltype='cf_sql_bit'>
+                WHERE userId = <cfqueryparam value=#session.stLoggedinUser.UserID# cfsqltype='cf_sql_bigint'>
+            </cfquery>
+        <cfcatch type="any">
+            <cfset updatedSuccessfully.error="#cfcatch#"/>
+        </cfcatch>
+        </cftry>
+        <cfreturn updatedSuccessfully/>
+    </cffunction>
+
 
     <!---insert user information--->
     <cffunction  name="insertUser" access="public" output="false" returntype="boolean">
@@ -209,6 +231,11 @@ Functionality: This file has services/functions related to the data in the datab
         <cfargument  name="alternativePincode" type="string" required="false"/>
         <cfargument  name="bio" type="string" required="false"/>
 
+        <cfset var role = "Student"/>
+        <cfif arguments.isTeacher>
+            <cfset role = "Teacher"/>
+        </cfif>
+
         <cfset var isCommit=false/>
         <cftransaction>
             <cftry>
@@ -218,7 +245,7 @@ Functionality: This file has services/functions related to the data in the datab
                     <!---Inserting data in the user table--->
                     INSERT INTO [dbo].[User] 
                     (registrationDate,firstName,lastName,emailid,username,password,dob,isTeacher,
-                        yearOfExperience,homeLocation,otherLocation,online,bio)
+                        yearOfExperience,homeLocation,otherLocation,online,bio,role)
                     VALUES (
                         <cfqueryparam value='#now()#' cfsqltype='cf_sql_date'>,
                         <cfqueryparam value='#arguments.firstName#' cfsqltype='cf_sql_varchar'>, 
@@ -232,7 +259,8 @@ Functionality: This file has services/functions related to the data in the datab
                         <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
                         <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
                         <cfqueryparam value=0 cfsqltype='cf_sql_bit'>,
-                        <cfqueryparam value='#arguments.bio#' cfsqltype='cf_sql_varchar'>
+                        <cfqueryparam value='#arguments.bio#' cfsqltype='cf_sql_varchar'>,
+                        <cfqueryparam value='#role#' cfsqltype='cf_sql_varchar'>
                         );
                 </cfquery>
                 <!---initializing the primary key generated while inserting the user--->

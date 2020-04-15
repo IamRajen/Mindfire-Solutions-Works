@@ -49,7 +49,7 @@ Functionality: This file contains the functions which help to login the user in 
 		<!---Get the user data from the database--->
 		<cftry>
 			<cfquery name="rsLoginUser">
-				SELECT firstName, lastName, username, emailId, password , isTeacher, userId
+				SELECT firstName, lastName, username, emailId, password , isTeacher, userId, role
 				FROM [dbo].[User]
 				WHERE username = <cfqueryparam value="#arguments.username#" cfsqltype="cf_sql_varchar" /> AND password = <cfqueryparam value="#hashPassword#" cfsqltype="cf_sql_varchar" />
 			</cfquery>
@@ -62,7 +62,7 @@ Functionality: This file contains the functions which help to login the user in 
 		<cfif rsLoginUser.recordCount EQ 1>
 			<!---Log the user in--->
 			<cflogin >
-				<cfloginuser name="#rsLoginUser.FIRSTNAME# #rsLoginUser.LASTNAME#" password="#rsLoginUser.PASSWORD#" roles="#rsLoginUser.ISTEACHER#">
+				<cfloginuser name="#rsLoginUser.FIRSTNAME# #rsLoginUser.LASTNAME#" password="#rsLoginUser.PASSWORD#" roles="#rsLoginUser.ROLE#">
 			</cflogin>
 			<!---Save user data in the session scope--->
 			<cfset session.stLoggedInUser = {'firstName' = rsLoginUser.FIRSTNAME, 'lastName' = rsLoginUser.LASTNAME, 'username' = rsLoginUser.USERNAME, 'userId' = rsLoginUser.USERId} />

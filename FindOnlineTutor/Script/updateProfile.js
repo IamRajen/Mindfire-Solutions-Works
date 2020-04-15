@@ -6,7 +6,10 @@ Created By: Rajendra Mishra.
 Functionality: This javascript file helps update the profile of user.
 */
 
-var inputFields=new Map();
+var inputFieldsProfile=new Map();
+var inputFieldsPhoneNumber=new Map();
+var inputFieldsAddress=new Map();
+var inputFieldsPassword=new Map();
 var countryMap=new Map();
 var stateMap=new Map();
 var addressArray;
@@ -32,32 +35,39 @@ $(document).ready(function()
         }
       });
     //Adding submit button..
-    $("#buttonDiv").html($("<input>").attr({"id":"submitButton","type":"submit","value":"UPDATE","name":"submitButton"}).addClass("btn btn-danger btn-block"));
+    $("#buttonUserDetailDiv").html($("<input>").attr({"id":"submitButton1","type":"submit","value":"UPDATE","name":"submitButton"}).addClass("btn btn-danger"));
+    $("#buttonUserPhoneDetailDiv").html($("<input>").attr({"id":"submitButton2","type":"submit","value":"UPDATE","name":"submitButton"}).addClass("btn btn-danger"));
+    $("#buttonUserAddressDetailDiv").html($("<input>").attr({"id":"submitButton3","type":"submit","value":"UPDATE","name":"submitButton"}).addClass("btn btn-danger"));
+    $("#buttonUserInterestDetailDiv").html($("<input>").attr({"id":"submitButton3","type":"submit","value":"UPDATE","name":"submitButton"}).addClass("btn btn-danger px-auto"));
+      
+    
     //setting the inputfields keys and values..
-    inputFields.set("firstName",{id:"firstName", errorMsg:"", value:""});
-    inputFields.set("lastName",{id:"lastName", errorMsg:"", value:""});
-    inputFields.set("emailAddress",{id:"emailAddress", errorMsg:"", value:""});
-    inputFields.set("primaryPhoneNumber",{id:"primaryPhoneNumber", errorMsg:"", value:""});
-    inputFields.set("alternativePhoneNumber",{id:"alternativePhoneNumber", errorMsg:"", value:""});
-    inputFields.set("dob",{id:"dob", errorMsg:"", value:""});
-    inputFields.set("password",{id:"password", errorMsg:"", value:""});
-    inputFields.set("confirmPassword",{id:"confirmPassword", errorMsg:"", value:""});
+    inputFieldsProfile.set("firstName",{id:"firstName", errorMsg:"", value:""});
+    inputFieldsProfile.set("lastName",{id:"lastName", errorMsg:"", value:""});
+    inputFieldsProfile.set("emailAddress",{id:"emailAddress", errorMsg:"", value:""});
+    inputFieldsProfile.set("dob",{id:"dob", errorMsg:"", value:""});
+    inputFieldsProfile.set("bio",{id:"bio", errorMsg:"", value:""});
+
+    inputFieldsPhoneNumber.set("primaryPhoneNumber",{id:"primaryPhoneNumber", errorMsg:"", value:""});
+    inputFieldsPhoneNumber.set("alternativePhoneNumber",{id:"alternativePhoneNumber", errorMsg:"", value:""});
+    
+    // inputFields.set("password",{id:"password", errorMsg:"", value:""});
+    // inputFields.set("confirmPassword",{id:"confirmPassword", errorMsg:"", value:""});
     // inputFields.set("experience",{id:"experience", errorMsg:"", value:""});
-    inputFields.set("currentAddress",{id:"currentAddress", errorMsg:"", value:""});
-    inputFields.set("currentCountry",{id:"currentCountry", errorMsg:"", value:""});
-    inputFields.set("currentState",{id:"currentState", errorMsg:"", value:""});
-    inputFields.set("currentCity",{id:"currentCity", errorMsg:"", value:""});
-    inputFields.set("currentPincode",{id:"currentPincode", errorMsg:"", value:""});
-    inputFields.set("alternativeAddress",{id:"alternativeAddress", errorMsg:"", value:""});
-    inputFields.set("alternativeCountry",{id:"alternativeCountry", errorMsg:"", value:""});
-    inputFields.set("alternativeState",{id:"alternativeState", errorMsg:"", value:""});
-    inputFields.set("alternativeCity",{id:"alternativeCity", errorMsg:"", value:""});
-    inputFields.set("alternativePincode",{id:"alternativePincode", errorMsg:"", value:""});
-    inputFields.set("bio",{id:"bio", errorMsg:"", value:""});
+
+    inputFieldsAddress.set("currentAddress",{id:"currentAddress", errorMsg:"", value:""});
+    inputFieldsAddress.set("currentCountry",{id:"currentCountry", errorMsg:"", value:""});
+    inputFieldsAddress.set("currentState",{id:"currentState", errorMsg:"", value:""});
+    inputFieldsAddress.set("currentCity",{id:"currentCity", errorMsg:"", value:""});
+    inputFieldsAddress.set("currentPincode",{id:"currentPincode", errorMsg:"", value:""});
+    inputFieldsAddress.set("alternativeAddress",{id:"alternativeAddress", errorMsg:"", value:""});
+    inputFieldsAddress.set("alternativeCountry",{id:"alternativeCountry", errorMsg:"", value:""});
+    inputFieldsAddress.set("alternativeState",{id:"alternativeState", errorMsg:"", value:""});
+    inputFieldsAddress.set("alternativeCity",{id:"alternativeCity", errorMsg:"", value:""});
+    inputFieldsAddress.set("alternativePincode",{id:"alternativePincode", errorMsg:"", value:""});
     var alternativeAddress=["alternativeAddress","alternativeCountry","alternativeState","alternativeCity","alternativePincode"];
     
     var userId = $('#headingUserId').text();
-    $("h2").hide();
     //ajax call been made if we successfully retrieve the userId
     if(userId != '')
     {
@@ -108,31 +118,30 @@ $(document).ready(function()
         });
     }
 
-    $("form").submit(function(e)
+    //user profile form submission start here...
+    $("#formUserDetail").submit(function(e)
     {
         var successfullyValidated=true;
         var havingAlternativeAddress=checkAlternativeAddress(alternativeAddress);
 
-        for(var i of inputFields.keys())
+        for(var i of inputFieldsProfile.keys())
         {
-            if(i.length>7 && i.slice(0,-7)=="Country")
+            // if(i.length>7 && i.slice(0,-7)=="Country")
+            // {
+            //     inputFieldsProfile.get(i).value=countryMap.get($("#"+id).val());
+            // }
+            // else if(i.length>6 && i.slice(0,-5)=="State")
+            // {
+            //     inputFieldsProfile.get(i).value=stateMap.get($("#"+id).val());
+            // }
+            if(inputFieldsProfile.get(i).errorMsg)
             {
-                inputFields.get(i).value=countryMap.get($("#"+id).val());
-            }
-            else if(i.length>6 && i.slice(0,-5)=="State")
-            {
-                inputFields.get(i).value=stateMap.get($("#"+id).val());
-            }
-            if(inputFields.get(i).errorMsg)
-            {
-                // console.log(i+" "+inputFields.get(i).errorMsg)
-                setErrorBorder(inputFields.get(i));
+                setErrorBorder(inputFieldsProfile.get(i));
                 successfullyValidated=false;
             }
         }
         //after validating the default settings is prevented for ajax call
         e.preventDefault();
-        var self=this;
         if(!successfullyValidated)
         {
             swal({
@@ -163,22 +172,22 @@ $(document).ready(function()
                         "firstName": $("#firstName").val(),
                         "lastName": $("#lastName").val(),
                         "emailAddress": $("#emailAddress").val(),
-                        "primaryPhoneNumber": $("#primaryPhoneNumber").val(),
-                        "alternativePhoneNumber":$("#alternativePhoneNumber").val(),
+                        // "primaryPhoneNumber": $("#primaryPhoneNumber").val(),
+                        // "alternativePhoneNumber":$("#alternativePhoneNumber").val(),
                         "dob":$("#dob").val(),
-                        "password":$("#password").val(),
-                        "confirmPassword":$("#confirmPassword").val(), 
-                        "currentAddress":$("#currentAddress").val(),
-                        "currentCountry":countryMap.get(parseInt($("#currentCountry").val())),
-                        "currentState":stateMap.get($("#currentState").val()).name,
-                        "currentCity":$("#currentCity").val(),
-                        "currentPincode":$("#currentPincode").val(),
-                        "havingAlternativeAddress": havingAlternativeAddress,
-                        "alternativeAddress": havingAlternativeAddress == true ? $("#alternativeAddress").val() : '',
-                        "alternativeCountry":havingAlternativeAddress == true ? countryMap.get(parseInt($("#alternativeCountry").val())) : '',
-                        "alternativeState":havingAlternativeAddress == true ? stateMap.get($("#alternativeState").val()).name:'',
-                        "alternativeCity":havingAlternativeAddress == true ? $("#alternativeCity").val():'',
-                        "alternativePincode":havingAlternativeAddress == true ? $("#alternativePincode").val():'',
+                        // "password":$("#password").val(),
+                        // "confirmPassword":$("#confirmPassword").val(), 
+                        // "currentAddress":$("#currentAddress").val(),
+                        // "currentCountry":countryMap.get(parseInt($("#currentCountry").val())),
+                        // "currentState":stateMap.get($("#currentState").val()).name,
+                        // "currentCity":$("#currentCity").val(),
+                        // "currentPincode":$("#currentPincode").val(),
+                        // "havingAlternativeAddress": havingAlternativeAddress,
+                        // "alternativeAddress": havingAlternativeAddress == true ? $("#alternativeAddress").val() : '',
+                        // "alternativeCountry":havingAlternativeAddress == true ? countryMap.get(parseInt($("#alternativeCountry").val())) : '',
+                        // "alternativeState":havingAlternativeAddress == true ? stateMap.get($("#alternativeState").val()).name:'',
+                        // "alternativeCity":havingAlternativeAddress == true ? $("#alternativeCity").val():'',
+                        // "alternativePincode":havingAlternativeAddress == true ? $("#alternativePincode").val():'',
                         "bio":$("#bio").val()=="" ? '': $("#bio").val()
                     },
                 success: function(error) {
@@ -192,7 +201,7 @@ $(document).ready(function()
                             icon: "success",
                             buttons: false,
                         })
-                        setTimeout(function(){self.submit()},3000);
+                        setTimeout(function(){ window.location.reload(true) },2000);
                     }
                     //else the error is been rectified and message been shown 
                     else
@@ -201,8 +210,8 @@ $(document).ready(function()
                         for (var key in errorMsgs) {
                             if(key!="validatedSuccessfully" && !errorMsgs[key])
                             {
-                                inputFields.get(key).errorMsg=errorMsgs[key];
-                                setErrorBorder(inputFields.get(key));
+                                inputFieldsProfile.get(key).errorMsg=errorMsgs[key];
+                                setErrorBorder(inputFieldsProfile.get(key));
                                 showErrorModel=true;
                             } 
                         }
@@ -228,6 +237,278 @@ $(document).ready(function()
                 }
             });
         }
+    });
+
+    //user Phone Number form submission start here...
+    $("#formUserPhoneDetail").submit(function(e)
+    {
+        var successfullyValidated=true;
+
+        for(var i of inputFieldsPhoneNumber.keys())
+        {
+            if(inputFieldsPhoneNumber.get(i).errorMsg)
+            {
+                setErrorBorder(inputFieldsPhoneNumber.get(i));
+                successfullyValidated=false;
+            }
+        }
+        //after validating the default settings is prevented for ajax call
+        e.preventDefault();
+        if(!successfullyValidated)
+        {
+            swal({
+                title: "Validation Fails!!",
+                text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
+                icon: "warning",
+                button: "Ok",
+            });
+        }
+        //
+        else
+        {
+            //ajax call made to validate and update the user profile...
+            $.ajax({
+                type:"POST",
+                url:"Components/updateUserProfile.cfc?method=updateUserPhoneNumber",
+                cache: false,
+                error: function(){
+                    swal({
+                        title: "Registration Fails!!",
+                        text: "Some of the internal function fails to register. Please try after some time!!",
+                        icon: "error",
+                        button: "Ok",
+                    });
+                
+                },
+                data:{
+                        "primaryPhoneNumber": $("#primaryPhoneNumber").val(),
+                        "alternativePhoneNumber":$("#alternativePhoneNumber").val()
+                    },
+                success: function(error) {
+                    var errorMsgs=JSON.parse(error);
+                    //if everything goes fine then user if registered by giving a success message
+                    if(errorMsgs["validatedSuccessfully"] == true)
+                    { 
+                        swal({
+                            title: "Successfully Updated!!",
+                            text: "Your Phone Number has been successfully updated",
+                            icon: "success",
+                            buttons: false,
+                        })
+                        setTimeout(function(){ window.location.reload(true) },2000);
+                    }
+                    //else the error is been rectified and message been shown 
+                    else
+                    {
+                        var showErrorModel=false;
+                        for (var key in errorMsgs) {
+                            if(key!="validatedSuccessfully" && !errorMsgs[key])
+                            {
+                                inputFieldsPhoneNumber.get(key).errorMsg=errorMsgs[key];
+                                setErrorBorder(inputFieldsPhoneNumber.get(key));
+                                showErrorModel=true;
+                            } 
+                        }
+                        if(showErrorModel)
+                        {
+                            swal({
+                                title: "Failed to Update!!",
+                                text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
+                                icon: "error",
+                                button: "Ok",
+                            });
+                        }
+                        else 
+                        {
+                            swal({
+                                title: "Failed to update!!",
+                                text: "Registration fails due to some server problem. Please, try after some time!!",
+                                icon: "error",
+                                button: "Ok",
+                            });
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    //user profile form submission start here...
+    $("#formUserAddressDetail").submit(function(e)
+    {
+        var successfullyValidated=true;
+        var havingAlternativeAddress=checkAlternativeAddress(alternativeAddress);
+
+        for(var i of inputFieldsAddress.keys())
+        {
+            if(i.length>7 && i.slice(0,-7)=="Country")
+            {
+                inputFieldsAddress.get(i).value=countryMap.get($("#"+id).val());
+            }
+            else if(i.length>6 && i.slice(0,-5)=="State")
+            {
+                inputFieldsAddress.get(i).value=stateMap.get($("#"+id).val());
+            }
+            if(inputFieldsAddress.get(i).errorMsg)
+            {
+                setErrorBorder(inputFieldsAddress.get(i));
+                successfullyValidated=false;
+            }
+        }
+        //after validating the default settings is prevented for ajax call
+        e.preventDefault();
+        if(!successfullyValidated)
+        {
+            swal({
+                title: "Validation Fails!!",
+                text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
+                icon: "warning",
+                button: "Ok",
+            });
+        }
+        //
+        else
+        {
+            //ajax call made to validate and update the user profile...
+            $.ajax({
+                type:"POST",
+                url:"Components/updateUserProfile.cfc?method=updateUserAddress",
+                cache: false,
+                error: function(){
+                    swal({
+                        title: "Registration Fails!!",
+                        text: "Some of the internal function fails to register. Please try after some time!!",
+                        icon: "error",
+                        button: "Ok",
+                    });
+                
+                },
+                data:{
+                        "currentAddress":$("#currentAddress").val(),
+                        "currentCountry":countryMap.get(parseInt($("#currentCountry").val())),
+                        "currentState":stateMap.get($("#currentState").val()).name,
+                        "currentCity":$("#currentCity").val(),
+                        "currentPincode":$("#currentPincode").val(),
+                        "havingAlternativeAddress": havingAlternativeAddress,
+                        "alternativeAddress": havingAlternativeAddress == true ? $("#alternativeAddress").val() : '',
+                        "alternativeCountry":havingAlternativeAddress == true ? countryMap.get(parseInt($("#alternativeCountry").val())) : '',
+                        "alternativeState":havingAlternativeAddress == true ? stateMap.get($("#alternativeState").val()).name:'',
+                        "alternativeCity":havingAlternativeAddress == true ? $("#alternativeCity").val():'',
+                        "alternativePincode":havingAlternativeAddress == true ? $("#alternativePincode").val():''
+                    },
+                success: function(error) {
+                    var errorMsgs=JSON.parse(error);
+                    //if everything goes fine then user if registered by giving a success message
+                    if(errorMsgs["validatedSuccessfully"] == true)
+                    { 
+                        swal({
+                            title: "Successfully Updated!!",
+                            text: "Your profile has been successfully updated",
+                            icon: "success",
+                            buttons: false,
+                        })
+                        setTimeout(function(){ window.location.reload(true) },2000);
+                    }
+                    //else the error is been rectified and message been shown 
+                    else
+                    {
+                        var showErrorModel=false;
+                        for (var key in errorMsgs) {
+                            if(key!="validatedSuccessfully" && !errorMsgs[key])
+                            {
+                                inputFieldsAddress.get(key).errorMsg=errorMsgs[key];
+                                setErrorBorder(inputFieldsAddress.get(key));
+                                showErrorModel=true;
+                            } 
+                        }
+                        if(showErrorModel)
+                        {
+                            swal({
+                                title: "Registration Fails!!",
+                                text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
+                                icon: "error",
+                                button: "Ok",
+                            });
+                        }
+                        else 
+                        {
+                            swal({
+                                title: "Registration Fails!!",
+                                text: "Registration fails due to some server problem. Please, try after some time!!",
+                                icon: "error",
+                                button: "Ok",
+                            });
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    //user Phone Number form submission start here...
+    $("#formUserInterestDetail").submit(function(e)
+    {
+        e.preventDefault();
+        var otherLocation=0;
+        var homeLocation=0;
+        var onlineLocation=0;
+        if ($('#otherLocation').is(":checked"))
+        {
+            otherLocation=1;
+        }
+        if ($('#homeLocation').is(":checked"))
+        {
+            homeLocation=1;
+        }
+        if ($('#online').is(":checked"))
+        {
+            onlineLocation=1;
+        }
+        // console.log(otherLocation,homeLocation,onlineLocation)
+        // ajax call made to validate and update the user profile...
+        $.ajax({
+            type:"POST",
+            url:"Components/updateUserProfile.cfc?method=updateUserInterest",
+            cache: false,
+            error: function(){
+                swal({
+                    title: "Registration Fails!!",
+                    text: "Some of the internal function fails to register. Please try after some time!!",
+                    icon: "error",
+                    button: "Ok",
+                });
+            
+            },
+            data:{
+                    "otherLocation": otherLocation,
+                    "homeLocation": homeLocation,
+                    "online": onlineLocation
+                },
+            success: function(error) {
+                var errorMsgs=JSON.parse(error);
+                //if everything goes fine then user if registered by giving a success message
+                if(errorMsgs["validatedSuccessfully"] == true)
+                { 
+                    swal({
+                        title: "Successfully Updated!!",
+                        text: "Your Phone Number has been successfully updated",
+                        icon: "success",
+                        buttons: false,
+                    })
+                    setTimeout(function(){ window.location.reload(true) },2000);
+                }
+                //else the error is been rectified and message been shown 
+                else
+                {
+                    swal({
+                        title: "Failed to update!!",
+                        text: "Registration fails due to some server problem. Please, try after some time!!",
+                        icon: "error",
+                        button: "Ok",
+                    });
+                }
+            }
+        });
     });
 });
     
@@ -355,7 +636,7 @@ function isValidPattern(text,pattern)
 // All Validation Functions Starts here
 function checkName(element)
 {
-    var object = inputFields.get(element.id);
+    var object = inputFieldsProfile.get(element.id);
     if(isEmpty(object))
     {
         return;
@@ -379,7 +660,7 @@ function checkName(element)
 }
 function checkEmailId(element)
 {
-    var object = inputFields.get(element.id);
+    var object = inputFieldsProfile.get(element.id);
     if(isEmpty(object))
     {
         return;
@@ -419,7 +700,7 @@ function checkEmailId(element)
 }
 function checkPhoneNumber(element)
 {
-    let object = inputFields.get(element.id);
+    let object = inputFieldsPhoneNumber.get(element.id);
     let text = $.trim($(element).val());
     if(text == "" && object.id=="primaryPhoneNumber")
     {
@@ -441,8 +722,8 @@ function checkPhoneNumber(element)
     if((object.id=="primaryPhoneNumber" && text==$('#alternativePhoneNumber').val())
         || (object.id=="alternativePhoneNumber" && text==$('#primaryPhoneNumber').val()))
     {
-        inputFields.get('alternativePhoneNumber').errorMsg="Alternative number should not be same.You can keep this blank.";
-        setErrorBorder(inputFields.get('alternativePhoneNumber'));
+        inputFieldsPhoneNumber.get('alternativePhoneNumber').errorMsg="Alternative number should not be same.You can keep this blank.";
+        setErrorBorder(inputFieldsPhoneNumber.get('alternativePhoneNumber'));
         return
     }
     $.ajax({
@@ -475,7 +756,7 @@ function checkAddress(element)
 {
     var addressType=element.id.toString().slice(0,-7);
     populateCountry($("#"+addressType+"Country"));
-    var object = inputFields.get(element.id);
+    var object = inputFieldsAddress.get(element.id);
     var text = $.trim($("#"+object.id).val());
     if(text == "")
     {   
@@ -497,7 +778,7 @@ function checkAddress(element)
 function checkCountry(element)
 {
     var addressType=element.id.toString().slice(0,-7);
-    var object=inputFields.get(element.id);
+    var object=inputFieldsAddress.get(element.id);
 
     populateState($("#"+addressType+"State"),$(element).val());
     if($(element).val()!="")
@@ -511,7 +792,7 @@ function checkCountry(element)
 }
 function checkState(element)
 {
-    var object=inputFields.get(element.id);
+    var object=inputFieldsAddress.get(element.id);
     if(element.id.slice(0,1)!="a" && !$(element).val())
     {
         object.errorMsg="Mandatory Field!! Provide Current State";
@@ -522,7 +803,7 @@ function checkState(element)
 }
 function checkPincode(element)
 {
-    var object=inputFields.get(element.id);
+    var object=inputFieldsAddress.get(element.id);
     if(!($(element).val()))
     {
         if(object.id.slice(0,5)!="alter")
@@ -591,7 +872,7 @@ function checkPassword(element)
 function checkDOB(element)
 {
     var today = new Date();
-    var object=inputFields.get(element.id);
+    var object=inputFieldsProfile.get(element.id);
     var dateObject = new Date($(element).val());
     if(dateObject.getFullYear()>=today.getFullYear()-2 || dateObject.getFullYear()<today.getFullYear()-80)
     {
@@ -603,7 +884,7 @@ function checkDOB(element)
 }
 function checkBio(element)
 {
-    var object=inputFields.get(element.id);
+    var object=inputFieldsProfile.get(element.id);
     text=$.trim($("#"+object.id).val());
     if(!text)
         return;

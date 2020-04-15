@@ -16,26 +16,8 @@ Functionality: This file helps to validate and update the user profile.
         <cfargument  name="firstName" type="string" required="true"/>
         <cfargument  name="lastName" type="string" required="true"/>
         <cfargument  name="emailAddress" type="string" required="true"/>
-        <cfargument  name="primaryPhoneNumber" type="string" required="true"/>
-        <cfargument  name="alternativePhoneNumber" type="string" required="false"/>
         <cfargument  name="dob" type="string" required="true"/>
-        <cfargument  name="password" type="string" required="true"/>
-        <cfargument  name="confirmPassword" type="string" required="true"/>
-        <cfargument  name="currentAddress" type="string" required="true"/>
-        <cfargument  name="currentCountry" type="string" required="true"/>
-        <cfargument  name="currentState" type="string" required="true"/>
-        <cfargument  name="currentCity" type="string" required="true"/>
-        <cfargument  name="currentPincode" type="string" required="true"/>
-        <cfargument  name="havingAlternativeAddress" type="boolean" required="true"/>
-        <cfargument  name="alternativeAddress" type="string" required="false"/>
-        <cfargument  name="alternativeCountry" type="string" required="false"/>
-        <cfargument  name="alternativeState" type="string" required="false"/>
-        <cfargument  name="alternativeCity" type="string" required="false"/>
-        <cfargument  name="alternativePincode" type="string" required="false"/>
         <cfargument  name="bio" type="string" required="false"/>
-
-        <!---creating object of validation.cfc for validation--->
-        <cfset var patternValidationObj = createObject("component","patternValidation")/>
 
         <!--- creating a struct for error messages and calling the required functions--->
         <cfset errorMsgs={}>
@@ -44,35 +26,6 @@ Functionality: This file helps to validate and update the user profile.
         <cfset errorMsgs["firstName"]=patternValidationObj.validName(arguments.firstName)/>
         <cfset errorMsgs["lastName"]=patternValidationObj.validName(arguments.lastName)/>
         <cfset errorMsgs["emailAddress"]=patternValidationObj.validEmail(arguments.emailAddress)/>
-        <cfset errorMsgs["primaryPhoneNumber"]=patternValidationObj.validNumber(arguments.primaryPhoneNumber)/>
-
-        <cfif arguments.alternativePhoneNumber NEQ '' and arguments.alternativePhoneNumber NEQ arguments.primaryPhoneNumber>
-            <cfset errorMsgs["alternativePhoneNumber"]=patternValidationObj.validNumber(arguments.alternativePhoneNumber)/>
-        <cfelseif arguments.alternativePhoneNumber NEQ '' and arguments.alternativePhoneNumber EQ arguments.primaryPhoneNumber>
-            <cfset errorMsgs["alternativePhoneNumber"]="Alternative number should not be same.You can keep this blank."/>
-        </cfif>
-
-        <!---<cfset errorMsgs["dob"]=validationObj.validateDOB(arguments.dob)/> --->
-        <cfset errorMsgs["password"]=patternValidationObj.validPassword(arguments.password)/>
-
-        <cfif arguments.password NEQ arguments.confirmPassword>
-            <cfset errorMsgs["confirmPassword"]="password not matched!!"/>
-        </cfif>
-
-        
-        <cfset errorMsgs["currentAddress"]=patternValidationObj.validText(arguments.currentAddress)/>
-        <cfset errorMsgs["currentCountry"]=patternValidationObj.validText(arguments.currentCountry)/>
-        <cfset errorMsgs["currentState"]=patternValidationObj.validText(arguments.currentState)/>
-        <cfset errorMsgs["currentCity"]=patternValidationObj.validText(arguments.currentCity)/>
-        <cfset errorMsgs["currentPincode"]=patternValidationObj.validNumber(arguments.currentPincode)/>
-
-        <cfif arguments.havingAlternativeAddress>
-            <cfset errorMsgs["alternativeAddress"]=patternValidationObj.validText(arguments.alternativeAddress)/>
-            <cfset errorMsgs["alternativeCountry"]=patternValidationObj.validText(arguments.alternativeCountry)/>
-            <cfset errorMsgs["alternativeState"]=patternValidationObj.validText(arguments.alternativeState)/>
-            <cfset errorMsgs["alternativeCity"]=patternValidationObj.validText(arguments.alternativeCity)/>
-            <cfset errorMsgs["alternativePincode"]=patternValidationObj.validNumber(arguments.alternativePincode)/>
-        </cfif>
         
         <cfif arguments.bio NEQ ''>
             <cfset errorMsgs["bio"]=patternValidationObj.validText(arguments.bio)/>
@@ -93,17 +46,70 @@ Functionality: This file helps to validate and update the user profile.
                     <!---updating user info--->
 
                     <cfset var userInfoUpdate=databaseServiceObj.updateUser(
-                        arguments.firstName, arguments.lastName, arguments.emailAddress, arguments.dob, 
-                        arguments.password,arguments.bio
+                        arguments.firstName, arguments.lastName, arguments.emailAddress, arguments.dob, arguments.bio
                     )/>
                     <cfif structKeyExists(userInfoUpdate, "error")>
                         <cfthrow detail='#userInfoUpdate.error#'/>
                     </cfif>
                     
-                    <!---updating phone numbers--->
+                    <cftransaction action="commit" />
+                    <cfset isCommit=true />
+                <cfcatch type="any">
+                    <cflog  text="#cfcatch#">
+                </cfcatch>
+                </cftry>
 
+            </cftransaction>
+		    <cfif isCommit==true>
+                <cfset errorMsgs["validatedSuccessfully"]=true/> 
+                <cfset errorMsgs.commit = isCommit>  
+            <cfelse>
+                <cfset errorMsgs["validatedSuccessfully"]=false/>
+                <cfset errorMsgs.commit = isCommit>  
+            </cfif>  
+        </cfif>
+
+        <cfreturn errorMsgs/>
+    </cffunction>
+
+
+    <!---update user profile--->
+    <cffunction  name="updateUserPhoneNumber" access="remote" output="false" returnformat="json" returntype="struct">
+        <!---arguments declaration--->
+
+        <cfargument  name="primaryPhoneNumber" type="string" required="true"/>
+        <cfargument  name="alternativePhoneNumber" type="string" required="false"/>
+
+        <!--- creating a struct for error messages and calling the required functions--->
+        <cfset errorMsgs={}>
+        <cfset errorMsgs["validatedSuccessfully"]=true/>
+
+        <cfset errorMsgs["primaryPhoneNumber"]=patternValidationObj.validNumber(arguments.primaryPhoneNumber)/>
+
+        <cfif arguments.alternativePhoneNumber NEQ '' and arguments.alternativePhoneNumber NEQ arguments.primaryPhoneNumber>
+            <cfset errorMsgs["alternativePhoneNumber"]=patternValidationObj.validNumber(arguments.alternativePhoneNumber)/>
+        <cfelseif arguments.alternativePhoneNumber NEQ '' and arguments.alternativePhoneNumber EQ arguments.primaryPhoneNumber>
+            <cfset errorMsgs["alternativePhoneNumber"]="Alternative number should not be same.You can keep this blank."/>
+        </cfif>
+
+        
+        <!---looping the errorMsgs struct for validation--->
+        <cfloop collection="#errorMsgs#" item="key">
+            <cfif key NEQ 'validatedSuccessfully' and errorMsgs[key] NEQ true>
+                <cfset errorMsgs["validatedSuccessfully"]=false/>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+
+        <cfif errorMsgs["validatedSuccessfully"]>
+            <cfset var isCommit=''/>
+            <cftransaction>
+                <cftry>
+                    
+                    <!---updating phone numbers--->
+                    
                     <!---getting the phone numbers of user--->
-                    <cfset userPhoneNumbers = databaseServiceObj.getMyPhoneNumber(session.stLoggedinuser.userID)/> 
+                    <cfset var userPhoneNumbers = databaseServiceObj.getMyPhoneNumber(session.stLoggedinuser.userID)/> 
                     <!---updating the primary phone number--->
                     <cfset var phoneInfoUpdate=databaseServiceObj.updatePhoneNumber(
                         userPhoneNumbers.phoneNumber.userPhoneNumberId[1], arguments.primaryPhoneNumber
@@ -129,6 +135,76 @@ Functionality: This file helps to validate and update the user profile.
                             <cfthrow detail = '#insertPhone.error#'/> 
                         </cfif>
                     </cfif>  
+
+                    <cftransaction action="commit" />
+                    <cfset isCommit=true />
+                <cfcatch type="any">
+                    <cflog  text="#cfcatch#">
+                </cfcatch>
+                </cftry>
+            </cftransaction>
+		    <cfif isCommit==true>
+                <cfset errorMsgs["validatedSuccessfully"]=true/> 
+                <cfset errorMsgs.commit = isCommit>  
+            <cfelse>
+                <cfset errorMsgs["validatedSuccessfully"]=false/>
+                <cfset errorMsgs.commit = isCommit>  
+            </cfif>  
+        </cfif>
+
+        <cfreturn errorMsgs/>
+    </cffunction>
+
+
+    <!---update user Address--->
+    <cffunction  name="updateUserAddress" access="remote" output="false" returnformat="json" returntype="struct">
+        <!---arguments declaration--->
+
+        <cfargument  name="currentAddress" type="string" required="true"/>
+        <cfargument  name="currentCountry" type="string" required="true"/>
+        <cfargument  name="currentState" type="string" required="true"/>
+        <cfargument  name="currentCity" type="string" required="true"/>
+        <cfargument  name="currentPincode" type="string" required="true"/>
+
+        <cfargument  name="havingAlternativeAddress" type="boolean" required="true"/>
+
+        <cfargument  name="alternativeAddress" type="string" required="false"/>
+        <cfargument  name="alternativeCountry" type="string" required="false"/>
+        <cfargument  name="alternativeState" type="string" required="false"/>
+        <cfargument  name="alternativeCity" type="string" required="false"/>
+        <cfargument  name="alternativePincode" type="string" required="false"/>
+
+        <!--- creating a struct for error messages and calling the required functions--->
+        <cfset errorMsgs={}>
+        <cfset errorMsgs["validatedSuccessfully"]=true/>
+        
+        <cfset errorMsgs["currentAddress"]=patternValidationObj.validText(arguments.currentAddress)/>
+        <cfset errorMsgs["currentCountry"]=patternValidationObj.validText(arguments.currentCountry)/>
+        <cfset errorMsgs["currentState"]=patternValidationObj.validText(arguments.currentState)/>
+        <cfset errorMsgs["currentCity"]=patternValidationObj.validText(arguments.currentCity)/>
+        <cfset errorMsgs["currentPincode"]=patternValidationObj.validNumber(arguments.currentPincode)/>
+
+        <cfif arguments.havingAlternativeAddress>
+            <cfset errorMsgs["alternativeAddress"]=patternValidationObj.validText(arguments.alternativeAddress)/>
+            <cfset errorMsgs["alternativeCountry"]=patternValidationObj.validText(arguments.alternativeCountry)/>
+            <cfset errorMsgs["alternativeState"]=patternValidationObj.validText(arguments.alternativeState)/>
+            <cfset errorMsgs["alternativeCity"]=patternValidationObj.validText(arguments.alternativeCity)/>
+            <cfset errorMsgs["alternativePincode"]=patternValidationObj.validNumber(arguments.alternativePincode)/>
+        </cfif>
+        
+        
+        <!---looping the errorMsgs struct for validation--->
+        <cfloop collection="#errorMsgs#" item="key">
+            <cfif key NEQ 'validatedSuccessfully' and errorMsgs[key] NEQ true>
+                <cfset errorMsgs["validatedSuccessfully"]=false/>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+
+        <cfif errorMsgs["validatedSuccessfully"]>
+            <cfset var isCommit=''/>
+            <cftransaction>
+                <cftry>
 
                     <!---updating addresses--->
 
@@ -160,7 +236,6 @@ Functionality: This file helps to validate and update the user profile.
                             <cfthrow detail = '#insertAlternativeAddress.error#'/>
                         </cfif>
                     </cfif> 
-                
 
                     <cftransaction action="commit" />
                     <cfset isCommit=true />
@@ -180,6 +255,53 @@ Functionality: This file helps to validate and update the user profile.
 
         <cfreturn errorMsgs/>
     </cffunction>
+
+    <!---update user profile--->
+    <cffunction  name="updateUserInterest" access="remote" output="false" returnformat="json" returntype="struct">
+        <!---arguments declaration--->
+
+        <cfargument  name="otherLocation" type="numeric" required="true"/>
+        <cfargument  name="homeLocation" type="numeric" required="true"/>
+        <cfargument  name="online" type="numeric" required="true"/>
+
+        <!--- creating a struct for error messages and calling the required functions--->
+        <cfset errorMsgs={}>
+        <cfset errorMsgs["validatedSuccessfully"]=true/>
+
+        <!---validation starts here--->
+        <cfset errorMsgs["otherLocation"] = patternValidationObj.isBit(arguments.otherLocation)/>
+        <cfset errorMsgs["homeLocation"] = patternValidationObj.isBit(arguments.homeLocation)/>
+        <cfset errorMsgs["online"] = patternValidationObj.isBit(arguments.online)/>
+        
+        <!---looping the errorMsgs struct for validation--->
+        <cfloop collection="#errorMsgs#" item="key">
+            <cfif key NEQ 'validatedSuccessfully' and errorMsgs[key] NEQ true>
+                <cfset errorMsgs["validatedSuccessfully"]=false/>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+
+        <cfif errorMsgs["validatedSuccessfully"]>
+            <cftry>  
+                <!---updating Interests and Facilities--->
+                <cfset var userInterest = databaseServiceObj.updateInterest(
+                    arguments.otherLocation,arguments.homeLocation,arguments.online
+                )/>
+                <cfif structKeyExists(userInterest, "error") >
+                    <cfthrow detail = '#userInterest.error#'/>
+                </cfif>
+                
+            <cfcatch type="any">
+                <cflog  text="#cfcatch#">
+                <cfset errorMsgs["validatedSuccessfully"]=false/>
+            </cfcatch>
+            </cftry>  
+        </cfif>
+
+        <cfreturn errorMsgs/>
+    </cffunction>
+
+
 
     <!---validating the email address for update--->
     <cffunction  name="validateEmail" access="remote" output="false" returntype="struct" returnformat="json">
@@ -240,5 +362,6 @@ Functionality: This file helps to validate and update the user profile.
 
         <cfreturn errorMsg/>
     </cffunction>
+
 </cfcomponent>
     
