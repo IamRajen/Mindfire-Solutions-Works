@@ -204,9 +204,9 @@ Functionality: This file show the profile data to user and allows to modify it.
                         <div class="form-check ml-5 mb-2 mt-4">
                             <label class="form-check-label">
                                 <input id="otherLocation" type="checkbox" class="form-check-input" <cfoutput>#otherLocationExists#</cfoutput> >
-                                <cfif isUserInRole('Teacher')>
+                                <cfif session.stLoggedinUser.role EQ 'Teacher'>
                                     <cfoutput>Having a Coaching Center</cfoutput>
-                                <cfelseif isUserInRole('Student')>
+                                <cfelseif session.stLoggedinUser.role EQ 'Student'>
                                     <cfoutput>Looking for studying at Coaching center</cfoutput>
                                 </cfif>
                             </label>
@@ -214,9 +214,9 @@ Functionality: This file show the profile data to user and allows to modify it.
                         <div class="form-check ml-5 mb-2">
                             <label class="form-check-label">
                                 <input id="homeLocation" type="checkbox" class="form-check-input" <cfoutput>#homeLocationExists#</cfoutput>>
-                                <cfif isUserInRole('Teacher')>
+                                <cfif session.stLoggedinUser.role EQ 'Teacher'>
                                     <cfoutput>Can Teach Student at Home</cfoutput>
-                                <cfelseif isUserInRole('Student')>
+                                <cfelseif session.stLoggedinUser.role EQ 'Student'>
                                     <cfoutput>Looking for Home Teacher</cfoutput>
                                 </cfif>
                             </label>
@@ -224,9 +224,9 @@ Functionality: This file show the profile data to user and allows to modify it.
                         <div class="form-check ml-5 mb-2">
                             <label class="form-check-label">
                                 <input id="online" type="checkbox" class="form-check-input" <cfoutput>#onlineLocationExists#</cfoutput>>
-                                <cfif isUserInRole('Teacher')>
+                                <cfif session.stLoggedinUser.role EQ 'Teacher'>
                                     <cfoutput>Having a Online Teaching Facility</cfoutput>
-                                <cfelseif isUserInRole('Student')>
+                                <cfelseif session.stLoggedinUser.role EQ 'Student'>
                                     <cfoutput>Looking for teacher having Online teaching facility</cfoutput>
                                 </cfif>
                             </label>
@@ -260,7 +260,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                     </p>
                 </div>
                 
-                    <!---Current Address Field--->
+                <!---Current Address Field--->
 
                     <div class="row mt-4 mr-2 ml-2">
                         <div class="col-md-3">

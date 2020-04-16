@@ -8,12 +8,59 @@ Functionality: It is a batch page which contains all the related information for
 <cf_header homeLink="../index.cfm" logoPath="../Images/logo.png" stylePath="../Styles/style.css" scriptPath="../Script/batchValidation.js">
 
 <h1 class="d-inline text-info">Batches</h1>
+
 <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" data-target="#addNewBatch">
     Add new Batch
 </button>
 <hr>
 
-<!-- The Modal -->
+<!---Display the batches---> 
+    <cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
+    <cfset batches = batchServiceObj.getMyBatch(session.stLoggedInUser.userID)/>
+<!---     <cfdump  var="#batches.data#"> --->
+    <div id="batchDiv" class="m-3">
+        <cfif structKeyExists(batches, "error")>
+            <div class="alert alert-danger pt-3 pb-3 rounded-top">
+                <p class="text-danger text-center">Some error occured while retrieving your batches. Please, try after sometime.</p>
+            </div>
+        <cfelseif batches.data.recordCount EQ 0>
+            <div class="alert alert-secondary pt-5 pb-5 rounded-top">
+                <p class="text-secondary text-center">You haven't created any batch. You can create it by clicking on "Add New Batch" button at top right side.</p>
+            </div>
+        <cfelse>
+            <cfoutput query="batches.data">
+                <a href="batchesDetails.cfm?id=#batchId#" class="row m-3 p-3 shadow bg-light rounded">
+                    <div class="col-md-12 border-bottom pb-2">
+                        <h3 class=" text-dark d-inline">#batchName#<span class="text-info h6 ml-2">#batchType#</span></h3>
+                        <small class="bg-warning float-right d-inline rounded p-1 text-light mx-1">Request</small>
+                        <small class="bg-warning float-right d-inline rounded p-1 text-light mx-1">Notification</small> 
+                    </div>
+                    
+                    <div class="col-md-12">
+                        <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Description: </span>#batchDetails#</p>
+                    </div> 
+                    <div class="col-md-4">
+                        <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Start Date: </span>#startDate#</p>
+                    </div> 
+                    <div class="col-md-4">
+                        <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">End Date: </span>#endDate#</p>
+                    </div> 
+                    <div class="col-md-4">
+                        <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Batch Capacity: </span>#capacity#</p>
+                    </div> 
+                    <div class="col-md-4">
+                        <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Enrolled: </span>#enrolled#</p>
+                    </div> 
+                    <div class="col-md-4">
+                        <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Fee: </span>#fee#</p>
+                    </div> 
+                    
+                </a>
+            </cfoutput>
+        </cfif>
+    </div>
+
+<!--- The Modal --->
   <div class="modal fade" id="addNewBatch">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -96,5 +143,9 @@ Functionality: It is a batch page which contains all the related information for
     </div>
   </div>
  
+
+    
+
+
 
 </cf_header>

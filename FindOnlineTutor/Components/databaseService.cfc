@@ -460,6 +460,7 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn isUsernamePresent/>
     </cffunction>
 
+<!---batch functions starts from here--->
     <!---function to insert new batch--->
     <cffunction  name="insertBatch" access="public" output="false" returnformat="json" returntype="struct">
         <cfargument  name="batchOwnerId" type="any" required="true"/>
@@ -503,6 +504,33 @@ Functionality: This file has services/functions related to the data in the datab
             <cfset insertedSuccessfully.newBatchId=newBatch.GENERATEDKEY/>
         </cfif>
         <cfreturn insertedSuccessfully/>
+    </cffunction>
+
+    <!---function to collect batches of teacher--->
+    <cffunction  name="collectTeacherBatch" output="false" access="public" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="teacherId" type="any" required="true">
+        <!---declaring a structure for storing the query data and error if occured--->
+        <cfset var batches={}/>
+        <!---Declaring a variable for storing result data--->
+        <cfset var teacherBatches = ''/>
+        <cftry>
+            <cfquery name="teacherBatches">
+                SELECT * 
+                FROM [dbo].[batch]
+                WHERE batchOwnerId = <cfqueryparam value=#arguments.teacherId# cfsqltype='cf_sql_bigint'>
+                ORDER BY batchId DESC
+            </cfquery>
+        <cfcatch type="any">
+            <cflog text="collecting batch error: #cfcatch#">
+            <cfset batches.error = true/>
+        </cfcatch>
+        </cftry>
+
+        <cfif NOT structKeyExists(batches, "error")>
+            <cfset batches.data = teacherBatches/>
+        </cfif>
+        <cfreturn batches/>
     </cffunction>
 
 </cfcomponent>

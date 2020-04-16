@@ -181,10 +181,18 @@ Functionality: This file contains the functions which help to give required serv
     </cffunction>
 
     <!---function to retrieve the all batches of specific teacher--->
-    <cffunction  name="getTeacherBatch" output="false" access="access" returntype="struct">
+    <cffunction  name="getMyBatch" output="false" access="public" returntype="struct">
         <!---arguments--->
-        <cfargument  name="batchOwnerId" type="any" required="true"/>
-        
+        <cfargument  name="userId" type="any" required="true"/>
+        <!---creating a structure for returning data--->
+        <cfset var batches={}/>
+        <!---calling required function as user type--->
+        <cfif session.stLoggedInUser.role EQ 'Teacher'>
+            <cfset batches=databaseValidationObj.collectTeacherBatch(session.stLoggedInUser.userID)/>
+<!---         <cfelseif session.stLoggedInUser.role EQ 'Student'> --->
+            
+        </cfif>
+        <cfreturn batches/>
     </cffunction>
 
 </cfcomponent>

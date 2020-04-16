@@ -23,6 +23,12 @@ Functionality: This page get first executed whenever a request comes to the webs
 		<cfif isDefined('url.restartApp')>
 			<cfset this.onApplicationStart() />
 		</cfif>
+
+		<!---Implement ressource Access control for the 'admin' folder--->
+		<cfif listFind(arguments.targetPage,'Teacher', '/') AND (NOT structKeyExists(session, "stLoggedinUser") OR session.stLoggedinUser.role NEQ 'Teacher')>
+			<cflocation  url="/assignments_mindfire/FindOnlineTutor">
+
+		</cfif>
 		<cfreturn true />
 	</cffunction>
 

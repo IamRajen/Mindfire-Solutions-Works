@@ -65,7 +65,7 @@ Functionality: This file contains the functions which help to login the user in 
 				<cfloginuser name="#rsLoginUser.FIRSTNAME#" password="#rsLoginUser.PASSWORD#" roles="#rsLoginUser.role#">
 			</cflogin>
 			<!---Save user data in the session scope--->
-			<cfset session.stLoggedInUser = {'firstName' = rsLoginUser.FIRSTNAME, 'lastName' = rsLoginUser.LASTNAME, 'username' = rsLoginUser.USERNAME, 'userId' = rsLoginUser.USERId} />
+			<cfset session.stLoggedInUser = {'firstName' = rsLoginUser.FIRSTNAME, 'lastName' = rsLoginUser.LASTNAME, 'username' = rsLoginUser.USERNAME, 'userId' = rsLoginUser.USERId, 'role' = rsLoginUser.role} />
 			<!---change the isUserLoggedIn variable to true--->
 			<cfset var isUserLoggedIn = true />
 		</cfif>
