@@ -11,7 +11,7 @@ var inputFields=new Map();
 var countryMap=new Map();
 var stateMap=new Map();
 
-var patternName=/^[A-Za-z']+$/;
+var patternName=/^[A-Za-z]+$/;
 var patternEmail=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 var patternPhone=/^[^0-1][0-9]{9}$/;
 var patternText=/^[a-zA-Z0-9\s,'-]*$/;
@@ -311,7 +311,6 @@ function isEmpty(object)
 //function for valid pattern..
 function isValidPattern(text,pattern)
 {
-    return true;
     return pattern.test(text);
 }
 

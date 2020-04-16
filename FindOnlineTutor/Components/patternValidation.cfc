@@ -87,4 +87,24 @@ Functionality: This file contains some functions which validate a specific patte
         <cfreturn valid/>
     </cffunction>
 
+    <!---function to validate only alphabets and spaces--->
+    <cffunction  name="validHeading"  access="public" output="false" returntype="boolean">
+        <cfargument  name="text" type="string" required="true"/>
+        <cfset var valid=true/>
+        <cfif NOT isValid("regex", text, "^[a-zA-Z ]+$")>
+            <cfset valid=false/>
+        </cfif>
+        <cfreturn valid/>
+    </cffunction>
+
+    <!---function to validate only alphabets and spaces--->
+    <cffunction  name="validLargeText"  access="public" output="false" returntype="boolean">
+        <cfargument  name="text" type="string" required="true"/>
+        <cfset var valid=true/>
+        <cfif NOT isValid("regex", text, "^[ A-Za-z0-9_@./:&+-]*$")>
+            <cfset valid=false/>
+        </cfif>
+        <cfreturn valid/>
+    </cffunction>
+
 </cfcomponent>

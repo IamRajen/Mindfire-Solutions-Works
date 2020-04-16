@@ -125,7 +125,7 @@ Functionality: This is the signup page helps the user to validate and register i
 				<label class="control-label"  for="dob">D.O.B:<span class="text-danger">*</span></label>
 			</div>
 			<div class="col-md-4">
-				<input type="date" id="dob" name="dob" placeholder="Create Password" class="form-control d-block" onblur="checkDOB(this)">
+				<input type="date" id="dob" name="dob" class="form-control d-block" onblur="checkDOB(this)">
 				<span class="text-danger small float-left"></span>
 			</div>
 		</div>

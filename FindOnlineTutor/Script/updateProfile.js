@@ -122,18 +122,9 @@ $(document).ready(function()
     $("#formUserDetail").submit(function(e)
     {
         var successfullyValidated=true;
-        var havingAlternativeAddress=checkAlternativeAddress(alternativeAddress);
 
         for(var i of inputFieldsProfile.keys())
         {
-            // if(i.length>7 && i.slice(0,-7)=="Country")
-            // {
-            //     inputFieldsProfile.get(i).value=countryMap.get($("#"+id).val());
-            // }
-            // else if(i.length>6 && i.slice(0,-5)=="State")
-            // {
-            //     inputFieldsProfile.get(i).value=stateMap.get($("#"+id).val());
-            // }
             if(inputFieldsProfile.get(i).errorMsg)
             {
                 setErrorBorder(inputFieldsProfile.get(i));

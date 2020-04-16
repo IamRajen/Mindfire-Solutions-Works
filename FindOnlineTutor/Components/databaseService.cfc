@@ -460,5 +460,49 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn isUsernamePresent/>
     </cffunction>
 
+    <!---function to insert new batch--->
+    <cffunction  name="insertBatch" access="public" output="false" returnformat="json" returntype="struct">
+        <cfargument  name="batchOwnerId" type="any" required="true"/>
+        <cfargument  name="batchName" type="string" required="true"/>
+        <cfargument  name="batchType" type="string" required="true"/>
+        <cfargument  name="batchDetails" type="string" required="true"/>
+        <cfargument  name="startDate" type="string" required="true"/>
+        <cfargument  name="endDate" type="string" required="true"/>
+        <cfargument  name="capacity" type="numeric" required="true"/>
+        <cfargument  name="fee" type="numeric" required="true"/>
+        <cfargument  name="enrolled" type="numeric" required="false" default=0/>
+
+        <!---creating a structure for returning purpose. which contains the inserted result and error msg if occurred--->
+        <cfset var insertedSuccessfully={}/>
+        <!---declaring a variable for result of query execution--->
+        <cfset var newBatch=''/>
+
+        <cftry>
+            <cfquery result="newBatch">
+                INSERT INTO [dbo].[Batch]
+                (batchOwnerId,batchType,batchName,batchDetails,startDate,endDate,capacity,enrolled,fee)
+                VALUES (
+                    <cfqueryparam value=#arguments.batchOwnerId# cfsqltype='cf_sql_bigint'>,
+                    <cfqueryparam value='#arguments.batchType#' cfsqltype='cf_sql_varchar'>,
+                    <cfqueryparam value='#arguments.batchName#' cfsqltype='cf_sql_varchar'>,
+                    <cfqueryparam value='#arguments.batchDetails#' cfsqltype='cf_sql_varchar'>,
+                    <cfqueryparam value='#arguments.startDate#' cfsqltype='cf_sql_date'>,
+                    <cfqueryparam value='#arguments.endDate#' cfsqltype='cf_sql_date'>,
+                    <cfqueryparam value=#arguments.capacity# cfsqltype='cf_sql_smallint'>,
+                    <cfqueryparam value=#arguments.enrolled# cfsqltype='cf_sql_smallint'>,
+                    <cfqueryparam value=#arguments.fee# cfsqltype='cf_sql_money'>
+                )
+            </cfquery>
+        <cfcatch type="any">
+            <!---if an error occurred while inserting then it will be store in the error key of returning structure for
+            further execution--->
+            <cfset insertedSuccessfully.error='#cfcatch#'/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(insertedSuccessfully, "error")>
+            <cfset insertedSuccessfully.newBatchId=newBatch.GENERATEDKEY/>
+        </cfif>
+        <cfreturn insertedSuccessfully/>
+    </cffunction>
 
 </cfcomponent>

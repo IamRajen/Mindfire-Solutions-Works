@@ -7,6 +7,7 @@ Functionality: This is the homepage.
 --->
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" profilePath="profile.cfm">
 <!--- <cfdump  var="#isUserInRole('Teacher')#"> --->
+<cfdump  var="#session#">
 <cfif structKeyExists(session, "stloggedinUser")>
 	<h1>Dashboard</h1>
 	<div class="container mt-5 mb-5">

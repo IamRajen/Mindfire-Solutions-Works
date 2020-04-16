@@ -50,7 +50,7 @@ Functionality: This file show the profile data to user and allows to modify it.
             <form id="formUserDetail" class="disabledbutton pb-5 mb-5" id="form-update" method="POST" action="profile.cfm">
 
                 <div class="alert alert-info pt-3">
-                    <p class="text-info text-center font-weight-bold">
+                    <p class="text-info text-center">
                         If you want to REMOVE the ALTERNATIVE fields just keep it BLANK.
                     </p>
                 </div>
@@ -130,7 +130,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                     <form id="formUserPhoneDetail" class="disabledbutton pb-5 mb-5" id="form-update" method="POST" action="profile.cfm">
 
                         <div class="alert alert-info pt-3">
-                            <p class="text-info text-center font-weight-bold">
+                            <p class="text-info text-center">
                                 If you want to REMOVE the ALTERNATIVE fields just keep it BLANK.
                             </p>
                         </div>
@@ -197,7 +197,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                             <cfset onlineLocationExists = 'checked'/>
                         </cfif>
                         <div class="alert alert-info pt-3">
-                            <p class="text-info text-center font-weight-bold">
+                            <p class="text-info text-center">
                                 These fields are not mandatory but it helps in recommandation.
                             </p>
                         </div>
@@ -255,7 +255,7 @@ Functionality: This file show the profile data to user and allows to modify it.
             <form id="formUserAddressDetail" class="disabledbutton pb-5 mb-5" id="form-update" method="POST" action="profile.cfm">
 
                 <div class="alert alert-info pt-3">
-                    <p class="text-info text-center font-weight-bold">
+                    <p class="text-info text-center">
                         If you want to REMOVE the ALTERNATIVE fields just keep it BLANK.
                     </p>
                 </div>
