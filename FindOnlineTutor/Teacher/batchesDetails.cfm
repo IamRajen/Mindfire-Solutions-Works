@@ -1,4 +1,4 @@
-<cf_header homeLink="../index.cfm" logoPath="../Images/logo.png" stylePath="../Styles/style.css" scriptPath="../Script/batchValidation.js">
+<cf_header homeLink="../index.cfm" logoPath="../Images/logo.png" stylePath="../Styles/style.css" scriptPath="../Script/editBatchDetails.js">
 
     <cfif NOT structKeyExists(url, "id")>
         <cflocation  url="/assignments_mindfire/FindOnlineTutor">
@@ -20,7 +20,7 @@
             <p id="batchId" class="hidden"><cfoutput>#batchInfo.overview.batch.batchId#</cfoutput></p>
             <div class="col-md-12 border-bottom pb-2 mb-2">
                 <h3 class=" text-dark d-inline">Overview</h3>
-                <button class="btn btn-danger d-inline float-right px-3 py-1" data-toggle="modal" data-target="#editBatch">Edit</button>
+                <button class="btn btn-danger d-inline float-right px-3 py-1" data-toggle="modal" data-target="#editBatchModal" onclick="loadBatchOverview()">Edit</button>
             </div>
             
             <div class="col-md-12">
@@ -53,7 +53,7 @@
                     <div class="col-md-6 p-3 mb-4 shadow bg-light rounded">
 
                         <h3 class=" text-dark d-inline">Timing</h3>
-                        <button class="btn btn-danger d-inline float-right px-3 py-1" data-toggle="modal" data-target="#editBatchTime">Edit</button>
+                        <button class="btn btn-danger d-inline float-right px-3 py-1" data-toggle="modal" data-target="#editBatchTimeModal" onclick="loadBatchTiming()">Edit</button>
                         <hr>
                         <!---if no timing available a blank msg while be diplayed--->
                         <!---display the timing with specific day--->
@@ -120,132 +120,143 @@
 
         <!---Feedback Section end here--->
 
+        <!---all output processes ends here--->
+
+        <!---all models starts from here--->
+        <!---The Edit Batch Timing Modal --->
+        <div class="modal fade" id="editBatchTimeModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="editBatchTiming">
+                        <!---model header--->
+                        <div class="modal-header">
+                            <h5 class="modal-title"><cfoutput>#batchInfo.overview.batch.batchName#</cfoutput> Batch Time</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <!---div for displaying the msg if some error occurred while retrieving the data--->
+                        <div id="errorEditBatchTiming" class="alert alert-danger pt-5 hidden">
+                            <p class="d-block text-danger"></p>
+                        </div>
+                        <!---modal body--->
+                        <div id="editBatchTimingModelBody" class="modal-body">
+                            <div id="batchTimingDesign">
+                                <label id="label1" class="d-block text-center" class="control-label"  for="startDate">MONDAY</label>
+                                <div class="row m-3 p-2 border-buttom ">
+                                    <div class="col-md-6">
+                                        <label class="text-info" class="control-label"  for="startDate">Start Time:<span class="text-danger">*</span></label>
+                                        <input class="form-control" type="time" value="13:45:00" id="startTime1">
+                                        <span class="text-danger small float-left"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-info" class="control-label"  for="endDate">End Time:<span class="text-danger">*</span></label>
+                                        <input class="form-control" type="time" value="13:45:00" id="endTime1">
+                                        <span class="text-danger small float-left"></span>
+                                    </div>
+                                </div>
+                            </div>    
+                        </div>
+                        <!---modal footer--->
+                        <div id="editBatchTimingfooter" class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--- The Edit Batch Modal --->
+        <div class="modal fade" id="editBatchModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="editBatchOverview">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title pl-5">Batch Information</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <!---div for displaying the msg if some error occurred while retrieving the data--->
+                        <div id="errorEditBatchDetails" class="alert alert-danger pt-5 hidden">
+                            <p class="d-block text-danger"></p>
+                        </div>
+                        
+                        <!-- Modal body -->
+                        <div id="editBatchOverviewModelBody" class="modal-body">
+                            <!---Batch name field--->
+                                <div class="row m-3">
+                                    <label class="text-info" class="control-label"  for="batchName">Batch Name:<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="text" id="editBatchName" name="batchName" placeholder="Batch Name" class="form-control d-block" onblur="checkBatchName(this)">
+                                        <span class="text-danger small float-left"></span>
+                                    </div>
+                                </div>
+                                
+                            <!---Batch type field--->
+                                <div class="row m-3">
+                                    <label class="text-info" class="control-label"  for="batchType">Batch Type:<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <label><input type="radio" name="editBatchType" value="otherLocation">Coaching Center</label>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label><input type="radio" name="editBatchType" value="homeLocation">Student Home</label>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label><input type="radio" name="editBatchType" value="online">Online</label>
+                                    </div>  
+                                </div>
+
+                            <!---Batch detail--->
+                                <div class="row m-3">
+                                    <label class="text-info" for="batchDetail">Batch Details:<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <textarea class="form-control" rows="5" id="editBatchDetails" onblur="checkBatchDetails(this)"></textarea>
+                                        <span class="text-danger small float-left"></span>
+                                    </div>
+                                </div>
+                            
+                            <!---Batch Start date End date--->
+                                <div class="row m-3 ">
+                                    <div class="col-md-6">
+                                        <label class="text-info" class="control-label"  for="startDate">Start Date:<span class="text-danger">*</span></label>
+                                        <input type="date" id="editBatchStartDate" name="startDate" class="form-control d-block" onblur="checkDate(this)">
+                                        <span class="text-danger small float-left"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-info" class="control-label"  for="endDate">End Date:<span class="text-danger">*</span></label>
+                                        <input type="date" id="editBatchEndDate" name="endDate" class="form-control d-block" onblur="checkDate(this)">
+                                        <span class="text-danger small float-left"></span>
+                                    </div>
+                                </div>
+                            <!---Batch Capacity fee--->
+                                <div class="row m-3 ">
+                                    <div class="col-md-6">
+                                        <label class="text-info" class="control-label"  for="batchCapacity">Batch capacity:<span class="text-danger">*</span></label>
+                                        <input type="text" id="editBatchCapacity" name="batchCapacity" class="form-control d-block" onblur="checkCapacityFee(this)"/>
+                                        <span class="text-danger small float-left"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-info" class="control-label"  for="batchFee">Batch fee(In Rupees):<span class="text-danger">*</span></label>
+                                        <input type="text" id="editBatchFee" name="batchFee" class="form-control d-block" onblur="checkCapacityFee(this)">
+                                        <span class="text-danger small float-left"></span>
+                                    </div>
+                                </div>
+
+                        </div>
+                        <!-- Modal footer -->
+                        <div id="editBatchOverviewfooter" class="modal-footer">
+                            <input type="submit" class="btn btn-danger" value="Done">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!---all models ends here--->
+
     <cfelse>
         <!---if failed to retrived the details an erro msg will displayed--->
         <div class="alert alert-danger pt-3 m-2 mb-5">
             <p class="d-block text-danger m-2"><cfoutput>#batchInfo.overview.error#</cfoutput></p>
         </div>
     </cfif>
-    <!---all output processes ends here--->
-
-    <!---all models starts from here--->
-    <!---The Edit Batch Timing Modal --->
-    <div class="modal fade" id="editBatchTime">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <!---model header--->
-                <div class="modal-header">
-                    <h5 class="modal-title"><cfoutput>#batchInfo.overview.batch.batchName#</cfoutput> Batch Time</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <!---modal body--->
-                <div class="modal-body">
-                
-                    <label id="label1" class="d-block text-center" class="control-label"  for="startDate">MONDAY</label>
-                    <div class="row m-3 p-2 border-buttom ">
-                        <div class="col-md-6">
-                            <label class="text-info" class="control-label"  for="startDate">Start Time:<span class="text-danger">*</span></label>
-                            <input class="form-control" type="time" value="13:45:00" id="startTime1">
-                            <span class="text-danger small float-left"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="text-info" class="control-label"  for="endDate">End Time:<span class="text-danger">*</span></label>
-                            <input class="form-control" type="time" value="13:45:00" id="endTime1">
-                            <span class="text-danger small float-left"></span>
-                        </div>
-                    </div>
-                    
-                </div>
-                <!---modal footer--->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--- The Edit Batch Modal --->
-    <div class="modal fade" id="editBatch">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form id="editBatch">
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title pl-5">Batch Information</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <!---Batch name field--->
-                            <div class="row m-3">
-                                <label class="text-info" class="control-label"  for="batchName">Batch Name:<span class="text-danger">*</span></label>
-                                <div class="col-md-12">
-                                    <input type="text" id="batchName" name="batchName" placeholder="Batch Name" class="form-control d-block" onblur="checkBatchName(this)">
-                                    <span class="text-danger small float-left"></span>
-                                </div>
-                            </div>
-                            
-                        <!---Batch type field--->
-                            <div class="row m-3">
-                                <label class="text-info" class="control-label"  for="batchType">Batch Type:<span class="text-danger">*</span></label>
-                                <div class="col-md-12">
-                                    <label><input type="radio" name="batchType" value="otherLocation">Coaching Center</label>
-                                </div>
-                                <div class="col-md-12">
-                                    <label><input type="radio" name="batchType" value="homeLocation">Student Home</label>
-                                </div>
-                                <div class="col-md-12">
-                                    <label><input type="radio" name="batchType" value="online">Online</label>
-                                </div>  
-                            </div>
-
-                        <!---Batch detail--->
-                            <div class="row m-3">
-                                <label class="text-info" for="batchDetail">Batch Details:<span class="text-danger">*</span></label>
-                                <div class="col-md-12">
-                                    <textarea class="form-control" rows="5" id="batchDetails" onblur="checkBatchDetails(this)"></textarea>
-                                    <span class="text-danger small float-left"></span>
-                                </div>
-                            </div>
-                        
-                        <!---Batch Start date End date--->
-                            <div class="row m-3 ">
-                                <div class="col-md-6">
-                                    <label class="text-info" class="control-label"  for="startDate">Start Date:<span class="text-danger">*</span></label>
-                                    <input type="date" id="batchStartDate" name="startDate" class="form-control d-block" onblur="checkDate(this)">
-                                    <span class="text-danger small float-left"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="text-info" class="control-label"  for="endDate">End Date:<span class="text-danger">*</span></label>
-                                    <input type="date" id="batchEndDate" name="endDate" class="form-control d-block" onblur="checkDate(this)">
-                                    <span class="text-danger small float-left"></span>
-                                </div>
-                            </div>
-                        <!---Batch Capacity fee--->
-                            <div class="row m-3 ">
-                                <div class="col-md-6">
-                                    <label class="text-info" class="control-label"  for="batchCapacity">Batch capacity:<span class="text-danger">*</span></label>
-                                    <input type="text" id="batchCapacity" name="batchCapacity" class="form-control d-block" onblur="checkCapacityFee(this)"/>
-                                    <span class="text-danger small float-left"></span>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="text-info" class="control-label"  for="batchFee">Batch fee(In Rupees):<span class="text-danger">*</span></label>
-                                    <input type="text" id="batchFee" name="batchFee" class="form-control d-block" onblur="checkCapacityFee(this)">
-                                    <span class="text-danger small float-left"></span>
-                                </div>
-                            </div>
-
-                    </div>
-                    <!-- Modal footer -->
-                    <div id="buttonDiv" class="modal-footer">
-                        <input type="submit" class="btn btn-danger" value="Done">
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <!---all models ends here--->
 </cf_header>

@@ -60,10 +60,11 @@ Functionality: This file contains the functions which help to login the user in 
 		
 		<!---Check if the query returns one and only one user--->
 		<cfif rsLoginUser.recordCount EQ 1>
-			<!---Log the user in--->
+			<!---Log the user in
 			<cflogin>
 				<cfloginuser name="#rsLoginUser.FIRSTNAME#" password="#rsLoginUser.PASSWORD#" roles="#rsLoginUser.role#">
 			</cflogin>
+			--->
 			<!---Save user data in the session scope--->
 			<cfset session.stLoggedInUser = {'firstName' = rsLoginUser.FIRSTNAME, 'lastName' = rsLoginUser.LASTNAME, 'username' = rsLoginUser.USERNAME, 'userId' = rsLoginUser.USERId, 'role' = rsLoginUser.role} />
 			<!---change the isUserLoggedIn variable to true--->

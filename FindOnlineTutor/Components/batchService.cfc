@@ -74,6 +74,74 @@ Functionality: This file contains the functions which help to give required serv
 
     </cffunction>
 
+    <!---function to create a new batch--->
+    <cffunction  name="updateBatch" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---defining argumnents--->
+        <cfargument  name="batchId" type="any" required="true">
+        <cfargument  name="editBatchName" type="string" required="true">
+        <cfargument  name="editBatchType" type="string" required="true">
+        <cfargument  name="editBatchDetails" type="string" required="true">
+        <cfargument  name="editBatchStartDate" type="string" required="true">
+        <cfargument  name="editBatchEndDate" type="string" required="true">
+        <cfargument  name="editBatchCapacity" type="string" required="true">
+        <cfargument  name="editBatchFee" type="string" required="true">
+
+        <!---creating a variable for returning the msg as per required--->
+        <cfset var errorMsgs["validatedSuccessfully"] = true/>
+
+        <!---creating a trimmed variable of every arguments--->
+        <cfset var name=trim(arguments.editBatchName)/>
+        <cfset var type=trim(arguments.editBatchType)/>
+        <cfset var details=trim(arguments.editBatchDetails)/>
+        <cfset var startDate=trim(arguments.editBatchStartDate)/>
+        <cfset var endDate=trim(arguments.editBatchEndDate)/>
+        <cfset var capacity=trim(arguments.editBatchCapacity)/>
+        <cfset var fee=trim(arguments.editBatchFee)/>
+
+        <!---validating the argumnents--->
+        <cfset var errorMsgs['editBatchName'] = validateBatchName(name)/>
+        <cfset var errorMsgs['editBatchType'] = validateBatchType(type)/>
+        <cfset var errorMsgs['editBatchDetails'] = validateBatchDetails(details)/>
+        <cfset var errorMsgs['editBatchStartDate'] = validateBatchDate(startDate)/>
+        <cfset var errorMsgs['editBatchEndDate'] = validateBatchDate(endDate)/>
+        <cfset var errorMsgs['editBatchCapacity'] = validateBatchCapacity(capacity)/>
+        <cfset var errorMsgs['editBatchFee'] = validateBatchFee(fee)/>
+
+        <cfif NOT structKeyExists(errorMsgs['editBatchStartDate'], 'msg') AND NOT structKeyExists(errorMsgs['editBatchEndDate'], 'msg')>
+            <cfif dateTimeFormat(arguments.editBatchStartDate, "MM/dd/yyyy") GT dateTimeFormat(arguments.editBatchEndDate, "MM/dd/yyyy")>
+                <cfset errorMsgs['editBatchEndDate']={'msg':'End date should more than start date'}/>
+            </cfif>
+        </cfif>
+
+        <!---looping the errorMsgs struct for validation--->
+        <cfloop collection="#errorMsgs#" item="key">
+            <cfif key NEQ 'validatedSuccessfully' and structKeyExists(errorMsgs[key],"msg")>
+                <cfset errorMsgs["validatedSuccessfully"]=false/>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+
+
+        <cfif errorMsgs["validatedSuccessfully"]>
+
+            <!---if successfully validated updation works starts from here--->
+            <cflog  text="#arguments.batchId#">
+            <cfset var editBatchOverview = databaseServiceObj.updateBatch(
+                #arguments.batchId#, name, type, details, startDate,endDate,LSParseNumber(capacity),
+                LSParseNumber(fee))/>
+            <cfif structKeyExists(editBatchOverview, "error")>
+                <cfset errorMsgs["error"]=true/>
+            <cfelse>
+                <cfset errorMsgs["updatedSuccessfully"]=true/>
+            </cfif>
+
+        </cfif>
+
+        <cfreturn errorMsgs/>
+        
+
+    </cffunction>
+
     <!---function to validate the batch name--->
     <cffunction  name="validateBatchName" access="public" output="false" returntype="struct">
         <!---arguments--->
@@ -201,29 +269,51 @@ Functionality: This file contains the functions which help to give required serv
         <cfargument  name="batchId" type="numeric" required="true">
         <!---creating a variable for storing the returned value from database function call--->
         <cfset var batchDetails = {}/>
-        <cfset batchDetails.overview = databaseServiceObj.getBatchByID(arguments.batchId)/>
-        <cfset var batchTime = databaseServiceObj.getBatchTime(arguments.batchId)/>
+        <cfset batchDetails.overview = getBatchOverviewById(arguments.batchId)/>
+        <cfset var batchDetails.timing = getBatchTimingById(arguments.batchId)/>
 
-        <cfset var days = ["Monday","Tuesday", "Wednesday", "Thrusday", "Friday", "Saturday", "Sunday"]/>
-        <cfset var timing = [{},{},{},{},{},{},{}]/>
-        <!---looping over batch timing to create a structure of timing--->
-        <cfif structKeyExists(batchTime, "time")>
-            <cfset var rowNum = 1/>
-            <cfloop query="batchTime.time">
-                <cfset timing[#batchTime.time.day#]['#days[batchTime.time.day]#']=QueryGetRow(batchTime.time, rowNum)/>
-                <cfset rowNum = rowNum+1/>
-            </cfloop>
-            <cfloop from="1" to="#arrayLen( timing )#" index="i">
-                <cfif structIsEmpty(timing[i])>
-                    <cfset timing[i]['#days[i]#'] = {}/>
-                </cfif>
-            </cfloop>
-            <cfset batchdetails.timing.time = timing/>
-        <cfelse>
-            <cfset batchdetails.timing = batchTime/>
-        </cfif>
+        
         <cfreturn batchDetails/>
         
+    </cffunction>
+
+    <!---function to get the batch overview --->
+    <cffunction  name="getBatchOverviewById" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---argument--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <!---declaring a structure for returning the value of batch overview--->
+        <cfset var batchOverview = databaseServiceObj.getBatchByID(arguments.batchId)/>
+        <cfreturn batchOverview/>
+    </cffunction>
+
+    <!---function to get the batch timing --->
+    <cffunction  name="getBatchTimingById" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---argument--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <!---declaring a structure for returning the value of batch overview--->
+        <cfset var batchTiming = databaseServiceObj.getBatchTime(arguments.batchId)/>
+        <!---creating the timing array of batch --->
+        <cfset var days = ["Monday","Tuesday", "Wednesday", "Thrusday", "Friday", "Saturday", "Sunday"]/>
+        <cfset var timeArray = [{},{},{},{},{},{},{}]/>
+        <!---returning structure of batch timing --->
+        <cfset var timing = {}/>
+        <!---looping over batch timing to create a structure of timing--->
+        <cfif structKeyExists(batchTiming, "time")>
+            <cfset var rowNum = 1/>
+            <cfloop query="batchTiming.time">
+                <cfset timeArray[#batchTiming.time.day#]['#days[batchTiming.time.day]#']=QueryGetRow(batchTiming.time, rowNum)/>
+                <cfset rowNum = rowNum+1/>
+            </cfloop>
+            <cfloop from="1" to="#arrayLen( timeArray )#" index="i">
+                <cfif structIsEmpty(timeArray[i])>
+                    <cfset timeArray[i]['#days[i]#'] = {}/>
+                </cfif>
+            </cfloop>
+            <cfset timing.time = timeArray/>
+        <cfelse>
+            <cfset timing = batchTiming/>
+        </cfif>
+        <cfreturn timing/>
     </cffunction>
 
 

@@ -567,6 +567,42 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn newBatchTime/>
     </cffunction>
 
+    <!---function to insert new batch--->
+    <cffunction  name="updateBatch" access="public" output="false" returnformat="json" returntype="struct">
+        <cfargument  name="batchId" type="numeric" required="true"/>
+        <cfargument  name="batchName" type="string" required="true"/>
+        <cfargument  name="batchType" type="string" required="true"/>
+        <cfargument  name="batchDetails" type="string" required="true"/>
+        <cfargument  name="startDate" type="string" required="true"/>
+        <cfargument  name="endDate" type="string" required="true"/>
+        <cfargument  name="capacity" type="numeric" required="true"/>
+        <cfargument  name="fee" type="numeric" required="true"/>
+
+        <!---creating a structure for returning purpose. which contains the inserted result and error msg if occurred--->
+        <cfset var updatedSuccessfully={}/>
+        <!---updation starts here--->
+        <cfset var updateBatch=''/>
+
+        <cftry>
+            <cfquery result="updateBatch">
+                UPDATE [dbo].[Batch]
+                SET batchName = <cfqueryparam value='#arguments.batchName#' cfsqltype='cf_sql_varchar'>,
+                    batchType = <cfqueryparam value='#arguments.batchType#' cfsqltype='cf_sql_varchar'>,
+                    batchDetails = <cfqueryparam value='#arguments.batchDetails#' cfsqltype='cf_sql_varchar'>,
+                    startDate = <cfqueryparam value='#arguments.startDate#' cfsqltype='cf_sql_date'>,
+                    endDate = <cfqueryparam value='#arguments.endDate#' cfsqltype='cf_sql_date'>,
+                    capacity = <cfqueryparam value='#arguments.capacity#' cfsqltype='cf_sql_smallint'>,
+                    fee = <cfqueryparam value='#arguments.fee#' cfsqltype='cf_sql_smallint'>
+                WHERE batchId = <cfqueryparam value=#arguments.batchId# cfsqltype='cf_sql_bigint'>;
+            </cfquery>
+        <cfcatch type="any">
+            <cfset updatedSuccessfully.error="#cfcatch#"/>
+            <cflog  text="#cfcatch#">
+        </cfcatch>
+        </cftry>
+        <cfreturn updatedSuccessfully/>
+    </cffunction>
+
     <!---function to get the batch info by it's ID--->
     <cffunction  name="getBatchByID" access="public" output="false" returntype="struct">
         <!---arguments--->
