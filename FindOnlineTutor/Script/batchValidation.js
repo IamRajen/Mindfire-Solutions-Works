@@ -25,7 +25,7 @@ $(document).ready(function()
     inputFields.set("batchCapacity",{id:"batchCapacity", errorMsg:"Enter the batch capacity", value:""});
     inputFields.set("batchFee",{id:"batchFee", errorMsg:"Enter the batch fee", value:""});
 
-    $("form").submit(function(e){
+    $("#newBatch").submit(function(e){
         e.preventDefault();
         var successfullyValidated=true;
         // console.log($('input[name="batchType"]:checked').val());
@@ -39,6 +39,90 @@ $(document).ready(function()
             }
         }
         console.log($("batchEndDate").val())
+        //if successfully validated data is send to the server for creating batch
+        if(successfullyValidated)
+        {
+            $.ajax({
+                type:"POST",
+                async: "false",
+                url:"../Components/batchService.cfc?method=createBatch",
+                cache: false,
+                timeout: 2000,
+                error: function(){
+                    swal({
+                        title: "Failed to Create New Batch!!",
+                        text: "Some error occured. Please try after sometime",
+                        icon: "error",
+                        button: "Ok",
+                    });
+                },
+                data:{
+                        "batchName":$("#batchName").val(),
+                        "batchType": $('input[name="batchType"]:checked').val(),
+                        "batchDetails": $("#batchDetails").val(),
+                        "batchStartDate": $("#batchStartDate").val(),
+                        "batchEndDate": $("#batchEndDate").val(),
+                        "batchCapacity": $("#batchCapacity").val(),
+                        "batchFee": $("#batchFee").val()
+                    },
+                success: function(error) {
+                    errorMsgs=JSON.parse(error);
+                    console.log(errorMsgs);
+                    if(errorMsgs.hasOwnProperty("createdSuccessfully"))
+                    {
+                        swal({
+                            title: "Successfully Created",
+                            text: "Batch: "+$("#batchName").val(),
+                            icon: "success",
+                            buttons: false,
+                        })
+                        setTimeout(function(){window.location.reload(true)},2000)
+                        
+                    }
+                    else if(errorMsgs.hasOwnProperty("error"))
+                    {
+                        swal({
+                            title: "Failed to Create Batch!!",
+                            text: "Unable to create the batch. Please, try after sometime!!",
+                            icon: "error",
+                            button: "Ok",
+                        });
+                    }
+                    else if(errorMsgs["validatedSuccessfully"]==false)
+                    {
+                        delete errorMsgs['validatedSuccessfully'];
+                        for(var key in errorMsgs) 
+                        {
+                            if(errorMsgs[key].hasOwnProperty("MSG"))
+                            {
+                                inputFields.get(key).errorMsg=errorMsgs[key]["MSG"];
+                                setErrorBorder(inputFields.get(key));
+                            } 
+                        }
+                        swal({
+                            title: "Failed to create a BATCH!!",
+                            text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
+                            icon: "error",
+                            button: "Ok",
+                        });
+                    }
+                }
+            });
+        }
+    });
+
+    $("#editBatch").submit(function(e){
+        e.preventDefault();
+        var successfullyValidated=true;
+        //client-side validation starts here
+        for(var key of inputFields.keys())
+        {
+            if(inputFields.get(key).errorMsg)
+            {
+                setErrorBorder(inputFields.get(key));
+                successfullyValidated=false;
+            }
+        }
         //if successfully validated data is send to the server for creating batch
         if(successfullyValidated)
         {

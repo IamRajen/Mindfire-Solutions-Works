@@ -9,7 +9,7 @@ Functionality: This file contains the functions which help to give required serv
 <cfcomponent output="false">
 
     <cfset patternvalidationObj = createObject("component","patternValidation")/>
-    <cfset databaseValidationObj = createObject("component","databaseService")/>
+    <cfset databaseServiceObj = createObject("component","databaseService")/>
     <!---function to create a new batch--->
     <cffunction  name="createBatch" access="remote" output="false" returntype="struct" returnformat="json">
         <!---defining argumnents--->
@@ -58,7 +58,7 @@ Functionality: This file contains the functions which help to give required serv
 
         <cfif errorMsgs["validatedSuccessfully"]>
 
-            <cfset var newBatch = databaseValidationObj.insertBatch(
+            <cfset var newBatch = databaseServiceObj.insertBatch(
                 #session.stloggedinUser.userID#, name, type, details, startDate,endDate,LSParseNumber(capacity),
                 LSParseNumber(fee), 0)/>
             <cfif structKeyExists(newBatch, "error")>
@@ -188,11 +188,43 @@ Functionality: This file contains the functions which help to give required serv
         <cfset var batches={}/>
         <!---calling required function as user type--->
         <cfif session.stLoggedInUser.role EQ 'Teacher'>
-            <cfset batches=databaseValidationObj.collectTeacherBatch(session.stLoggedInUser.userID)/>
+            <cfset batches=databaseServiceObj.collectTeacherBatch(session.stLoggedInUser.userID)/>
 <!---         <cfelseif session.stLoggedInUser.role EQ 'Student'> --->
             
         </cfif>
         <cfreturn batches/>
     </cffunction>
+
+    <!---function to get the batch information like overview timing and feedbacks by it's Id--->
+    <cffunction  name="getBatchDetailsByID" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <!---creating a variable for storing the returned value from database function call--->
+        <cfset var batchDetails = {}/>
+        <cfset batchDetails.overview = databaseServiceObj.getBatchByID(arguments.batchId)/>
+        <cfset var batchTime = databaseServiceObj.getBatchTime(arguments.batchId)/>
+
+        <cfset var days = ["Monday","Tuesday", "Wednesday", "Thrusday", "Friday", "Saturday", "Sunday"]/>
+        <cfset var timing = [{},{},{},{},{},{},{}]/>
+        <!---looping over batch timing to create a structure of timing--->
+        <cfif structKeyExists(batchTime, "time")>
+            <cfset var rowNum = 1/>
+            <cfloop query="batchTime.time">
+                <cfset timing[#batchTime.time.day#]['#days[batchTime.time.day]#']=QueryGetRow(batchTime.time, rowNum)/>
+                <cfset rowNum = rowNum+1/>
+            </cfloop>
+            <cfloop from="1" to="#arrayLen( timing )#" index="i">
+                <cfif structIsEmpty(timing[i])>
+                    <cfset timing[i]['#days[i]#'] = {}/>
+                </cfif>
+            </cfloop>
+            <cfset batchdetails.timing.time = timing/>
+        <cfelse>
+            <cfset batchdetails.timing = batchTime/>
+        </cfif>
+        <cfreturn batchDetails/>
+        
+    </cffunction>
+
 
 </cfcomponent>

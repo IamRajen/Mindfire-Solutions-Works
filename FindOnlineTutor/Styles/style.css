@@ -94,4 +94,8 @@ a:hover{
 {
   color: #F2AA4CFF;
 }
+.hidden
+{
+  display: none;
+}
 

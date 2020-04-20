@@ -72,7 +72,9 @@ Functionality: It is a header file which is included probably in every pages.
 			</nav>
 			<div class="container">
 	<cfelse>
-			</div>			
+			</div>	
+			<div class="bg-secondary p-5">
+        </div>			
 		</body>
 	</html>
 </cfif>

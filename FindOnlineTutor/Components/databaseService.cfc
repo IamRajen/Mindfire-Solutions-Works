@@ -463,7 +463,7 @@ Functionality: This file has services/functions related to the data in the datab
 <!---batch functions starts from here--->
     <!---function to insert new batch--->
     <cffunction  name="insertBatch" access="public" output="false" returnformat="json" returntype="struct">
-        <cfargument  name="batchOwnerId" type="any" required="true"/>
+        <cfargument  name="batchOwnerId" type="numeric" required="true"/>
         <cfargument  name="batchName" type="string" required="true"/>
         <cfargument  name="batchType" type="string" required="true"/>
         <cfargument  name="batchDetails" type="string" required="true"/>
@@ -509,7 +509,7 @@ Functionality: This file has services/functions related to the data in the datab
     <!---function to collect batches of teacher--->
     <cffunction  name="collectTeacherBatch" output="false" access="public" returntype="struct">
         <!---arguments--->
-        <cfargument  name="teacherId" type="any" required="true">
+        <cfargument  name="teacherId" type="numeric" required="true">
         <!---declaring a structure for storing the query data and error if occured--->
         <cfset var batches={}/>
         <!---Declaring a variable for storing result data--->
@@ -531,6 +531,95 @@ Functionality: This file has services/functions related to the data in the datab
             <cfset batches.data = teacherBatches/>
         </cfif>
         <cfreturn batches/>
+    </cffunction>
+
+    <!---function to insert batch timing--->
+    <cffunction  name="insertBatchTime" output="false" access="public" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <cfargument  name="startTime" type="string" required="true">
+        <cfargument  name="endTime" type="string" required="true">
+        <cfargument  name="day" type="numeric" required="true">
+        <!---variable for query result--->
+        <cfset var batchTime=''/>
+        <!---declaring structure for returning the query generated key and error msg if occured--->
+        <cfset var newBatchTime={}/>
+        <!---insertion starts here--->
+        <cftry>
+            <cfquery result="batchTime">
+                INSERT INTO [dbo].[BatchTiming]
+                (batchId, startTime, endTime, day)
+                VALUES( <cfqueryparam value=#arguments.batchId# cfsqltype='cf_sql_bigint'>,
+                        <cfqueryparam value='#arguments.startTime#' cfsqltype='cf_sql_time'>,
+                        <cfqueryparam value='#arguments.endTime#' cfsqltype='cf_sql_time'>,
+                        <cfqueryparam value='#arguments.day#' cfsqltype='cf_sql_smallint'> 
+                )     
+            </cfquery>
+        <cfcatch type="any">
+            <cflog text="insert batch time: #cfcatch.detail#"/>
+            <cfset newBatchTime.error=cfcatch.detail/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(newBatchTime, "error")>
+            <cfset newBatchTime.batchTime=batchTime/>
+        </cfif>
+        
+        <cfreturn newBatchTime/>
+    </cffunction>
+
+    <!---function to get the batch info by it's ID--->
+    <cffunction  name="getBatchByID" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <!---declaring a variable for storing the retrived data--->
+        <cfset var batch=''/>
+        <!---declaring a structure for storing the value to be returned--->
+        <cfset var batchInfo={}/>
+        <!---retrieving starts here--->
+        <cftry>
+            <cfquery name="batch">
+                SELECT * 
+                FROM [dbo].[Batch]
+                WHERE batchId = <cfqueryparam value=#arguments.batchId# cfsqltype='cf_sql_bigint'>
+            </cfquery>
+        <cfcatch type="any">
+            <cflog text="databaseService : getBatchByID()-> #cfcatch.detail#"/>
+            <cfset batchInfo.error="Problem Occured while retrieving the batch information. Please, try after sometime."/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(batchInfo, "error")>
+            <cfset batchInfo.batch = batch/>
+        </cfif>
+
+        <cfreturn batchInfo/>
+    </cffunction>
+
+    <!---function to get the batch timing info by it's batch ID--->
+    <cffunction  name="getBatchTime" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <!---declaring a variable for storing the retrived data--->
+        <cfset var batchTime=''/>
+        <!---declaring a structure for storing the value to be returned--->
+        <cfset var batchTimeInfo={}/>
+        <!---retrieving starts here--->
+        <cftry>
+            <cfquery name="batchTime">
+                SELECT * 
+                FROM [dbo].[BatchTiming]
+                WHERE batchId = <cfqueryparam value=#arguments.batchId# cfsqltype='cf_sql_bigint'>
+                ORDER BY day ASC
+            </cfquery>
+        <cfcatch type="any">
+            <cflog text="databaseService : getBatchTime()-> #cfcatch.detail#"/>
+            <cfset batchTimeInfo.error="Problem Occured while retrieving the batch time information. Try to refresh the page or try after sometime."/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(batchTimeInfo, "error")>
+            <cfset batchTimeInfo.time = batchTime/>
+        </cfif>
+
+        <cfreturn batchTimeInfo/>
     </cffunction>
 
 </cfcomponent>
