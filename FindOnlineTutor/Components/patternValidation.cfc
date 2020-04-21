@@ -107,4 +107,14 @@ Functionality: This file contains some functions which validate a specific patte
         <cfreturn valid/>
     </cffunction>
 
+    <!---function to validate time--->
+    <cffunction  name="validTime"  access="public" output="false" returntype="boolean">
+        <cfargument  name="time" type="string" required="true"/>
+        <cfset var valid=true/>
+        <cfif NOT isValid("regex", time, "^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$")>
+            <cfset valid=false/>
+        </cfif>
+        <cfreturn valid/>
+    </cffunction>
+
 </cfcomponent>

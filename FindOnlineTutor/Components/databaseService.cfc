@@ -603,6 +603,32 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn updatedSuccessfully/>
     </cffunction>
 
+    <!---function to insert batch timing--->
+    <cffunction  name="updateBatchTime" output="false" access="public" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchTimingId" type="numeric" required="true">
+        <cfargument  name="startTime" type="string" required="true">
+        <cfargument  name="endTime" type="string" required="true">
+        <!---variable for query result--->
+        <!---creating a structure for returning purpose. which contains the inserted result and error msg if occurred--->
+        <cfset var updatedSuccessfully={}/>
+        <!---updation starts here--->
+        <cfset var updateBatchTime=''/>
+        <cftry>
+            <cfquery result="updateBatchTime">
+                UPDATE [dbo].[BatchTiming]
+                SET startTime = <cfqueryparam value='#arguments.startTime#' cfsqltype='cf_sql_varchar'>,
+                    endTime = <cfqueryparam value='#arguments.endTime#' cfsqltype='cf_sql_varchar'>
+                WHERE batchTimingId = <cfqueryparam value=#arguments.batchTimingId# cfsqltype='cf_sql_bigint'>;
+            </cfquery>
+        <cfcatch type="any">
+            <cfset updatedSuccessfully.error="#cfcatch#"/>
+            <cflog  text="updated :#cfcatch.detail#">
+        </cfcatch>
+        </cftry>
+        <cfreturn updatedSuccessfully/>
+    </cffunction>
+
     <!---function to get the batch info by it's ID--->
     <cffunction  name="getBatchByID" access="public" output="false" returntype="struct">
         <!---arguments--->

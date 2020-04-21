@@ -142,25 +142,13 @@
                         <!---modal body--->
                         <div id="editBatchTimingModelBody" class="modal-body">
                             <div id="batchTimingDesign">
-                                <label id="label1" class="d-block text-center" class="control-label"  for="startDate">MONDAY</label>
-                                <div class="row m-3 p-2 border-buttom ">
-                                    <div class="col-md-6">
-                                        <label class="text-info" class="control-label"  for="startDate">Start Time:<span class="text-danger">*</span></label>
-                                        <input class="form-control" type="time" value="13:45:00" id="startTime1">
-                                        <span class="text-danger small float-left"></span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="text-info" class="control-label"  for="endDate">End Time:<span class="text-danger">*</span></label>
-                                        <input class="form-control" type="time" value="13:45:00" id="endTime1">
-                                        <span class="text-danger small float-left"></span>
-                                    </div>
-                                </div>
+                                <!---the edit timing columns will be added here--->
                             </div>    
                         </div>
                         <!---modal footer--->
                         <div id="editBatchTimingfooter" class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-danger">Save changes</button>
+                            <button type="submit" class="btn btn-danger">Save changes</button>
                         </div>
                     </form>
                 </div>

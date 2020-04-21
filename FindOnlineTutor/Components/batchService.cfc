@@ -142,6 +142,98 @@ Functionality: This file contains the functions which help to give required serv
 
     </cffunction>
 
+    <!---function to create a new batch--->
+    <cffunction  name="updateBatchTiming" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <cfargument  name="Monday" type="struct" required="true">
+        <cfargument  name="Tuesday" type="struct" required="true">
+        <cfargument  name="Wednesday" type="struct" required="true">
+        <cfargument  name="Thrusday" type="struct" required="true">
+        <cfargument  name="Friday" type="struct" required="true">
+        <cfargument  name="Saturday" type="struct" required="true">
+        <cfargument  name="Sunday" type="struct" required="true">  
+        <!---creating a week structure which basically converts the batch day to number--->
+        <cfset var weekDays = {"Monday":"1","Tuesday":"2", "Wednesday":"3", "Thrusday":"4", "Friday":"5", "Saturday":"6", "Sunday":"7"}/>
+        <!---creating a variable for storing the batch number of the update request--->
+        <cfset var batchNumber = arguments.batchId/>
+        <cfset var batchDeleted = structDelete(arguments, "batchId")/>     
+        <!---declaring a structure for returning the result--->
+        <cfset var errorMsgs = {}/>
+        <cfset errorMsgs["validatedSuccessfully"] = true/>
+        <cfset var day = 0/>
+        <!---looping the arguments for checking the errors for validation--->
+        <cfloop collection="#arguments#" item="item">
+            <cfif arguments[item].startTime NEQ '' and arguments[item].endTime NEQ ''>
+                <cfif NOT patternValidationObj.validTime(arguments[item].startTime)>
+                    <cfset errorMsgs["#day#"]["startTime"] = "Invalid time"/>
+                    <cfset errorMsgs["validatedSuccessfully"] = false/>
+                </cfif>
+                <cfif NOT patternValidationObj.validTime(arguments[item].endTime)>
+                    <cfset errorMsgs["#day#"]["endTime"] = "Invalid time"/>
+                    <cfset errorMsgs["validatedSuccessfully"] = false/>
+                </cfif>
+                <cfif NOT structKeyExists(errorMsgs, "#item#")>
+                    <cfset var startTime = TimeFormat(arguments[item].startTime,"HH:mm")/>
+                    <cfset var endTime = TimeFormat(arguments[item].endTime,"HH:mm")/>
+                    <cfif startTime GT endTime>
+                        <cfset errorMsgs["#day#"]["endTime"]="end time should be more than start time"/>
+                        <cfset errorMsgs["validatedSuccessfully"] = false/>
+                    </cfif>
+                </cfif>
+            <cfelseif arguments[item].startTime NEQ '' and arguments[item].endTime EQ ''>
+                <cfset errorMsgs["#day#"]["endTime"] = "Must also have the end time or you can keep both blank."/>
+                <cfset errorMsgs["validatedSuccessfully"] = false/>
+            <cfelseif arguments[item].startTime EQ '' and arguments[item].endTime NEQ ''>
+                <cfset errorMsgs["#day#"]["startTime"] = "Must also have the start time or you can keep both blank."/>
+                <cfset errorMsgs["validatedSuccessfully"] = false/>
+            </cfif>
+            <cfset day = day+1 />
+            
+        </cfloop>
+        <!---calling update function for updating the timing--->
+        <cfif errorMsgs["validatedSuccessfully"]>
+            <!---using transaction for updating with respect to their id's--->
+            <cfset var isCommit=false/>
+            <cftransaction>
+                <cftry>
+                    <cfloop collection="#arguments#" item="item">
+                        <cfif arguments[item].startTime NEQ '' and arguments[item].endTime NEQ ''>
+                            <cfif arguments[item].batchTimingId NEQ ''>
+                                <!---update the timing--->
+                                <cfset var updateBatchTiming = databaseServiceObj.updateBatchTime
+                                    (arguments[item].batchTimingId, arguments[item].startTime, arguments[item].endTime)/>
+                                <cfif structKeyExists(updateBatchTiming, "error")>
+                                    <cfthrow detail = "updateError :#updateBatchTiming.error#"/>
+                                </cfif>
+                            <cfelse>
+                                <!---insert the timing--->
+                                <cfset var insertBatchTiming = databaseServiceObj.insertBatchTime
+                                    (batchNumber, arguments[item].startTime, arguments[item].endTime, weekDays[item])/>
+                                    <cflog  text="#batchNumber#">
+                                <cfif structKeyExists(insertBatchTiming, "error")>
+                                    <cfthrow detail = "insertError: #insertBatchTiming.error#"/>
+                                </cfif>
+                            </cfif>
+                        </cfif>
+                    </cfloop>   
+    
+                    <!---if every query get successfully executed then commit actoin get called--->
+                    <cftransaction action="commit" />
+                    <cfset isCommit=true />
+                    
+                <cfcatch type="any">
+                    <!---if some error occured while transaction then the whole transaction will be rollback--->
+                    <cftransaction action="rollback" />
+                </cfcatch>
+                </cftry>
+            </cftransaction>
+            <cfset errorMsgs.commit = isCommit/>
+        </cfif>
+
+        <cfreturn errorMsgs/>
+    </cffunction>
+
     <!---function to validate the batch name--->
     <cffunction  name="validateBatchName" access="public" output="false" returntype="struct">
         <!---arguments--->

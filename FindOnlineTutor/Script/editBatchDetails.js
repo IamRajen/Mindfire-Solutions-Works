@@ -10,9 +10,11 @@ Functionality: This javascript file helps to edit the batch information like tim
 var patternName=/^[A-Za-z ]+$/;
 var patternNumber=/^[0-9]+$/;
 var patternText=/^[ A-Za-z0-9_@./&+:-]*$/;
+var patternTime = /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/;
 
 //all maps are declared here...!!
 var inputOverview = new Map();
+var inputTiming = new Map();
 
 $(document).ready(function(){
     //initializing the batch overview fields..
@@ -24,7 +26,8 @@ $(document).ready(function(){
     inputOverview.set("editBatchCapacity",{id:"editBatchCapacity", errorMsg:""});
     inputOverview.set("editBatchFee",{id:"editBatchFee", errorMsg:""});
 
-    $("#editBatchModal").submit(function(e)
+    
+    $("#editBatchOverview").submit(function(e)
     {
         e.preventDefault();
         var successfullyValidated=true;
@@ -67,7 +70,6 @@ $(document).ready(function(){
                 success: function(error) 
                 {
                     errorMsgs=JSON.parse(error);
-                    console.log(errorMsgs)
                     if(!errorMsgs.validatedSuccessfully)
                     {
                         //validation error msg..
@@ -80,7 +82,7 @@ $(document).ready(function(){
                             } 
                         }
                         swal({
-                            title: "Failed to create a BATCH!!",
+                            title: "Failed to update the BATCH!!",
                             text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
                             icon: "error",
                             button: "Ok",
@@ -105,7 +107,120 @@ $(document).ready(function(){
                             icon: "success",
                             buttons: false,
                         })
-                        setTimeout(function(){window.location.reload(true)},2000)
+                        setTimeout(function(){window.location.reload(true)},2000);
+                    }
+                    
+                }
+            });
+        }
+    });
+
+    $("#editBatchTiming").submit(function(e)
+    {
+        e.preventDefault();
+        var successfullyValidated=true;
+        //client-side validation starts here
+        for(var key of inputTiming.keys())
+        {
+            if(key.slice(4,9)=="Start" && $("#"+key).val() && $("#editEndTime"+key.slice(-1)).val()=="")
+            {   
+                inputTiming.get("editEndTime"+key.slice(-1)).errorMsg="Must also have the end time or you can keep both blank.";
+                setErrorBorder(inputTiming.get("editEndTime"+key.slice(-1)));
+                successfullyValidated=false;
+            }
+            else if(key.slice(4,7)=="End" && $("#"+key).val() && $("#editStartTime"+key.slice(-1)).val()=="")
+            {
+                inputTiming.get("editStartTime"+key.slice(-1)).errorMsg="Must also have the start time or you can keep both blank.";
+                setErrorBorder(inputTiming.get("editStartTime"+key.slice(-1)));
+                successfullyValidated=false;
+            }
+            else if($("#editEndTime"+key.slice(-1)).val() < $("#editStartTime"+key.slice(-1)).val())
+            {
+                inputTiming.get("editEndTime"+key.slice(-1)).errorMsg="End time must be greater than start time";
+                setErrorBorder(inputTiming.get("editEndTime"+key.slice(-1)));
+                successfullyValidated=false;
+            }
+            else if($("#editEndTime"+key.slice(-1)).val()=="" && $("#editStartTime"+key.slice(-1)).val()=="")
+            {
+                setSuccessBorder(inputTiming.get("editStartTime"+key.slice(-1)));
+                setSuccessBorder(inputTiming.get("editEndTime"+key.slice(-1)));
+            } 
+            
+        }
+
+        if(successfullyValidated)
+        {
+            //ajax call be made for updating the database
+            $.ajax({
+                type:"POST",
+                url:"../Components/batchService.cfc?method=updateBatchTiming",
+                cache: false,
+                timeout: 2000,
+                error: function(){
+                    swal({
+                        title: "Failed to retrieve the batch details!!",
+                        text: "Some error occured. Please try after sometime",
+                        icon: "error",
+                        button: "Ok",
+                    });
+                },
+                data:{
+                        "batchId" :   parseInt($("#batchId").text()),
+                        "Monday" :    JSON.stringify({"startTime":$("#editStartTime0").val(), "endTime":$("#editEndTime0").val(), "batchTimingId":inputTiming.get("editStartTime0").batchTimingId}),
+                        "Tuesday" :   JSON.stringify({"startTime":$("#editStartTime1").val(), "endTime":$("#editEndTime1").val(), "batchTimingId":inputTiming.get("editStartTime1").batchTimingId}),
+                        "Wednesday" : JSON.stringify({"startTime":$("#editStartTime2").val(), "endTime":$("#editEndTime2").val(), "batchTimingId":inputTiming.get("editStartTime2").batchTimingId}),
+                        "Thrusday" :  JSON.stringify({"startTime":$("#editStartTime3").val(), "endTime":$("#editEndTime3").val(), "batchTimingId":inputTiming.get("editStartTime3").batchTimingId}),
+                        "Friday" :    JSON.stringify({"startTime":$("#editStartTime4").val(), "endTime":$("#editEndTime4").val(), "batchTimingId":inputTiming.get("editStartTime4").batchTimingId}),
+                        "Saturday" :  JSON.stringify({"startTime":$("#editStartTime5").val(), "endTime":$("#editEndTime5").val(), "batchTimingId":inputTiming.get("editStartTime5").batchTimingId}),
+                        "Sunday" :    JSON.stringify({"startTime":$("#editStartTime6").val(), "endTime":$("#editEndTime6").val(), "batchTimingId":inputTiming.get("editStartTime6").batchTimingId})
+                    },
+                success: function(error) 
+                {
+                    var errorMsgs = JSON.parse(error);
+                    // if validation fails the error msgs should be shown to the required fields
+                    if(!errorMsgs["validatedSuccessfully"])
+                    {
+                        delete errorMsgs["validatedSuccessfully"];
+                        //loop over the json object for error msgs
+                        for(var key in errorMsgs) 
+                        {
+                            if(errorMsgs[key].hasOwnProperty("endTime"))
+                            {
+                                inputTiming.get("editEndTime"+key).errorMsg=errorMsgs[key]["endTime"];
+                                setErrorBorder(inputTiming.get("editEndTime"+key));
+                            }
+                            if(errorMsgs[key].hasOwnProperty("startTime"))
+                            {
+                                
+                                inputTiming.get("editStartTime"+key).errorMsg=errorMsgs[key]["startTime"];
+                                setErrorBorder(inputTiming.get("editStartTime"+key));
+                            }
+                        }
+                        swal({
+                            title: "Failed to update the BATCH Timing!!",
+                            text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
+                            icon: "error",
+                            button: "Ok",
+                        });
+                    }
+                    else if(!errorMsgs.COMMIT)
+                    {
+                        swal({
+                            title: "Failed to update the BATCH Timing!!",
+                            text: "Some internal problem occurred. Please, try after sometimes.",
+                            icon: "error",
+                            button: "Ok",
+                        });
+                    }
+                    else if(errorMsgs.COMMIT)
+                    {
+                        swal({
+                            title: "Successfully Updated!!",
+                            text: "The batch timing has been successfully updated.",
+                            icon: "success",
+                            button: "Ok",
+                        });
+                        setTimeout(function(){window.location.reload(true)},2000);
                     }
                     
                 }
@@ -177,18 +292,30 @@ function loadBatchTiming()
 {
     //declaring the weekday array for creating the batch timing input fields..
     var weekDays = ["Monday","Tuesday", "Wednesday", "Thrusday", "Friday", "Saturday", "Sunday"];
-    for(var day=1; day<weekDays.length; day++)
-    {
-        var batchDayFields = $("#batchTimingDesign").clone();
-        var dates = batchDayFields.find('input');
-        var label = batchDayFields.find('label');
-        
-        $(dates[0]).attr({"id":"startTime"+day});
-        $(dates[1]).attr({"id":"endTime"+day});
-        $(label).attr({"id":"label"+weekDays[day]});
-        $(label).text(weekDays[day]);
+    $("#editBatchTimingModelBody").empty();
 
-        $("#editBatchTimingModelBody").append(batchDayFields);
+    for(var day=0; day<weekDays.length; day++)
+    {
+        var dayDiv= '<label class="d-block text-center" class="control-label">'+weekDays[day]+'</label>'+
+                '<div class="row m-3 p-2 border-buttom ">'+
+                    '<div class="col-md-6">'+
+                        '<label class="text-info" class="control-label" >Start Time:<span class="text-danger">*</span></label>'+
+                        '<input class="form-control" type="time" id="editStartTime'+day+'" onblur="checkTime(this)">'+
+                        '<span class="text-danger small float-left"></span>'+
+                    '</div>'+
+                    '<div class="col-md-6">'+
+                        '<label class="text-info" class="control-label">End Time:<span class="text-danger">*</span></label>'+
+                        '<input class="form-control" type="time" id="editEndTime'+day+'"  onblur="checkTime(this)">'+
+                        '<span class="text-danger small float-left"></span>'+
+                    '</div>'+
+                '</div>'
+
+        $("#editBatchTimingModelBody").append(dayDiv);
+
+        //creating the map values for batch timing..
+        inputTiming.set("editStartTime"+day, {id: "editStartTime"+day , errorMsg:"", batchTimingId:""});
+        inputTiming.set("editEndTime"+day, {id: "editEndTime"+day , errorMsg:"", batchTimingId:""});
+        
     }
     $.ajax({
         type:"POST",
@@ -209,7 +336,6 @@ function loadBatchTiming()
         success: function(error) 
         {
             var batchTiming = JSON.parse(error);
-            console.log((batchTiming.TIME[0]))
             if(batchTiming.hasOwnProperty("ERROR"))
             {
                 //show the error msgs occurred while the retrieval if batch timing...
@@ -221,10 +347,30 @@ function loadBatchTiming()
             else
             {
                 //setting the batch times as per the days
-                // for(var data in batchTiming.TIME)
+                for(var data in batchTiming.TIME)
+                {
+                    if((batchTiming.TIME[data][weekDays[data]]).hasOwnProperty("BATCHID"))
+                    {
+                        var startTime = new Date(batchTiming.TIME[data][weekDays[data]].STARTTIME);
+                        var endTime = new Date(batchTiming.TIME[data][weekDays[data]].ENDTIME);
+                        
+                        var time =("0"+startTime.getHours()).slice(-2)+":"+("0"+startTime.getMinutes()).slice(-2);
+                        $("#editStartTime"+(data)).val(time);
+                        time =("0"+endTime.getHours()).slice(-2)+":"+("0"+endTime.getMinutes()).slice(-2);
+                        $("#editEndTime"+(data)).val(time);
+                        inputTiming.get("editStartTime"+data).batchTimingId = batchTiming.TIME[data][weekDays[data]].BATCHTIMINGID;
+                        inputTiming.get("editEndTime"+data).batchTimingId = batchTiming.TIME[data][weekDays[data]].BATCHTIMINGID;
+                    }
+                    else 
+                    {
+                        $("#editStartTime"+data).val("");
+                        $("#editEndTime"+data).val("");
+                    }
+                }
             }
         }
     });
+    console.log(inputTiming)
 }
 
 
@@ -258,7 +404,7 @@ function isValidPattern(text,pattern)
     return pattern.test(text);
 }
 
-//validaton fucntions 
+//validaton functions overview
 function checkBatchName(element)
 {
     var object= inputOverview.get(element.id);
@@ -360,6 +506,24 @@ function checkCapacityFee(element)
     if(element.id=="batchFee" && parseInt($(element).val())>1000000 )
     {
         object.errorMsg="Fee should be less than 10Lacs";
+        setErrorBorder(object);
+        return;
+    }
+    setSuccessBorder(object);
+}
+
+//validation function timing
+function checkTime(element)
+{
+    var object = inputTiming.get(element.id);
+    if(isEmpty(object))
+    {
+        setSuccessBorder(object);
+        return;
+    }
+    if(!isValidPattern($(element).val(), patternTime))
+    {   
+        object.errorMsg="Invalid Time. Please type a valid time";
         setErrorBorder(object);
         return;
     }
