@@ -74,6 +74,45 @@ Functionality: This file contains the functions which help to give required serv
 
     </cffunction>
 
+    <!---function to add notification--->
+    <cffunction  name="addNotification" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---defining arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <cfargument  name="notificationTitle" type="string" required="true">
+        <cfargument  name="notificationDetails" type="string" required="true">
+        <!---creating a struture for returning purpose--->
+        <cfset var errorMsgs = {}/>
+        <cfset errorMsgs["validatedSuccessfully"]= true/>
+        <!---validation works start from here--->
+        <cfif (NOT patternValidationObj.validText(arguments.notificationTitle)) OR arguments.notificationTitle EQ ''>
+            <cfset errorMsgs["notificationTitle"] = "Mandatory field and Should contain only alphanumeric characters and [_@./&:+-] symbols."/>
+            <cfset errorMsgs["validatedSuccessfully"]=false/>
+        <cfelseif len(arguments.notificationTitle) GT 20>
+            <cfset errorMsgs["notificationTitle"] = "Field should not contain more than 20 characters"/>
+            <cfset errorMsgs["validatedSuccessfully"]=false/>
+        </cfif>
+        <cfif (NOT patternValidationObj.validText(arguments.notificationDetails)) OR arguments.notificationDetails EQ ''>
+            <cfset errorMsgs["notificationDetails"] = "Mandatory field and Should contain only alphanumeric characters and [_@./&:+-] symbols."/>
+            <cfset errorMsgs["validatedSuccessfully"]=false/>
+        <cfelseif len(arguments.notificationDetails) GT 200>
+            <cfset errorMsgs["notificationDetails"] = "Field should not contain more than 200 characters"/>
+            <cfset errorMsgs["validatedSuccessfully"]=false/>
+        </cfif>
+
+        <cfif errorMsgs["validatedSuccessfully"]>
+            <!---insertion process starts from here--->
+            <cfset var batchNotification = databaseServiceObj.insertBatchNotification(
+                arguments.batchId, arguments.notificationTitle, arguments.notificationDetails
+            )/>
+            <cfif structKeyExists(batchNotification, "error")>
+                <cfset errorMsgs["insertion"]=false/>
+            <cfelse>
+                <cfset errorMsgs["insertion"]=true/>
+            </cfif>
+        </cfif>
+        <cfreturn errorMsgs/>
+    </cffunction>
+
     <!---function to create a new batch--->
     <cffunction  name="updateBatch" access="remote" output="false" returntype="struct" returnformat="json">
         <!---defining argumnents--->
@@ -363,7 +402,7 @@ Functionality: This file contains the functions which help to give required serv
         <cfset var batchDetails = {}/>
         <cfset batchDetails.overview = getBatchOverviewById(arguments.batchId)/>
         <cfset var batchDetails.timing = getBatchTimingById(arguments.batchId)/>
-
+        <cfset var batchDetails.notification = getBatchNotifications(arguments.batchId)/>
         
         <cfreturn batchDetails/>
         
@@ -408,5 +447,31 @@ Functionality: This file contains the functions which help to give required serv
         <cfreturn timing/>
     </cffunction>
 
+    <!---function to get the batch timing --->
+    <cffunction  name="getNotificationById" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---argument--->
+        <cfargument  name="batchNotificationId" type="numeric" required="true">
+        <!---declaring a structure for returning the value of batch notification--->
+        <cfset var notificationInfo = databaseServiceObj.getNotificationByID(arguments.batchNotificationId)/>
+        <cfreturn notificationInfo/>
+    </cffunction>
+
+    <!---function to get the batch feedback --->
+    <cffunction  name="getBatchNotifications" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---argument--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <!---declaring a structure for returning the value of batch overview--->
+        <cfset var batchFeedback = databaseServiceObj.getBatchNotifications(arguments.batchId)/>
+        <cfreturn batchFeedback/>
+    </cffunction>
+
+    <!---function to delete notification from notification table using it's iD--->
+    <cffunction  name="deleteNotification" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---arguments--->
+        <cfargument  name="batchNotificationId" type="numeric" required="true">
+        <!---calling the database function for deleting the notification--->
+        <cfset var notificationInfo = databaseServiceObj.deleteNotification(arguments.batchNotificationId)/>
+        <cfreturn notificationInfo/>
+    </cffunction> 
 
 </cfcomponent>

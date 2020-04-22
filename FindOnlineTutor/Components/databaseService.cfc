@@ -567,6 +567,38 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn newBatchTime/>
     </cffunction>
 
+    <cffunction  name="insertBatchNotification" output="false" access="public" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <cfargument  name="notificationTitle" type="string" required="true">
+        <cfargument  name="notificationDetails" type="string" required="true">
+        <!---variable for query result--->
+        <cfset var batchNotification=''/>
+        <!---declaring structure for returning the query generated key and error msg if occured--->
+        <cfset var newBatchNotification={}/>
+        <!---insertion starts here--->
+        <cftry>
+            <cfquery result="batchNotification">
+                INSERT INTO [dbo].[BatchNotification]
+                (batchId, dateTime, notificationTitle, notificationDetails)
+                VALUES( <cfqueryparam value=#arguments.batchId# cfsqltype='cf_sql_bigint'>,
+                        <cfqueryparam value=#now()# cfsqltype="cf_sql_timestamp">,
+                        <cfqueryparam value='#arguments.notificationTitle#' cfsqltype='cf_sql_varchar'>,
+                        <cfqueryparam value='#arguments.notificationDetails#' cfsqltype='cf_sql_varchar'>
+                )     
+            </cfquery>
+        <cfcatch type="any">
+            <cflog text="insert notification: #cfcatch#"/>
+            <cfset newBatchNotification.error=cfcatch.detail/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(newBatchNotification, "error")>
+            <cfset newBatchNotification.notification=batchNotification/>
+        </cfif>
+        
+        <cfreturn newBatchNotification/>
+    </cffunction>
+
     <!---function to insert new batch--->
     <cffunction  name="updateBatch" access="public" output="false" returnformat="json" returntype="struct">
         <cfargument  name="batchId" type="numeric" required="true"/>
@@ -629,6 +661,28 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn updatedSuccessfully/>
     </cffunction>
 
+    <!---function to delete notification--->
+    <cffunction  name="deleteNotification" output="false" access="public" returntype="struct">
+        <!---argument--->
+        <cfargument  name="batchNotificationId" type="numeric" required="true">
+        <!---return struture--->
+        <cfset var deleteNotificationInfo = {}/>
+        <cftry>
+            <cfquery>
+                DELETE [dbo].[BatchNotification]
+                WHERE batchNotificationId = <cfqueryparam value=#arguments.batchNotificationId# cfsqltype='cf_sql_bigint'>
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: deleteNotificationInfo-> #cfcatch.detail#">
+            <cfset deleteNotificationInfo.error = "Some error occurred while deleting the notification"/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(deleteNotificationInfo, "error")>
+            <cfset deleteNotificationInfo.success=true/>
+        </cfif>
+        <cfreturn deleteNotificationInfo/>
+    </cffunction>
+
     <!---function to get the batch info by it's ID--->
     <cffunction  name="getBatchByID" access="public" output="false" returntype="struct">
         <!---arguments--->
@@ -683,5 +737,62 @@ Functionality: This file has services/functions related to the data in the datab
 
         <cfreturn batchTimeInfo/>
     </cffunction>
+
+    <!---function to get the batch notification info by it's batch ID--->
+    <cffunction  name="getBatchNotifications" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <!---declaring a variable for storing the retrived data--->
+        <cfset var batchNotifications=''/>
+        <!---declaring a structure for storing the value to be returned--->
+        <cfset var batchNotificationInfo={}/>
+        <!---retrieving starts here--->
+        <cftry>
+            <cfquery name="batchNotifications">
+                SELECT * 
+                FROM [dbo].[BatchNotification]
+                WHERE batchId = <cfqueryparam value=#arguments.batchId# cfsqltype='cf_sql_bigint'>
+                ORDER BY dateTime DESC
+            </cfquery>
+        <cfcatch type="any">
+            <cflog text="databaseService : getBatchNotifications()-> #cfcatch.detail#"/>
+            <cfset batchNotificationInfo.error="Problem Occured while retrieving the batch notifications. Try to refresh the page or try after sometime."/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(batchNotificationInfo, "error")>
+            <cfset batchNotificationInfo.notifications = batchNotifications/>
+        </cfif>
+
+        <cfreturn batchNotificationInfo/>
+    </cffunction>
+
+    <!---function to get the batch notification by it's ID--->
+    <cffunction  name="getNotificationByID" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchNotificationId" type="numeric" required="true">
+        <!---declaring a variable for storing the retrived data--->
+        <cfset var notification=''/>
+        <!---declaring a structure for storing the value to be returned--->
+        <cfset var notificationInfo={}/>
+        <!---retrieving starts here--->
+        <cftry>
+            <cfquery name="notification">
+                SELECT * 
+                FROM [dbo].[BatchNotification]
+                WHERE batchNotificationId = <cfqueryparam value=#arguments.batchNotificationId# cfsqltype='cf_sql_bigint'>
+            </cfquery>
+        <cfcatch type="any">
+            <cflog text="databaseService : getNotificationByID()-> #cfcatch.detail#"/>
+            <cfset notificationInfo.error="Problem Occured while retrieving the notification. Please, try after sometime."/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(notificationInfo, "error")>
+            <cfset notificationInfo.notification = notification/>
+        </cfif>
+
+        <cfreturn notificationInfo/>
+    </cffunction>
+
+
 
 </cfcomponent>

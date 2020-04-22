@@ -122,24 +122,28 @@ $(document).ready(function(){
         //client-side validation starts here
         for(var key of inputTiming.keys())
         {
+            //if the starttime has a time but endtime doesn't
             if(key.slice(4,9)=="Start" && $("#"+key).val() && $("#editEndTime"+key.slice(-1)).val()=="")
             {   
                 inputTiming.get("editEndTime"+key.slice(-1)).errorMsg="Must also have the end time or you can keep both blank.";
                 setErrorBorder(inputTiming.get("editEndTime"+key.slice(-1)));
                 successfullyValidated=false;
             }
+            //if the end time has a time but start time doesn't
             else if(key.slice(4,7)=="End" && $("#"+key).val() && $("#editStartTime"+key.slice(-1)).val()=="")
             {
                 inputTiming.get("editStartTime"+key.slice(-1)).errorMsg="Must also have the start time or you can keep both blank.";
                 setErrorBorder(inputTiming.get("editStartTime"+key.slice(-1)));
                 successfullyValidated=false;
             }
+            //if the end time has a time is less than start time
             else if($("#editEndTime"+key.slice(-1)).val() < $("#editStartTime"+key.slice(-1)).val())
             {
                 inputTiming.get("editEndTime"+key.slice(-1)).errorMsg="End time must be greater than start time";
                 setErrorBorder(inputTiming.get("editEndTime"+key.slice(-1)));
                 successfullyValidated=false;
             }
+            //if both the start and end time doesn't have any data..
             else if($("#editEndTime"+key.slice(-1)).val()=="" && $("#editStartTime"+key.slice(-1)).val()=="")
             {
                 setSuccessBorder(inputTiming.get("editStartTime"+key.slice(-1)));
@@ -203,6 +207,7 @@ $(document).ready(function(){
                             button: "Ok",
                         });
                     }
+                    //if the validation is done successfully but failed to update the timing
                     else if(!errorMsgs.COMMIT)
                     {
                         swal({
@@ -212,6 +217,7 @@ $(document).ready(function(){
                             button: "Ok",
                         });
                     }
+                    // if successfully updated 
                     else if(errorMsgs.COMMIT)
                     {
                         swal({
@@ -226,6 +232,113 @@ $(document).ready(function(){
                 }
             });
         }
+    });
+
+    $("#addBatchNotification").submit(function(e){
+        e.preventDefault();
+        var successfullyValidated = true;
+        if(!isValidPattern($("#notificationTitle").val(), patternText) || $("#notificationTitle").val().length==0)
+        {   
+            $("#notificationTitle").next().text("Mandatory field and Should contain only alphanumeric characters and [_@./&:+-] symbols.");
+            $("#notificationTitle").css({"border-color": "#CD5C5C", "border-width":"2px"});
+            successfullyValidated = false;
+        }
+        else if($("#notificationTitle").val().length > 20)
+        {
+            $("#notificationTitle").next().text("Field should not contain more than 20 characters");
+            $("#notificationTitle").css({"border-color": "#CD5C5C", "border-width":"2px"});
+            successfullyValidated = false;
+        }
+        else 
+        {
+            $("#notificationTitle").css({"border-color": "#ddd", "border-width":"1px"});
+            $("#notificationTitle").next().text("");
+            successfullyValidated = true;
+        }
+        if(!isValidPattern($("#notificationDetails").val(), patternText) || $("#notificationDetails").val().length==0)
+        {   
+            $("#notificationDetails").next().text("Mandatory field and Should contain only alphanumeric characters and [_@./&:+-] symbols.");
+            $("#notificationDetails").css({"border-color": "#CD5C5C", "border-width":"2px"});
+            successfullyValidated = false;
+        }
+        else if($("#notificationDetails").val().length > 200)
+        {
+            $("#notificationDetails").next().text("Field should not contain more than 200 characters");
+            $("#notificationDetails").css({"border-color": "#CD5C5C", "border-width":"2px"});
+            successfullyValidated = false;
+        }
+        else 
+        {
+            $("#notificationDetails").css({"border-color": "#ddd", "border-width":"1px"});
+            $("#notificationDetails").next().text("");
+            successfullyValidated = true;
+        }
+
+        if(successfullyValidated)
+        {
+            //an ajax call will be initiated for insertion of notification...
+            $.ajax({
+                type:"POST",
+                url:"../Components/batchService.cfc?method=addNotification",
+                cache: false,
+                timeout: 2000,
+                error: function(){
+                    swal({
+                        title: "Failed to insert new notification!!",
+                        text: "Some error occured. Please try after sometime",
+                        icon: "error",
+                        button: "Ok",
+                    });
+                },
+                data:{
+                        "batchId":parseInt($("#batchId").text()),
+                        "notificationTitle" : $("#notificationTitle").val(),
+                        "notificationDetails" : $("#notificationDetails").val(),
+                    },
+                success: function(error) 
+                {
+                    var errorMsg = JSON.parse(error);
+                    if(!errorMsg["validatedSuccessfully"])
+                    {
+                        delete errorMsgs["validatedSuccessfully"];
+                        for(var key in errorMsgs) 
+                        {
+                            if(errorMsgs[key]!='')
+                            {
+                                $("#"+key).next().text(errorMsg[key]);
+                                $("#"+key).css({"border-color": "#CD5C5C", "border-width":"2px"});
+                            }
+                        }
+                    }
+                    else if(errorMsg.hasOwnProperty("insertion"))
+                    {
+                        if(errorMsg["insertion"])
+                        {
+                            //if inserted successfully
+                            swal({
+                                title: "Created Successfully!!",
+                                text: "Notification has been successfully created",
+                                icon: "success",
+                                button: "Ok",
+                            });
+                            setTimeout(function(){window.location.reload(true)},2000); 
+                        }
+                        else 
+                        {
+                            //if inserted fails
+                            swal({
+                                title: "Failed!!",
+                                text: "Failed to create the notification.Some error occured. Please try after sometime",
+                                icon: "error",
+                                button: "Ok",
+                            });
+                        }
+
+                    }
+                }
+            });
+        }
+        
     });
 });
 
@@ -287,13 +400,13 @@ function loadBatchOverview()
         }
     });
 }
-
+//function to retrieve the batch timing data...
 function loadBatchTiming() 
 {
     //declaring the weekday array for creating the batch timing input fields..
     var weekDays = ["Monday","Tuesday", "Wednesday", "Thrusday", "Friday", "Saturday", "Sunday"];
     $("#editBatchTimingModelBody").empty();
-
+    //loop which create 7 different dynamic field for timing of batch
     for(var day=0; day<weekDays.length; day++)
     {
         var dayDiv= '<label class="d-block text-center" class="control-label">'+weekDays[day]+'</label>'+
@@ -317,6 +430,7 @@ function loadBatchTiming()
         inputTiming.set("editEndTime"+day, {id: "editEndTime"+day , errorMsg:"", batchTimingId:""});
         
     }
+    // ajax call to retrieve the timing data and fixing it to the respective places...
     $.ajax({
         type:"POST",
         url:"../Components/batchService.cfc?method=getBatchTimingById",
@@ -370,10 +484,94 @@ function loadBatchTiming()
             }
         }
     });
-    console.log(inputTiming)
 }
 
+function loadNotification(element)
+{
+    $('#viewBatchNotificationModal').modal();
+    
+    var notificationId = $(element).find('p')[0];
+    $.ajax({
+        type:"POST",
+        url:"../Components/batchService.cfc?method=getNotificationById",
+        cache: false,
+        timeout: 2000,
+        error: function(){
+            swal({
+                title: "Failed to retrieve the Notification details!!",
+                text: "Some error occured. Please try after sometime",
+                icon: "error",
+                button: "Ok",
+            });
+        },
+        data:{
+                "batchNotificationId" : $(notificationId).text()
+            },
+        success: function(error) 
+        {
+            var notificationInfo = JSON.parse(error);
+            if(notificationInfo.hasOwnProperty("error"))
+            {
+                //error msg will be displayed 
+            }
+            else
+            {
+                $("#viewNotificationId").text(notificationInfo.NOTIFICATION.DATA[0][0])
+                $("#viewNotificationTitle").text(notificationInfo.NOTIFICATION.DATA[0][3]);
+                $("#viewNotificationDateTime").text(notificationInfo.NOTIFICATION.DATA[0][2]);
+                $("#viewNotificationDetails").text(notificationInfo.NOTIFICATION.DATA[0][4]);
+            }
+        }
+    });
 
+}
+
+function deleteNotification(element)
+{
+    var notificationId = $(element).parent().next().find('p')[0];
+    console.log($(notificationId).text())
+    $.ajax({
+        type:"POST",
+        url:"../Components/batchService.cfc?method=deleteNotification",
+        cache: false,
+        timeout: 2000,
+        error: function(){
+            swal({
+                title: "Failed to delete the Notification!!",
+                text: "Some error occured. Please try after sometime",
+                icon: "error",
+                button: "Ok",
+            });
+        },
+        data:{
+                "batchNotificationId" : $(notificationId).text()
+            },
+        success: function(error) 
+        {
+            var deleteNotificationInfo = JSON.parse(error);
+            if(deleteNotificationInfo.hasOwnProperty("error"))
+            {
+                swal({
+                    title: "Failed to delete notifiaction!!",
+                    text: "Unable to delete the notifiaction. Please, try after sometime!!",
+                    icon: "error",
+                    button: "Ok",
+                });
+            }
+            else 
+            {
+                swal({
+                    title: "Deleted Successfully",
+                    text: "the notification is been successfully deleted",
+                    icon: "success",
+                    buttons: false,
+                })
+                //success message
+                setTimeout(function(){window.location.reload(true)},2000); 
+            }
+        }
+    });
+}
 
 
 //border work
@@ -512,7 +710,6 @@ function checkCapacityFee(element)
     setSuccessBorder(object);
 }
 
-//validation function timing
 function checkTime(element)
 {
     var object = inputTiming.get(element.id);

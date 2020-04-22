@@ -42,16 +42,15 @@
                 <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Fee: </span><cfoutput>#batchInfo.overview.batch.fee#</cfoutput></p>
             </div> 
         </div>
-        <!---Notication Section ends here--->
+        <!---batch overview Section ends here--->
         
         <!---this div contains all the other batch deatils except the overview--->
         <div class="row m-3 mt-5">
             <!---Batch timing Section start from here--->
-            <cfif structKeyExists(batchInfo.timing, "time")>
-                <!---displaying the batch timing--->
-                
-                    <div class="col-md-6 p-3 mb-4 shadow bg-light rounded">
-
+            <div class="col-md-6 p-1 mb-4">
+                <div class="p-3 shadow bg-light rounded">
+                    <cfif structKeyExists(batchInfo.timing, "time")>
+                        <!---displaying the batch timing--->
                         <h3 class=" text-dark d-inline">Timing</h3>
                         <button class="btn btn-danger d-inline float-right px-3 py-1" data-toggle="modal" data-target="#editBatchTimeModal" onclick="loadBatchTiming()">Edit</button>
                         <hr>
@@ -60,9 +59,9 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr  class="bg-info">
-                                <th class=" text-light" scope="col">Day</th>
-                                <th class=" text-light" scope="col">Start Time</th>
-                                <th class=" text-light" scope="col">End Time</th>
+                                <th class="text-light" scope="col">Day</th>
+                                <th class="text-light" scope="col">Start Time</th>
+                                <th class="text-light" scope="col">End Time</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -92,18 +91,68 @@
                                 </cfloop>
                             </tbody>
                         </table>
-                    
-                    </div>
-            <cfelseif structKeyExists(batchInfo.timing, "error")>
-                <!---if some error occurred while retriving the timing of batch an error msg while be diplayed--->
-                <div class="alert alert-danger pt-3 m-2 mb-5">
-                    <p class="d-block text-danger m-2"><cfoutput>#batchInfo.timing.error#</cfoutput></p>
+                            
+                    <cfelseif structKeyExists(batchInfo.timing, "error")>
+                        <!---if some error occurred while retriving the timing of batch an error msg while be diplayed--->
+                        <div class="alert alert-danger pt-3 m-2 mb-5">
+                            <p class="d-block text-danger m-2"><cfoutput>#batchInfo.timing.error#</cfoutput></p>
+                        </div>
+                    </cfif> 
                 </div>
-            </cfif> 
+            </div>
             <!---Batch timing Section ends here--->
 
             <!---Notication Section start from here--->
-
+            <div class="col-md-6 p-1 mb-4">
+                <div class="p-3 shadow bg-light rounded">
+                    <cfif structKeyExists(batchInfo.notification, "notifications")>
+                    
+                        <!---displaying the batch notification--->
+                        <h3 class=" text-dark d-inline">Notification</h3>
+                        <button class="btn btn-danger d-inline float-right px-3 py-1" data-toggle="modal" data-target="#addBatchNotificationModal">Add</button>
+                        <hr>
+                        <!---if no available a blank msg while be diplayed--->
+                        <cfif batchInfo.notification.NOTIFICATIONS.recordCount EQ 0>
+                            <div class="alert alert-secondary pt-3">
+                                <p class="d-block text-dark m-2">No notification is added yet. You can create one by clicking add button at the top-right corner.</p>
+                            </div>
+                        </cfif> 
+                        <!---display the notifications--->
+                        <div class="overflow-auto" style="max-width: 500px; height: 409px;">
+                            <cfoutput query="batchInfo.notification.NOTIFICATIONS">
+                                <cfset notificationTime = #TimeFormat(dateTime,"h:mm:ss tt")#/>
+                                <cfset notificationDate = #DateFormat(dateTime,"d mmm yyyy")#/>
+                                <cfset today = #dateFormat(now(),"d mmm yyyy")#/>
+                                
+                                <div class="row m-2" onclick="loadNotification(this)">
+                                    <div class="col-md-12">
+                                        <h5 class="text-primary d-inline">#notificationTitle#</h5>
+                                        <p id="notificationId" class="hidden">#batchNotificationId#</p>
+                                        <small class="text-secondary d-inline float-right">
+                                            <cfif #dateCompare(today, notificationDate)#>
+                                                #notificationDate#
+                                            <cfelse>
+                                                #notificationTime#
+                                            </cfif>
+                                        </small>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <p class="d-block text-secondary">#Left(notificationDetails,70)#...</p>
+                                    </div>
+                                </div>
+                                
+                                
+                                <hr>
+                            </cfoutput>
+                        </div>
+                    <cfelseif structKeyExists(batchInfo.notification, "error")>
+                        <!---if some error occurred while retriving the timing of batch an error msg while be diplayed--->
+                        <div class="alert alert-danger pt-3">
+                            <p class="d-block text-danger m-2"><cfoutput>#batchInfo.notification.error#</cfoutput></p>
+                        </div>
+                    </cfif> 
+                </div>
+            </div>
             <!---Notication Section ends here--->
 
             <!---Request Section start from here--->
@@ -117,7 +166,7 @@
         </div>
 
         <!---Feedback Section start from here--->
-
+        
         <!---Feedback Section end here--->
 
         <!---all output processes ends here--->
@@ -239,6 +288,63 @@
                 </div>
             </div>
         </div>
+        <!--- The add notification model --->
+        <div class="modal fade" id="addBatchNotificationModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="addBatchNotification">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title pl-5">Batch Notification</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <!---Notification title field--->
+                                <div class="row m-3">
+                                    <label class="text-info" class="control-label"  for="notificationTitle">Notification Title:<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="text" id="notificationTitle" name="notificationTitle" placeholder="Notification Title" class="form-control d-block">
+                                        <span class="text-danger small float-left"></span>
+                                    </div>
+                                </div>
+
+                            <!---Notification detail field--->
+                                <div class="row m-3">
+                                    <label class="text-info" for="notificationDetails">Notification Details:<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <textarea class="form-control" rows="5" id="notificationDetails" name="notificationDetails" placeholder="Details of Notification"></textarea>
+                                        <span class="text-danger small float-left"></span>
+                                    </div>
+                                </div>
+                        </div>
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-danger" value="Done">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--- The view Batch notification Modal --->
+        <div class="modal fade" id="viewBatchNotificationModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Notification</h4>
+                        <button class="btn btn-danger d-inline float-right px-3 py-1" onclick="deleteNotification(this)">Delete</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div id="notificationSuccess" class="modal-body">
+                        <p id="viewNotificationId" class="hidden"></p>
+                        <h3 id="viewNotificationTitle" class="d-inline text-primary"></h3>
+                        <small id="viewNotificationDateTime" class="float-right text-secondary"></small>
+                        <p id="viewNotificationDetails" class="d-block my-5 text-secondary"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!---all models ends here--->
 
     <cfelse>
@@ -247,4 +353,5 @@
             <p class="d-block text-danger m-2"><cfoutput>#batchInfo.overview.error#</cfoutput></p>
         </div>
     </cfif>
+    <div id="dialog" title="Dialog Title" style="display:none"> Some text</div>  
 </cf_header>
