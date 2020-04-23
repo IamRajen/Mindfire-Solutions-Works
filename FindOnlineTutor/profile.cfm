@@ -7,7 +7,7 @@ Functionality: This file show the profile data to user and allows to modify it.
 --->
 
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/updateProfile.js">
-
+<div class="container mt-5">
 <!---if the user is logged in this if block will get executed--->
 <cfif structKeyExists(session, "stLoggedInUser")>
     <!---if user disables the javascript--->
@@ -43,7 +43,7 @@ Functionality: This file show the profile data to user and allows to modify it.
         <div class="container-fuild w-100 mx-auto mb-5 shadow rounded bg-light">
             <!---Heading Field--->
             <div class="bg-dark pt-3 pb-3 rounded-top text-center">
-                <span id="headingUserId" class="text-light text-capitalize d-inline"><cfoutput>#session.stloggedinuser.userID#</cfoutput></span>
+                <p id="headingUserId" class="hidden"><cfoutput>#session.stloggedinuser.userID#</cfoutput></p>
                 <p class="text-light d-inline" >   Your Profile</p>
             </div>
             <!---Form Field for user details--->
@@ -123,7 +123,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                 <div class="container-fuild w-100 mx-auto mb-5 shadow-lg rounded bg-light">
                     <!---Heading Field--->
                     <div class="bg-dark pt-3 pb-3 mt-5 rounded-top text-center">
-                        <span id="headingUserId" class="text-light text-capitalize d-inline" ><cfoutput>#session.stloggedinuser.userID#</cfoutput></span>
+                        <span id="headingUserId" class="hidden" ><cfoutput>#session.stloggedinuser.userID#</cfoutput></span>
                         <p class="text-light d-inline" >   Your Phone Numbers</p>
                     </div>
                     <!---Form Field for phone details--->
@@ -173,12 +173,12 @@ Functionality: This file show the profile data to user and allows to modify it.
 
                     <!---Heading Field--->
                     <div class="bg-dark pt-3 pb-3 mt-5 rounded-top text-center">
-                        <span id="headingUserId" class="text-light text-capitalize d-inline"><cfoutput>#session.stloggedinuser.userID#</cfoutput></span>
+                        <span id="headingUserId" class="hidden"><cfoutput>#session.stloggedinuser.userID#</cfoutput></span>
                         <p class="text-light d-inline" >
-                            <cfif isUserInRole('Teacher')>
-                                <cfoutput>Facilities You Provided</cfoutput>
-                            <cfelseif isUserInRole('student')>
-                                <cfoutput>Interest You Provided</cfoutput>
+                            <cfif session.stLoggedInUser.role EQ 'Teacher'>
+                                <cfoutput>Facilities You Provide</cfoutput>
+                            <cfelseif session.stLoggedInUser.role EQ 'student'>
+                                <cfoutput>Interest You Provide</cfoutput>
                             </cfif>
                         </p>
                     </div>
@@ -248,7 +248,7 @@ Functionality: This file show the profile data to user and allows to modify it.
 
             <!---Heading Field--->
             <div class="bg-dark pt-3 pb-3 mt-5 rounded-top text-center">
-                <span id="headingUserId" class="text-light text-capitalize d-inline"><cfoutput>#session.stloggedinuser.userID#</cfoutput></span>
+                <span id="headingUserId" class="hidden"><cfoutput>#session.stloggedinuser.userID#</cfoutput></span>
                 <p class="text-light d-inline" >   Your Addresses</p>
             </div>
             <!---Form Field for Address details--->
@@ -361,6 +361,6 @@ Functionality: This file show the profile data to user and allows to modify it.
     <cflocation  url="/assignments_mindfire/FindOnlineTutor"/>
 
 </cfif>
-
+</div>
 
 	

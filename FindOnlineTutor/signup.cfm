@@ -11,7 +11,7 @@ Functionality: This is the signup page helps the user to validate and register i
 </cfif>
 <!---Including the navibar custom tag--->
 <cf_header homeLink="index.cfm"  logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/registrationFormValidation.js">
-
+<div class="container mt-5">
 <noscript>
 	<div class="container  px-5 text-center">
 		<h3 class="mx-5 text-danger">Please enable <strong>JavaScipt</strong> to submit the form!!</h3>
@@ -268,7 +268,7 @@ Functionality: This is the signup page helps the user to validate and register i
 	</div>
 	
 </div>
-
+</div>
 </cf_header>
         
 	

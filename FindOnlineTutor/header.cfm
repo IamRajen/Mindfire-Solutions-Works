@@ -32,14 +32,16 @@ Functionality: It is a header file which is included probably in every pages.
 		</head>
 
 		<body>
+			<!---if logout button is clicked--->
 			<cfif structKeyExists(URL,'logout')>
 				<cfset createObject("component",'FindOnlineTutor.Components.authenticationService').doLogout() />
 				<cflocation  url="/assignments_mindfire/FindOnlineTutor/index.cfm">
 			</cfif>
-			<nav class="navbar navbar-expand-lg navbar-fixed-top navbar-dark shadow-sm p-3 mb-5 bg-dark">
+			<!---navbar start from here--->
+			<nav class="navbar navbar-expand-lg navbar-fixed-top navbar-dark shadow-sm p-3 bg-dark">
 				<div class="container-fluid">
 					<div class="navbar-header">
-						<img  src="<cfoutput>#attributes.logoPath#</cfoutput>" class="img-fluid mr-2" alt="logo">
+						<img  src="<cfoutput>#attributes.logoPath#</cfoutput>" class="img-fluid mr-2" alt="logo"/>
 			      		<a class="navbar-brand" href="<cfoutput>#attributes.homeLink#</cfoutput>">FindOnlineTutor</a>
 				    </div>
 				  	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,13 +52,38 @@ Functionality: It is a header file which is included probably in every pages.
 						<li class="nav-item mx-2">
 							<a class="nav-link text-light" href="index.cfm">Home</a>
 						</li>
+						<!---if user is logged in--->
 						<cfif structKeyExists(session, "stLoggedInUser") >
+							<li class="nav-item mx-2">
+								<a class="nav-link text-light" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/batches.cfm">Your Batch</a>
+							</li>
+							
+							<!---teacher's facilities start here--->
+							<cfif session.stLoggedInUser.role EQ 'Teacher'>
+								<li class="nav-item mx-2">
+									<a class="nav-link text-light" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/request.cfm">Requests<span class="text-warning">*</span></a>
+								</li>
+								<li class="nav-item mx-2">
+									<a class="nav-link text-light" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/students.cfm">Students</a>
+								</li>
+							</cfif>
+							<!---teacher's faclities end here--->
+
+							<!---student's faclities starts here--->
+							<cfif session.stLoggedInUser.role EQ 'Student'>
+								<li class="nav-item mx-2">
+									<a class="nav-link text-light" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/notification.cfm">Notification</a>
+								</li>
+							</cfif>
+							<!---student's faclities ends here--->
+
 							<li class="nav-item mx-2">
 								<a class="nav-link text-light" href="profile.cfm">Profile</a>
 							</li>
 							<li class="nav-item mx-2">
 								<a class="nav-link text-light" href="/assignments_mindfire/FindOnlineTutor/index.cfm?logout">Logout</a>
 							</li>
+						<!---if user is not logged in--->
 						<cfelse>
 							<li class="nav-item mx-2">
 								<a class="nav-link text-light" href="login.cfm">LogIn</a>
@@ -70,11 +97,10 @@ Functionality: It is a header file which is included probably in every pages.
 					</div>
 				</div>
 			</nav>
-			<div class="container">
-	<cfelse>
-			</div>	
-			<div class="bg-secondary p-5">
-        </div>			
+			
+	<cfelse>	
+			<footer class="p-5">
+        	</footer>			
 		</body>
 	</html>
 </cfif>

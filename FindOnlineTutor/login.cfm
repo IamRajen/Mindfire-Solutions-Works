@@ -11,7 +11,7 @@ Functionality: login page for non logged-In user.
 </cfif>
 
 <cf_header homeLink="index.cfm"  logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/loginFormValidation.js">
-
+<div class="container mt-5">
 <!--- <cfdump  var="#session#"> --->
 <div class="container-fuild w-50 mx-auto pb-4 mb-5 shadow rounded bg-light">
 	<!--- Registration Page starts here --->
@@ -76,7 +76,7 @@ Functionality: login page for non logged-In user.
 		</div>
 	</div>
 </div>
-
+</div>
 
 </cf_header>
 

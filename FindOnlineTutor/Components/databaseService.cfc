@@ -793,6 +793,29 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn notificationInfo/>
     </cffunction>
 
+    <!---function to retrieve the searched query for batches--->
+    <cffunction  name="searchQuery" access="public" output="false" returntype="struct">
+        <!---argument--->
+        <cfargument  name="words" type="string" required="true">
+        <cfset var result = {}/>
+        <cfset var searchResult =''/>
+        <!---query starts here--->
+        <cftry>
+            <cfquery name="searchResult">
+                SELECT * 
+                FROM [dbo].[Batch]
+                WHERE batchName LIKE '%#arguments.words#%'
+            </cfquery>
+        <cfcatch type="any">
+            <cflog text="databaseService-> searchQuery(): #cfcatch#"/>
+            <cfset result.error = "some error while executing your request. Please try after sometimes."/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(result, "error")>
+            <cfset result.batches = searchResult/>
+        </cfif>
+        <cfreturn result/>
+    </cffunction>
 
 
 </cfcomponent>

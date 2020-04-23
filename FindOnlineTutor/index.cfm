@@ -6,50 +6,24 @@ Created By: Rajendra Mishra.
 Functionality: This is the homepage.
 --->
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" profilePath="profile.cfm">
+<div class="container-fuild">
 <cfif structKeyExists(session, "stloggedinUser")>
-	<h1>Dashboard</h1>
-	<div class="container mt-5 mb-5">
-		<div class="row mt-5">
-			<div class="col-sm-6 d-flex justify-content-center mb-5">
-				<a href="Teacher/batches.cfm" type="button" class="section-div bg-light w-75 shadow">
-					<h1 class="text-center mt-4 text-dark">Batches</h1>
-				</a>	
-			</div>
-			<div class="col-sm-6 d-flex justify-content-center mb-5">
-				<a href="profile.cfm" type="button" class="section-div bg-light w-75 shadow">
-					<h1 class="text-center mt-4 text-dark">Profile</h1>
-				</a>
-			</div>
-		</div>
-		<div class="row mt-5">
-			<div class="col-sm-6 d-flex justify-content-center mb-5">
-				<a type="button" class="section-div bg-light w-75 shadow">
-					<h1 class="text-center mt-4 text-dark">Notifications</h1>
-				</a>	
-			</div>
-			<div class="col-sm-6 d-flex justify-content-center mb-5">
-				<a type="button" class="section-div bg-light w-75 shadow">
-					<h1 class="text-center mt-4 text-dark">Students</h1>
-				</a>
-			</div>
-		</div>
-	</div>
+<!--- 	<h6 class="text-secondary m-5 p-5">Welcome <cfoutput>#session.stLoggedInUser.FirstName#</cfoutput>!!</h6> --->
+	<cfif session.stloggedinUser.role EQ 'Teacher'>
+		<!---the teacher includes will be included--->
+		
+	<cfelseif session.stloggedinUser.role EQ 'Student'>
+		<!---the student includes will be included--->
+		<cfinclude  template="Include/student.cfm">
+	</cfif>
+
 </cfif>
-<!---
-<cfif NOT isUserInRole('Teacher')>
-	<div class="container center-container" style="margin-top:50px">
-		<form class="form-block">
-			<input type="text" class="form-control w-75 mx-auto" placeholder="Search for Teachers" aria-label="Search">
-			<input type="submit" class="btn btn-block mx-auto mt-2 btn-danger btn-round-lg" value="Search">
-		</form>
-	</div>
-</cfif>
---->
 
-
-
-	
+</div>
 </cf_header>	
+
+
+
 <!-- <div class="row mt-5"> -->
 <!-- 			<div class="col-md-4"> -->
 <!-- 				<h3>Q. What is Relationship between Teacher and Student?</h3> -->
@@ -81,3 +55,33 @@ Functionality: This is the homepage.
 <!-- 		    	<p>It's Just helps this Relation to grow it to Next level.</p> -->
 <!-- 		    </div> -->
 <!-- 	  	</div> -->
+
+<!---
+<div class="container mt-5 mb-5">
+			<div class="row mt-5">
+				<div class="col-sm-6 d-flex justify-content-center mb-5">
+					<a href="Teacher/batches.cfm" type="button" class="section-div bg-light w-75 shadow">
+						<h1 class="text-center mt-4 text-dark">Batches</h1>
+					</a>	
+				</div>
+				<div class="col-sm-6 d-flex justify-content-center mb-5">
+					<a href="profile.cfm" type="button" class="section-div bg-light w-75 shadow">
+						<h1 class="text-center mt-4 text-dark">Profile</h1>
+					</a>
+				</div>
+			</div>
+			<div class="row mt-5">
+				<div class="col-sm-6 d-flex justify-content-center mb-5">
+					<a type="button" class="section-div bg-light w-75 shadow">
+						<h1 class="text-center mt-4 text-dark">Notifications</h1>
+					</a>	
+				</div>
+				<div class="col-sm-6 d-flex justify-content-center mb-5">
+					<a type="button" class="section-div bg-light w-75 shadow">
+						<h1 class="text-center mt-4 text-dark">Students</h1>
+					</a>
+				</div>
+			</div>
+		</div>
+
+--->
