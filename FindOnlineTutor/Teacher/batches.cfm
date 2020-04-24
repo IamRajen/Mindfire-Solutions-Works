@@ -103,6 +103,24 @@ Functionality: It is a batch page which contains all the related information for
                                 <span class="text-danger small float-left"></span>
                             </div>
                         </div>
+
+                        <!---Batch tags--->
+                        <div class="row m-3">
+                            <div class="col-md-3">
+                                <label class="text-info" class="control-label"  for="batchTag">Tags:</label>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" id="batchTag" name="batchTag" placeholder="Enter Tag.." class="form-control d-block" onblur="checkBatchName(this)">
+                                <span class="text-danger small float-left"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-secondary d-inline px-4 py-1" onclick="addTag()">Add</button>
+                            </div>
+                        </div>
+                        <div class="row m-4">
+                            <small class="alert alert-secondary px-3 py-1 pt-2 mx-1 section-div">physics
+                            <button type="button" class="close ml-2">&times;</button></small>
+                        </div>
                     
                         <!---Batch Start date End date--->
                         <div class="row m-3 ">

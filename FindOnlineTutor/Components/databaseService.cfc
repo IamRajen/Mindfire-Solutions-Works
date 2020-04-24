@@ -796,7 +796,7 @@ Functionality: This file has services/functions related to the data in the datab
     <!---function to retrieve the searched query for batches--->
     <cffunction  name="searchQuery" access="public" output="false" returntype="struct">
         <!---argument--->
-        <cfargument  name="words" type="string" required="true">
+        <cfargument  name="word" type="any" required="true">
         <cfset var result = {}/>
         <cfset var searchResult =''/>
         <!---query starts here--->
@@ -804,10 +804,10 @@ Functionality: This file has services/functions related to the data in the datab
             <cfquery name="searchResult">
                 SELECT * 
                 FROM [dbo].[Batch]
-                WHERE batchName LIKE '%#arguments.words#%'
+                WHERE batchName LIKE '%#arguments.word#%';
             </cfquery>
         <cfcatch type="any">
-            <cflog text="databaseService-> searchQuery(): #cfcatch#"/>
+            <cflog text="databaseService-> searchQuery(): #cfcatch.detail#"/>
             <cfset result.error = "some error while executing your request. Please try after sometimes."/>
         </cfcatch>
         </cftry>

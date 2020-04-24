@@ -53,10 +53,13 @@ Functionality: It is a header file which is included probably in Teacher section
 						</li>
 						<cfif structKeyExists(session, "stLoggedInUser") >
 							<li class="nav-item mx-2">
-								<a class="nav-link text-light" href="batches.cfm">Batch</a>
+								<a class="nav-link text-light" href="batches.cfm">Your Batch</a>
 							</li>
 							<li class="nav-item mx-2">
 								<a class="nav-link text-light" href="request.cfm">Requests<span class="text-warning">*</span></a>
+							</li>
+							<li class="nav-item mx-2">
+								<a class="nav-link text-light" href="students.cfm">Students</a>
 							</li>
 							<li class="nav-item mx-2">
 								<a class="nav-link text-light" href="../profile.cfm">Profile</a>

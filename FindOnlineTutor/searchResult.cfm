@@ -6,31 +6,91 @@ Created By: Rajendra Mishra.
 Functionality: This file show the search result of teachers for batches.
 --->
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" profilePath="profile.cfm">
+<!--- <cfset myFunctionObj = createObject("component","FindOnlineTutor.Components.myFunction")/>
+<cfset keywords = arrayToList(myFunctionObj.removeStopWords(url.query)) />
+<cfdump  var="#words#"> --->
 <div class="container">
     <cfinclude  template="Include/searchForm.cfm">
     <cfif structKeyExists(url, "query")>
         <!---when some data is given for search--->
          <cfset databaseServiceObj = createObject("component","FindOnlineTutor/Components/databaseService")/>
-         <cfset batches = databaseServiceObj.searchQuery(url.Query)/>
+         <cfset batches = databaseServiceObj.searchQuery(url.query)/>
          <cfif  structKeyExists(batches, "batches")>
             <cfif batches.batches.recordCount GT 0>
                 <!---if search result got some data then filter option will be displayed--->
-                <div class="container px-5">
-                    <div class="row">
-                        <div class="col-sm-2 m-1">
-                            <p class="text-primary float-right m-1">Filter by:-</p> 
+                <div class="container">
+                    <div class="row my-2">
+                        <div class="col-sm-2 text-center my-1">
+                            <select id="inputCountry" class="form-control section-div">
+                                <option class="section-div" value="">Country</option>
+                                <option selected>India</option>
+                            </select>
                         </div>
-                        <div class="col-sm-2 text-center m-1 ">
-                            <p class="bg-secondary text-center section-div p-1 text-light">By Country</p>
+                        <div class="col-sm-2 text-center my-1">
+                            <select id="inputState" class="form-control section-div">
+                                <option class="section-div" value="">State</option>
+                                <option class="section-div">India</option>
+                            </select>
                         </div>
-                        <div class="col-sm-2 text-center m-1 ">
-                            <p class="bg-secondary text-center section-div p-1 text-light">By state</p>
+                        <div class="col-sm-2 text-center my-1">
+                            <select id="inputRating" class="form-control section-div">
+                                <option class="section-div" value="">Rating</option>
+                                <option value="4">Above 4</option>
+                                <option value="3">Above 3</option>
+                                <option value="2">Above 2</option>
+                                <option value="1">Above 1</option>
+                            </select>
                         </div>
-                        <div class="col-sm-2 text-center m-1 ">
-                            <p class="bg-secondary text-center section-div p-1 text-light">By Rating</p>
+                        <div class="col-sm-2 text-center my-1">
+                            <select id="inputFee" class="form-control section-div">
+                                <option class="section-div" value="">Fee</option>
+                                <option class="section-div">India</option>
+                            </select>
                         </div>
-                        <div class="col-sm-2 text-center m-1 ">
-                            <p class="bg-secondary text-center section-div p-1 text-light">By Days</p>
+                        <div class="col-sm-2 text-center my-1">
+                            <select id="inputState" class="form-control section-div">
+                                <option class="section-div" value="">Duration</option>
+                                <option class="section-div">India</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2 text-center my-1">
+                            <select id="inputCountry" class="form-control section-div">
+                                <option class="section-div" value="">Start Date</option>
+                                <option class="section-div">India</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row my-2">
+                        <div class="col-sm-2 text-center mx-2">
+                            <label class="form-check-label text-primary">Filter by Days:</label>
+                        </div>
+                        <div class="col-sm-1 text-center mx-2">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Monday</label>
+                        </div>
+                        <div class="col-sm-1 text-center mx-2">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Tuesday</label>
+                        </div>
+                        <div class="col-sm-1 text-center mx-2">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Wednesday</label>
+                        </div>
+                        <div class="col-sm-1 text-center mx-5">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Thrusday</label>
+                        </div>
+                        <div class="col-sm-1 text-center mx-1">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Friday</label>
+                        </div>
+                        <div class="col-sm-1 text-center mx-2">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Saturday</label>
+                        </div>
+                        <div class="col-sm-1 text-center mx-2">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Sunday</label>
                         </div>
                     </div>
                 </div>
