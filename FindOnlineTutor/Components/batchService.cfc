@@ -10,6 +10,7 @@ Functionality: This file contains the functions which help to give required serv
 
     <cfset patternvalidationObj = createObject("component","patternValidation")/>
     <cfset databaseServiceObj = createObject("component","databaseService")/>
+
     <!---function to create a new batch--->
     <cffunction  name="createBatch" access="remote" output="false" returntype="struct" returnformat="json">
         <!---defining argumnents--->
@@ -57,10 +58,10 @@ Functionality: This file contains the functions which help to give required serv
         </cfloop>
 
         <cfif errorMsgs["validatedSuccessfully"]>
-
+            <cfset var myAddress = databaseServiceObj.getMyAddress(session.stLoggedInUser.UserId)/>
             <cfset var newBatch = databaseServiceObj.insertBatch(
                 #session.stloggedinUser.userID#, name, type, details, startDate,endDate,LSParseNumber(capacity),
-                LSParseNumber(fee), 0)/>
+                LSParseNumber(fee), 0,myAddress.address.userAddressId[1],"")/>
             <cfif structKeyExists(newBatch, "error")>
                 <cfset errorMsgs["error"]=true/>
             <cfelseif structKeyExists(newBatch, "newBatchId")>
@@ -273,6 +274,26 @@ Functionality: This file contains the functions which help to give required serv
         <cfreturn errorMsgs/>
     </cffunction>
 
+    <!---function to update the batch address id--->
+    <cffunction  name="updateBatchAddressId" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <cfargument  name="addressId" type="numeric" required="true">
+        <!---calling funtion and initializing it into the returning variable--->
+        <cfset var updateInfo = databaseServiceObj.updateBatchAddressId(arguments.batchId, arguments.addressId)/>
+        <cfreturn updateInfo/>
+    </cffunction>
+
+    <!---function to update the batch address link--->
+    <cffunction  name="updateBatchAddressLink" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <cfargument  name="addressLink" type="string" required="true">
+        <!---calling funtion and initializing it into the returning variable--->
+        <cfset var updateInfo = databaseServiceObj.updateBatchAddressLink(arguments.batchId, arguments.addressLink)/>
+        <cfreturn updateInfo/>
+    </cffunction>
+
     <!---function to validate the batch name--->
     <cffunction  name="validateBatchName" access="public" output="false" returntype="struct">
         <!---arguments--->
@@ -316,7 +337,7 @@ Functionality: This file contains the functions which help to give required serv
         <!---validation starts from here--->
         <cfif patternValidationObj.isEmpty(arguments.batchType)>
             <cfset errorMsg.msg="Mandatory Field.Please provide your batch type!!"/>
-        <cfelseif (arguments.batchType NEQ 'online') AND (arguments.batchType NEQ 'homeLocation') AND (arguments.batchType NEQ 'otherLocation')>
+        <cfelseif (arguments.batchType NEQ 'online') AND (arguments.batchType NEQ 'home') AND (arguments.batchType NEQ 'coaching')>
             <cfset errorMsg.msg="Invalid batch type please select from the required fields."/>
         </cfif>
         <cfreturn errorMsg/>
@@ -401,6 +422,7 @@ Functionality: This file contains the functions which help to give required serv
         <!---creating a variable for storing the returned value from database function call--->
         <cfset var batchDetails = {}/>
         <cfset batchDetails.overview = getBatchOverviewById(arguments.batchId)/>
+        <cfset batchDetails.address = databaseServiceObj.getMyAddress(session.stLoggedInUser.UserId)/>
         <cfset var batchDetails.timing = getBatchTimingById(arguments.batchId)/>
         <cfset var batchDetails.notification = getBatchNotifications(arguments.batchId)/>
         
@@ -474,4 +496,12 @@ Functionality: This file contains the functions which help to give required serv
         <cfreturn notificationInfo/>
     </cffunction> 
 
+    <!---function to get the nearby batches of user--->
+    <cffunction  name="getNearByBatch" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---get the address of user--->
+        <cfset var userAddress = databaseServiceObj.getMyAddress(session.stLoggedInUser.UserId)/>
+        <!---creating a struct for returning purpose--->
+        <cfset var batches = databaseServiceObj.getNearByBatch(left(userAddress.Address.PINCODE[1],3))/>
+        <cfreturn batches/>
+    </cffunction>
 </cfcomponent>

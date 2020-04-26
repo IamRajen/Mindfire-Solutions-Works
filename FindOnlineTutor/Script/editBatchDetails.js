@@ -11,6 +11,7 @@ var patternName=/^[A-Za-z ]+$/;
 var patternNumber=/^[0-9]+$/;
 var patternText=/^[ A-Za-z0-9_@./&+:-]*$/;
 var patternTime = /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/;
+var patternLink = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
 
 //all maps are declared here...!!
 var inputOverview = new Map();
@@ -725,4 +726,106 @@ function checkTime(element)
         return;
     }
     setSuccessBorder(object);
+}
+
+function updateBatchAddress(id)
+{
+    if($("#batchType").text() == 'online')
+    {
+        if(!isValidPattern($("#addressLink").val(),patternLink))
+        {
+            $("#addressLink").next().text("Invalid Link Address");
+            $("#addressLink").css({"border-color": "#CD5C5C", "border-width":"2px"});
+            return;
+        }
+        else 
+        {
+            $("#addressLink").css({"border-color": "#ddd", "border-width":"1px"});
+            $("#addressLink").next().text("");
+        }
+        $.ajax({
+            type:"POST",
+            url:"../Components/batchService.cfc?method=updateBatchAddressLink",
+            cache: false,
+            timeout: 2000,
+            error: function(){
+                swal({
+                    title: "Failed to update the batch address!!",
+                    text: "Some error occured. Please try after sometime",
+                    icon: "error",
+                    button: "Ok",
+                });
+            },
+            data:{
+                    "batchId":parseInt($("#batchId").text()),
+                    "addressLink":$("#addressLink").val(),
+                },
+            success: function(error) 
+            {
+                var updateInfo = JSON.parse(error);
+                if(updateInfo.hasOwnProperty("error"))
+                {
+                    swal({
+                        title: "Failed to update the batch address!!",
+                        text: "Some error occured. Please try after sometime",
+                        icon: "error",
+                        button: "Ok",
+                    });
+                }
+                else{
+                    swal({
+                        title: "successfully updated!!",
+                        text: "Successfully updated the batch address",
+                        icon: "success",
+                        button: "Ok",
+                    });
+                    setTimeout(function(){window.location.reload(true)},2000);
+                }
+            }
+        });
+    }
+    else if($("#batchType").text() == 'coaching')
+    {
+        //ajax call be made for updating the database
+        $.ajax({
+            type:"POST",
+            url:"../Components/batchService.cfc?method=updateBatchAddressId",
+            cache: false,
+            timeout: 2000,
+            error: function(){
+                swal({
+                    title: "Failed to update the batch address!!",
+                    text: "Some error occured. Please try after sometime",
+                    icon: "error",
+                    button: "Ok",
+                });
+            },
+            data:{
+                    "batchId":parseInt($("#batchId").text()),
+                    "addressId":$("#addressId").val(),
+                },
+            success: function(error) 
+            {
+                var updateInfo = JSON.parse(error);
+                if(updateInfo.hasOwnProperty("error"))
+                {
+                    swal({
+                        title: "Failed to update the batch address!!",
+                        text: "Some error occured. Please try after sometime",
+                        icon: "error",
+                        button: "Ok",
+                    });
+                }
+                else{
+                    swal({
+                        title: "successfully updated!!",
+                        text: "Successfully updated the batch address",
+                        icon: "success",
+                        button: "Ok",
+                    });
+                    setTimeout(function(){window.location.reload(true)},2000);
+                }
+            }
+        });
+    }
 }

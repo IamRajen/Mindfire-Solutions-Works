@@ -229,8 +229,8 @@ Functionality: This file helps to validate and update the user profile.
                         </cfif>
                     <!---inserting the alternative address --->
                     <cfelseif arguments.alternativeAddress NEQ ''>
-                        <cfset var insertAlternativeAddress = insertAddress(
-                            userId,arguments.alternativeAddress, arguments.alternativeCountry, arguments.alternativeState,
+                        <cfset var insertAlternativeAddress = databaseServiceObj.insertAddress(
+                            session.stLoggedInUser.userId,arguments.alternativeAddress, arguments.alternativeCountry, arguments.alternativeState,
                             arguments.alternativeCity, arguments.alternativePincode)/>
                         <cfif structKeyExists(insertAlternativeAddress, "error")>
                             <cfthrow detail = '#insertAlternativeAddress.error#'/>

@@ -472,6 +472,8 @@ Functionality: This file has services/functions related to the data in the datab
         <cfargument  name="capacity" type="numeric" required="true"/>
         <cfargument  name="fee" type="numeric" required="true"/>
         <cfargument  name="enrolled" type="numeric" required="false" default=0/>
+        <cfargument  name="addressId" type="numeric" required="false"/>
+        <cfargument  name="addressLink" type="string" required="false" default=''/>
 
         <!---creating a structure for returning purpose. which contains the inserted result and error msg if occurred--->
         <cfset var insertedSuccessfully={}/>
@@ -481,7 +483,7 @@ Functionality: This file has services/functions related to the data in the datab
         <cftry>
             <cfquery result="newBatch">
                 INSERT INTO [dbo].[Batch]
-                (batchOwnerId,batchType,batchName,batchDetails,startDate,endDate,capacity,enrolled,fee)
+                (batchOwnerId,batchType,batchName,batchDetails,startDate,endDate,capacity,enrolled,fee,addressId,addressLink)
                 VALUES (
                     <cfqueryparam value=#arguments.batchOwnerId# cfsqltype='cf_sql_bigint'>,
                     <cfqueryparam value='#arguments.batchType#' cfsqltype='cf_sql_varchar'>,
@@ -491,7 +493,9 @@ Functionality: This file has services/functions related to the data in the datab
                     <cfqueryparam value='#arguments.endDate#' cfsqltype='cf_sql_date'>,
                     <cfqueryparam value=#arguments.capacity# cfsqltype='cf_sql_smallint'>,
                     <cfqueryparam value=#arguments.enrolled# cfsqltype='cf_sql_smallint'>,
-                    <cfqueryparam value=#arguments.fee# cfsqltype='cf_sql_money'>
+                    <cfqueryparam value=#arguments.fee# cfsqltype='cf_sql_money'>,
+                    <cfqueryparam value=#arguments.addressId# cfsqltype='cf_sql_bigint'>,
+                    <cfqueryparam value=#arguments.addressLink# cfsqltype='cf_sql_varchar'>
                 )
             </cfquery>
         <cfcatch type="any">
@@ -793,28 +797,83 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn notificationInfo/>
     </cffunction>
 
-    <!---function to retrieve the searched query for batches--->
-    <cffunction  name="searchQuery" access="public" output="false" returntype="struct">
-        <!---argument--->
-        <cfargument  name="word" type="any" required="true">
-        <cfset var result = {}/>
-        <cfset var searchResult =''/>
-        <!---query starts here--->
+    <!---function to update the batch address id--->
+    <cffunction  name="updateBatchAddressId" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <cfargument  name="addressId" type="numeric" required="true">
+        <!---calling funtion and initializing it into the returning variable--->
+        <cfset var updateInfo = {}/>
+        <!---query--->
         <cftry>
-            <cfquery name="searchResult">
-                SELECT * 
-                FROM [dbo].[Batch]
-                WHERE batchName LIKE '%#arguments.word#%';
+            <cfquery>
+                UPDATE [dbo].[Batch]
+                SET [addressId] = <cfqueryparam value="#arguments.addressId#" cfsqltype="cf_sql_bigint">
+                WHERE [batchId] = <cfqueryparam value="#arguments.batchId#" cfsqltype="cf_sql_bigint">
             </cfquery>
         <cfcatch type="any">
-            <cflog text="databaseService-> searchQuery(): #cfcatch.detail#"/>
-            <cfset result.error = "some error while executing your request. Please try after sometimes."/>
+            <cflog  text="helo #cfactch.detail#">
+            <cfset updateInfo.error = "some error occurred. Please, try after sometime."/>
         </cfcatch>
         </cftry>
-        <cfif NOT structKeyExists(result, "error")>
-            <cfset result.batches = searchResult/>
+        <cfif NOT structKeyExists(updateInfo, "error")>
+            <cfset updateInfo.info = true/>
         </cfif>
-        <cfreturn result/>
+        <cfreturn updateInfo/>
+    </cffunction>
+
+    <!---function to update the batch address Link--->
+    <cffunction  name="updateBatchAddressLink" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <cfargument  name="addressLink" type="string" required="true">
+        <!---calling funtion and initializing it into the returning variable--->
+        <cfset var updateInfo = {}/>
+        <!---query--->
+        <cftry>
+            <cfquery>
+                UPDATE [dbo].[Batch]
+                SET [addressLink] = <cfqueryparam value="#arguments.addressLink#" cfsqltype="cf_sql_varchar">
+                WHERE [batchId] = <cfqueryparam value="#arguments.batchId#" cfsqltype="cf_sql_bigint">
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="helo #cfactch.detail#">
+            <cfset updateInfo.error = "some error occurred. Please, try after sometime."/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(updateInfo, "error")>
+            <cfset updateInfo.info = true/>
+        </cfif>
+        <cfreturn updateInfo/>
+    </cffunction>
+
+    <!---function to get near by batches--->
+    <cffunction  name="getNearByBatch" output="false" access="public" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="pincode" type="numeric" required="true">
+        <!---creating a structure for storing the result and error msg if occurred--->
+        <cfset var batches = {}/>
+        <!---variable that will store the batch information--->
+        <cfset var batch=''/>
+        <!---query starts from here--->
+        <cftry>
+            <cfquery name="batch">
+                SELECT DISTINCT [dbo].[Batch].[batchId], [batchName], [address], [country], [state],
+                                [city], [pincode], [startDate], [batchType], [fee], [capacity], [enrolled]
+                FROM ([dbo].[Batch] 
+                JOIN [dbo].[UserAddress] ON ([dbo].[Batch].[addressId] = [dbo].[UserAddress].[userAddressId]))
+                WHERE batchType='online' OR [dbo].[UserAddress].[pincode] LIKE '#arguments.pincode#%'
+                ORDER BY [dbo].[Batch].[startdate] DESC;
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService-> getNearByBatch(): #cfcatch.detail#">
+            <cfset batches.error = "some error occurred. Please try after sometimes."/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(batches, "error")>
+            <cfset batches.batch = batch/>
+        </cfif>
+        <cfreturn batches/>
     </cffunction>
 
 
