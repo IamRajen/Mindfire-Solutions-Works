@@ -74,6 +74,9 @@ Functionality: It is a header file which is included probably in every pages.
 								<li class="nav-item mx-2">
 									<a class="nav-link text-light" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/notification.cfm">Notification</a>
 								</li>
+								<li class="nav-item mx-2">
+									<a class="nav-link text-light" href="searchResult.cfm">find Batch</a>
+								</li>
 							</cfif>
 							<!---student's faclities ends here--->
 

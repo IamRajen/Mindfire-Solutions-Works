@@ -850,7 +850,10 @@ Functionality: This file has services/functions related to the data in the datab
     <!---function to get near by batches--->
     <cffunction  name="getNearByBatch" output="false" access="public" returntype="struct">
         <!---arguments--->
-        <cfargument  name="pincode" type="numeric" required="true">
+        <cfargument  name="pincode" type="numeric" required="false">
+        <cfargument  name="country" type="string" required="false">
+        <cfargument  name="state" type="string" required="false">
+        
         <!---creating a structure for storing the result and error msg if occurred--->
         <cfset var batches = {}/>
         <!---variable that will store the batch information--->
@@ -858,11 +861,19 @@ Functionality: This file has services/functions related to the data in the datab
         <!---query starts from here--->
         <cftry>
             <cfquery name="batch">
-                SELECT DISTINCT [dbo].[Batch].[batchId], [batchName], [address], [country], [state],
-                                [city], [pincode], [startDate], [batchType], [fee], [capacity], [enrolled]
+                SELECT DISTINCT [dbo].[Batch].[batchId], [batchName],[batchDetails], [address], [country], [state],
+                                [city], [pincode], [startDate],[endDate], [batchType], [fee], [capacity], [enrolled]
                 FROM ([dbo].[Batch] 
                 JOIN [dbo].[UserAddress] ON ([dbo].[Batch].[addressId] = [dbo].[UserAddress].[userAddressId]))
-                WHERE batchType='online' OR [dbo].[UserAddress].[pincode] LIKE '#arguments.pincode#%'
+                
+                <cfif structKeyExists(arguments, "pincode")>
+                    WHERE (batchType='online' OR [dbo].[UserAddress].[pincode] LIKE '#arguments.pincode#%')
+                    <cflog  text="#arguments.pincode#">
+                <cfelseif structKeyExists(arguments, "country") AND (NOT structKeyExists(arguments, "state"))>
+                    WHERE ([dbo].[UserAddress].[country] = '#arguments.country#')
+                <cfelseif structKeyExists(arguments, "state")>
+                    WHERE [dbo].[UserAddress].[country] = '#arguments.country#' AND [dbo].[UserAddress].[state] = '#arguments.state#'
+                </cfif>
                 ORDER BY [dbo].[Batch].[startdate] DESC;
             </cfquery>
         <cfcatch type="any">

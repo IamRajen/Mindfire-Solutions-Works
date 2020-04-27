@@ -12,6 +12,5 @@ Functionality: It is a cfm file helps to find batches using some filtering optio
 <cfset batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
 <cfset myNearBatches = batchServiceObj.getNearByBatch()/>
 <cfdump  var="#myNearBatches#">
-<!--- <cfdump  var="#batch.getNearByBatch("#left(myCurrentAddress.Address.PINCODE[1],3)#")#"/> --->
 </div>
 </cf_header>

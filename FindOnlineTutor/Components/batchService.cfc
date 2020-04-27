@@ -498,10 +498,28 @@ Functionality: This file contains the functions which help to give required serv
 
     <!---function to get the nearby batches of user--->
     <cffunction  name="getNearByBatch" access="remote" output="false" returntype="struct" returnformat="json">
-        <!---get the address of user--->
-        <cfset var userAddress = databaseServiceObj.getMyAddress(session.stLoggedInUser.UserId)/>
-        <!---creating a struct for returning purpose--->
-        <cfset var batches = databaseServiceObj.getNearByBatch(left(userAddress.Address.PINCODE[1],3))/>
+        <!---arguments--->
+        <cfargument  name="country" type="string" required="false">
+        <cfargument  name="state" type="string" required="false">
+
+        <cfif arguments.country NEQ '' AND arguments.state EQ ''>
+            <!---calling function for retrieving the batches by country--->
+            <cfset var batches = databaseServiceObj.getNearByBatch(country=arguments.country)/>
+        <cfelseif arguments.state NEQ ''>
+            <!---calling function for retrieving the batches by state--->
+            <cfset var batches = databaseServiceObj.getNearByBatch(country=arguments.country, state=arguments.state)/>
+        <cfelse>
+            <!---calling function for retrieving the near by batches--->
+            <cfset var userAddress = databaseServiceObj.getMyAddress(session.stLoggedInUser.UserId)/>
+            <cfif structKeyExists(userAddress, "Address")>
+                <cfset var batches = databaseServiceObj.getNearByBatch(left(userAddress.Address.PINCODE[1],3))/>
+            <cfelse>
+                <cfset batches.error = "some error occurred. Please, try after sometimes."/>
+            </cfif>
+        </cfif>
+
         <cfreturn batches/>
     </cffunction>
+
+
 </cfcomponent>

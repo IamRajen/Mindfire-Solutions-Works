@@ -26,4 +26,5 @@ Functionality: This file contain some function created by me for conveniance.
         </cfloop>
             <cfreturn words>
     </cffunction>
+    
 </cfcomponent>

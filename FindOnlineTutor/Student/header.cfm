@@ -56,7 +56,7 @@ Functionality: It is a header file which is included probably in student section
 								<a class="nav-link text-light" href="batches.cfm">Your Batch</a>
 							</li>
                             <li class="nav-item mx-2">
-								<a class="nav-link text-light" href="findBatch.cfm">find Batch</a>
+								<a class="nav-link text-light" href="../searchResult.cfm">find Batch</a>
 							</li>
 							<li class="nav-item mx-2">
 								<a class="nav-link text-light" href="notification.cfm">Notifications<span class="text-warning">*</span></a>
