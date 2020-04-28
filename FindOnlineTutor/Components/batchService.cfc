@@ -521,5 +521,39 @@ Functionality: This file contains the functions which help to give required serv
         <cfreturn batches/>
     </cffunction>
 
+    <!---function to make a request to batch for enrollment--->
+    <cffunction  name="makeRequest" output="false" access="remote" returntype="struct" returnformat="json">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <!---creating a variable for returning purpose for status of the request--->
+        <cfset var requestStatus = {}/>
+        <!---checking if the user is already requested for the batch--->
+        <cfset var isRequested = databaseServiceObj.getBatchRequests(arguments.batchId, session.stLoggedInUser.userId)/>
+        <cfif structKeyExists(isRequested, "error")>
+            <cflog  text="erro">
+            <cfset requestStatus['error'] = "failed to make a request. Please try after sometime"/>
+        <cfelseif isRequested.requestData.recordCount GT 0>
+            <cflog  text="error">
+            <cfset requestStatus['warning'] = "Already you have requested for this batch. check your request status in your request option"/>
+        <cfelseif isRequested.requestData.recordCount EQ 0>
+            <cfset requestStatus = databaseServiceObj.insertRequest(arguments.batchId, session.stLoggedInUser.userId, "Pending")/>
+        </cfif>
+
+        <cfreturn requestStatus/>
+    </cffunction>
+
+    <!---function to get the requests of the user made previously--->
+    <cffunction  name="getBatchRequests" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="false">
+        <!---creating a variable for returning the structure of requested data--->
+        <cfset var requestDataInfo = {}/>
+        <cfif structKeyExists(arguments, "batchId")>
+            <cfset requestDataInfo = databaseServiceObj.getBatchRequests(batchId=arguments.batchId)/>
+        <cfelse>
+            <cfset requestDataInfo = databaseServiceObj.getBatchRequests(studentId=session.stLoggedInUser.userId)/>
+        </cfif>
+        <cfreturn requestDataInfo/>
+    </cffunction>
 
 </cfcomponent>

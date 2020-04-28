@@ -7,15 +7,23 @@ Functionality: This file show the search result of teachers for batches.
 --->
 <!---creating objects of batch service component--->
 <cfset batchServiceObj  = createObject("component","FindOnlineTutor.Components.batchService")/>
-
+<cfset databaseServiceObj = createObject("component","FindOnlineTutor.Components.databaseService")/>
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" profilePath="profile.cfm" scriptPath="Script/searchBatch.js">
 
 <div class="container">
     <cfif structKeyExists(session, "stLoggedInUser")>
         <!---display the users near by batches--->
         <cfset myNearBatches = batchServiceObj.getNearByBatch(country='' , state='')/>
-        <cfif structKeyExists(myNearBatches, "batch")>
+        <!---getting the all request made by the user--->
+        <cfset myRequest = databaseServiceObj.getBatchRequests(studentId=session.stLoggedInUser.userId)/>
+        
+        <cfif structKeyExists(myNearBatches, "batch") AND structKeyExists(myRequest, "REQUESTDATA")>
             <!---if successfully batches are retrieved then those will be displayed here--->
+            <cfset requestIds = {}>
+            <!---looping through the requests and storing it into the structure for further use--->
+            <cfloop query="myRequest.RequestData">
+                <cfset requestIds['#batchId#'] = '#requestStatus#'>
+            </cfloop>
             <!---filter options will be displayed--->
             <div class="row p-3 mt-4">
                 <div class="col-md-3">
@@ -48,11 +56,20 @@ Functionality: This file show the search result of teachers for batches.
             </div>
             <div id="batchesDiv">
                 <cfoutput query="myNearBatches.batch">
-                    <a href="batchesDetails.cfm?id=#batchId#" class="row m-3 p-3 shadow bg-light rounded">
+                    <div class="row m-3 p-3 shadow bg-light rounded">
                         <div class="col-md-12 border-bottom pb-2">
                             <h3 id="batchName" class=" text-dark d-inline">#batchName#</h3>
                             <span id="batchType" class="text-info h6 ml-2">#batchType#</span>
-                            <button class="btn btn-success float-right d-inline rounded text-light shadow" onclick="enrollStudent()">Enroll</button> 
+                            <div id="requestStatus" class="d-inline">
+                                <cfif structKeyExists(requestIds, "#batchId#") AND requestIds["#batchId#"] EQ 'Pending'>
+                                    <button class="btn btn-success float-right d-inline rounded text-light shadow mx-1 disabled">Pending...</button> 
+                                <cfelseif structKeyExists(requestIds, "#batchId#") AND requestIds["#batchId#"] EQ 'Approved'>
+                                    <small class="alert alert-success mt-2 text-success d-inline float-right p-1 px-2">Enrolled</small> 
+                                <cfelse>
+                                    <button class="btn btn-success float-right d-inline rounded text-light shadow mx-1" onclick="enrollStudent(this)">Enroll</button> 
+                                </cfif>
+                            </div>
+                            <a href="batchesDetails.cfm?id=#batchId#" class="btn btn-info float-right d-inline rounded text-light shadow mx-1">Details</a> 
                         </div>
                         <div class="col-md-12 py-2">
                             <span class="text-info h6 mr-2">Description: </span>
@@ -82,7 +99,7 @@ Functionality: This file show the search result of teachers for batches.
                             <span class="text-info h6 mr-2">Address: </span>
                             <p id="batchAddress" class="d-inline text-dark m-2">#address#, #city#, #state#, #country#-#pincode#</p>
                         </div> 
-                    </a>
+                    </div>
                 </cfoutput>
             </div>
         <cfelseif structKeyExists(myNearBatches, "error") OR structKeyExists(myNearBatches.batches, "error")>
