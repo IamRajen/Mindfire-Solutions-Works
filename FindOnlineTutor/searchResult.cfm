@@ -15,13 +15,13 @@ Functionality: This file show the search result of teachers for batches.
         <!---display the users near by batches--->
         <cfset myNearBatches = batchServiceObj.getNearByBatch(country='' , state='')/>
         <!---getting the all request made by the user--->
-        <cfset myRequest = databaseServiceObj.getBatchRequests(studentId=session.stLoggedInUser.userId)/>
+        <cfset myRequest = batchServiceObj.getMyRequests()/>
         
-        <cfif structKeyExists(myNearBatches, "batch") AND structKeyExists(myRequest, "REQUESTDATA")>
+        <cfif structKeyExists(myNearBatches, "batch") AND structKeyExists(myRequest, "REQUESTS")>
             <!---if successfully batches are retrieved then those will be displayed here--->
             <cfset requestIds = {}>
             <!---looping through the requests and storing it into the structure for further use--->
-            <cfloop query="myRequest.RequestData">
+            <cfloop query="myRequest.Requests">
                 <cfset requestIds['#batchId#'] = '#requestStatus#'>
             </cfloop>
             <!---filter options will be displayed--->
@@ -102,7 +102,7 @@ Functionality: This file show the search result of teachers for batches.
                     </div>
                 </cfoutput>
             </div>
-        <cfelseif structKeyExists(myNearBatches, "error") OR structKeyExists(myNearBatches.batches, "error")>
+        <cfelseif structKeyExists(myNearBatches, "error") OR structKeyExists(myNearBatches.batch, "error")>
             <!---if some error occurred while retrieving the data error msg will be displayed--->
             <div class="alert alert-danger pt-3 pb-3 rounded-top">
                 <p class="text-danger text-center">Some error occured while retrieving your batches. Please, try after sometime.</p>

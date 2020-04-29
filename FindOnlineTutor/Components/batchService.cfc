@@ -545,15 +545,41 @@ Functionality: This file contains the functions which help to give required serv
     <!---function to get the requests of the user made previously--->
     <cffunction  name="getBatchRequests" access="remote" output="false" returntype="struct" returnformat="json">
         <!---arguments--->
-        <cfargument  name="batchId" type="numeric" required="false">
+        <cfargument  name="batchId" type="numeric" required="true">
         <!---creating a variable for returning the structure of requested data--->
-        <cfset var requestDataInfo = {}/>
-        <cfif structKeyExists(arguments, "batchId")>
-            <cfset requestDataInfo = databaseServiceObj.getBatchRequests(batchId=arguments.batchId)/>
-        <cfelse>
-            <cfset requestDataInfo = databaseServiceObj.getBatchRequests(studentId=session.stLoggedInUser.userId)/>
-        </cfif>
-        <cfreturn requestDataInfo/>
+        <cfset var requestInfo = {}/>
+        <cfset requestInfo = databaseServiceObj.getBatchRequests(arguments.batchId)/>
+
+        <cfreturn requestInfo/>
     </cffunction>
 
+    <!---function to get the user requests--->
+    <cffunction  name="getMyRequests" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---variable to store the returned data from database service--->
+        <cfset var requestInfo={}/>
+        <!---calling the function as per the user--->
+        <cfif session.stLoggedInUser.role EQ 'Teacher'>
+            <cfset requestInfo=databaseServiceObj.getMyRequests(teacherId=session.stLoggedInUser.userId)/>
+        <cfelseif session.stLoggedInUser.role EQ 'Student'>
+            <cfset requestInfo=databaseServiceObj.getMyRequests(studentId=session.stLoggedInUser.userId)/>
+        </cfif>
+        <cfreturn requestInfo/>
+    </cffunction>
+
+    <!---fucntion to update the batch request status--->
+    <cffunction  name="updateBatchRequest" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---argument--->
+        <cfargument  name="batchRequestId" type="numeric" required="true">
+        <cfargument  name="requestStatus" type="string" required="true">
+        <!---structure containing the request action info--->
+        <cfset var updateInfo = {}/>
+        <!---get the details of request--->
+        <cfset var requestDetailInfo = databaseServiceObj.getRequestDetails(arguments.batchRequestId)/>
+        <cfif structKeyExists(requestDetailInfo, "error")>
+            <cfset updateInfo.error = requestDetailInfo.error/>
+        <cfelseif structKeyExists(requestDetailInfo, "requestDetails") AND requestDetailInfo.requestDetails.batchOwnerId EQ session.stLoggedInUser.userID>
+            <cfset updateInfo = databaseServiceObj.updateBatchRequest(arguments.batchRequestId, arguments.requestStatus)/>
+        </cfif>
+        <cfreturn updateInfo/>
+    </cffunction>
 </cfcomponent>

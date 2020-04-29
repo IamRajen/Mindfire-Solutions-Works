@@ -64,7 +64,7 @@ function makeAjaxCall(country ,state)
     //making an ajax call for retrieving the requests made by the user previously..
     $.ajax({
         type:"POST",
-        url:"Components/batchService.cfc?method=getBatchRequests",
+        url:"Components/batchService.cfc?method=getMyRequests",
         cache: false,
         timeout: 2000,
         error: function(){
@@ -90,7 +90,7 @@ function makeAjaxCall(country ,state)
             }
             else 
             {
-                var data = returnData.REQUESTDATA.DATA;
+                var data = returnData.REQUESTS.DATA;
                 for(let request=0;request<data.length;request++)
                 {
                     myRequestIds.set(data[request][1], data[request][3]);

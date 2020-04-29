@@ -919,28 +919,19 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn requestStatus/>
     </cffunction>
 
-    <!---function to get the request status of batch for a user--->
+    <!---function to get the requests of batch--->
     <cffunction  name="getBatchRequests" output="false" access="public" returntype="struct">
         <!---arguments--->
-        <cfargument  name="batchId" type="numeric" required="false">
-        <cfargument  name="studentId" type="numeric" required="false">
+        <cfargument  name="batchId" type="numeric" required="true">
         <!---variable to store the request data--->
-        <cfset var requestData = ''/>
-        <cfset var requestDataInfo = {}/>
+        <cfset var requests = ''/>
+        <cfset var requestInfo = {}/>
         <!---query--->
         <cftry>
-            <cfquery name="requestData">
+            <cfquery name="requests">
                 SELECT  *
                 FROM    [dbo].[BatchRequest]
-                WHERE   
-                <cfif structKeyExists(arguments, "batchId") AND structKeyExists(arguments, "studentId")>
-                    batchId = <cfqueryparam value="#arguments.batchId#" cfsqltype="cf_sql_bigint">
-                    AND studentId = <cfqueryparam value="#arguments.studentId#" cfsqltype="cf_sql_bigint">
-                <cfelseif structKeyExists(arguments, "batchId")>
-                    batchId = <cfqueryparam value="#arguments.batchId#" cfsqltype="cf_sql_bigint">
-                <cfelseif structKeyExists(arguments, "studentId")>
-                    studentId = <cfqueryparam value="#arguments.studentId#" cfsqltype="cf_sql_bigint">
-                </cfif>
+                WHERE   [dbo].[BatchRequest].[batchId] = <cfqueryparam value="#arguments.batchId#" cfsqltype="cf_sql_bigint">
             </cfquery>
         <cfcatch type="any">
             <cflog  text="databaseservice: getRequestStatus()-> #cfcatch# #cfcatch.detail#">
@@ -948,10 +939,98 @@ Functionality: This file has services/functions related to the data in the datab
         </cfcatch>
         </cftry>
         <cfif NOT structKeyExists(requestDataInfo, "error")>
-            <cfset requestDataInfo.requestData = requestData/>
+            <cfset requestDataInfo.requests = requests/>
         </cfif>
         <cfreturn requestDataInfo/>
     </cffunction>
 
+    <!---function to get the all requestes of user--->
+    <cffunction  name="getMyRequests" access="public" output="false" returntype="struct">
+        <!---argumnets--->
+        <cfargument  name="studentId" type="numeric" required="false">
+        <cfargument  name="teacherId" type="numeric" required="false">
+        
+        <!---variable that will contain the request query--->
+        <cfset var requests=''/>
+        <!---structure that will contain the request Information--->
+        <cfset var requestInfo = {}/>
+        <!---query--->
+        <cftry>
+            <cfquery name="requests">
+                SELECT [dbo].[BatchRequest].[batchRequestId] , [dbo].[BatchRequest].[requestDateTime] , [dbo].[BatchRequest].[requestStatus] , [dbo].[Batch].[batchName] , [dbo].[Batch].[batchId] 
+                <cfif structKeyExists(arguments, "teacherId")>
+                    ,[dbo].[User].[firstName]+' '+[dbo].[User].[lastName] AS "Student", [dbo].[User].[userId]
+                </cfif>
+                FROM ([dbo].[BatchRequest]
+                JOIN [dbo].[Batch] ON ([dbo].[Batch].[batchId]=[dbo].[BatchRequest].[batchId])
+                JOIN [dbo].[User] ON ([dbo].[User].[userId]=[dbo].[BatchRequest].[studentId]))
+                <cfif structKeyExists(arguments, "teacherId")>
+                    WHERE [dbo].[Batch].[batchOwnerId]=<cfqueryparam value="#arguments.teacherId#" cfsqltype="cf_sql_bigint">
+                <cfelseif structKeyExists(arguments, "studentId")>
+                    WHERE studentId=<cfqueryparam value="#arguments.studentId#" cfsqltype="cf_sql_bigint">
+                </cfif>
+                ORDER BY requestDateTime DESC 
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService getMyRequest(): #cfcatch# #cfcatch.detail#">
+            <cfset requestInfo.error = "some error occurred. Please try after somtime"/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(requestInfo, "error")>
+            <cfset requestInfo.requests = requests/>
+        </cfif>
+        <cfreturn requestInfo/>
+    </cffunction> 
 
+    <!---function to update the requests--->
+    <cffunction  name="updateBatchRequest" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchRequestId" type="numeric" required="true">
+        <cfargument  name="requestStatus" type="string" required="true">
+        <!---struct that contains the update info--->
+        <cfset var updateInfo = {}/>
+        <!---query--->
+        <cftry>
+            <cfquery>
+                UPDATE  [dbo].[BatchRequest]
+                SET     [dbo].[BatchRequest].[requestStatus] = <cfqueryparam value="#arguments.requestStatus#" cfsqltype="cf_sql_varchar">
+                WHERE   [dbo].[BatchRequest].[batchRequestId] = <cfqueryparam value="#arguments.batchRequestId#" cfsqltype='cf_sql_bigint'>
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService updateRequest(): #cfcatch# #cfcatch.detail#">
+            <cfset updateInfo.error = "some error occured while updating the request. Please try after sometimes"/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(updateInfo, "error")>
+            <cfset updateInfo.update = true/>
+        </cfif>
+        <cfreturn updateInfo>
+    </cffunction>
+
+    <!---get the request details by it's request id--->
+    <cffunction  name="getRequestDetails" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchRequestId" type="numeric" required="true">
+        <!---variable to store the query output--->
+        <cfset var requestDetails = ''/>
+        <!---structure that contains the requestDetails information--->
+        <cfset var requestDetailInfo = {}/>
+        <!---query--->
+        <cftry>
+            <cfquery name="requestDetails">
+                SELECT  [dbo].[Batch].[batchOwnerId]
+                FROM    [dbo].[BatchRequest]
+                JOIN    [dbo].[Batch] ON [dbo].[BatchRequest].[batchId]=[dbo].[Batch].[batchId]
+                WHERE   [dbo].[BatchRequest].[batchRequestId]=<cfqueryparam value="#arguments.batchRequestId#" cfsqltype='cf_sql_bigint'>
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService getRequestDetails(): #cfcatch# #cfcatch.detail#">
+            <cfset requestDetailInfo = "Some error occurred.Please try after sometime">
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(requestDetailInfo, "error")>
+            <cfset requestDetailInfo.requestDetails = requestDetails/>
+        </cfif>
+        <cfreturn requestDetailInfo>
+    </cffunction>
 </cfcomponent>
