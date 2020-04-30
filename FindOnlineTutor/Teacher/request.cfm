@@ -59,7 +59,7 @@ Functionality: It is a request page which contains all the requests of the parti
                                     <button class="btn btn-danger m-1" onclick="updateRequest(#batchRequestId#, this)">Reject</button>
                                 </td>
                             <cfelse>
-                                <td><p class="text-center alert alert-secondary p-1">Action been taken</p></td>
+                                <td><p class="text-center  p-1">Action been taken</p></td>
                             </cfif>
                             
                         </tr>

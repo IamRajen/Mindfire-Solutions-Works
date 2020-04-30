@@ -16,18 +16,18 @@ Functionality: It is a batch page which contains all the related information for
 
 <!---Display the batches---> 
     <cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
-    <cfset batches = batchServiceObj.getMyBatch(session.stLoggedInUser.userID)/>
+    <cfset batchInfo = batchServiceObj.getMyBatch()/>
     <div id="batchDiv" class="m-3">
-        <cfif structKeyExists(batches, "error")>
+        <cfif structKeyExists(batchInfo, "error")>
             <div class="alert alert-danger pt-3 pb-3 rounded-top">
-                <p class="text-danger text-center">Some error occured while retrieving your batches. Please, try after sometime.</p>
+                <p class="text-danger text-center">#batchInfo.error#</p>
             </div>
-        <cfelseif batches.data.recordCount EQ 0>
+        <cfelseif batchInfo.batches.recordCount EQ 0>
             <div class="alert alert-secondary pt-5 pb-5 rounded-top">
                 <p class="text-secondary text-center">You haven't created any batch. You can create it by clicking on "Add New Batch" button at top right side.</p>
             </div>
         <cfelse>
-            <cfoutput query="batches.data">
+            <cfoutput query="batchInfo.batches">
                 <a href="batchesDetails.cfm?id=#batchId#" class="row m-3 p-3 shadow bg-light rounded">
                     <div class="col-md-12 border-bottom pb-2">
                         <h3 class=" text-dark d-inline">#batchName#<span class="text-info h6 ml-2">#batchType#</span></h3>

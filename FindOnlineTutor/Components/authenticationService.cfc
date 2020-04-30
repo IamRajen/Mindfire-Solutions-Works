@@ -45,7 +45,7 @@ Functionality: This file contains the functions which help to login the user in 
 
 		<!---Create the isUserLoggedIn variable--->
 		<cfset var isUserLoggedIn = false />
-
+		<cfset var rsLoginUser = ''/>
 		<!---Get the user data from the database--->
 		<cftry>
 			<cfquery name="rsLoginUser">

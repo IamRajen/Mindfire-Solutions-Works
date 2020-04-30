@@ -101,15 +101,45 @@ Functionality: This file contains the functions which help to give required serv
         </cfif>
 
         <cfif errorMsgs["validatedSuccessfully"]>
-            <!---insertion process starts from here--->
-            <cfset var batchNotification = databaseServiceObj.insertBatchNotification(
-                arguments.batchId, arguments.notificationTitle, arguments.notificationDetails
-            )/>
-            <cfif structKeyExists(batchNotification, "error")>
-                <cfset errorMsgs["insertion"]=false/>
-            <cfelse>
-                <cfset errorMsgs["insertion"]=true/>
-            </cfif>
+            <cftransaction>
+                <cftry>
+                    <!---insertion process starts from here--->
+                    <cfset var batchNotification = databaseServiceObj.insertBatchNotification(
+                        arguments.batchId, arguments.notificationTitle, arguments.notificationDetails
+                    )/>
+                    <!---getting the key of the inserted notification--->
+                    <cfset var batchNotificationId = batchNotification.notification.GENERATEDKEY/>
+                    <!---getting all enrolled students of this batch--->
+                    <cfset var enrolledStudents = databaseServiceObj.getEnrolledStudent(arguments.batchId)/>
+                    <cfif structKeyExists(enrolledStudents, "error")>
+                        <cfthrow detail = "#enrolledStudents.error#"/>
+                    <cfelseif structKeyExists(enrolledStudents, "enrolledStudents")>
+                        <cflog  text="hello">
+                        <!---looping through the students--->
+                        <cfloop query="enrolledStudents.enrolledStudents">
+                            
+                            <cfset var insertedNotificationStatus = databaseServiceObj.insertNotificationStatus
+                                                        (batchNotificationId, batchEnrolledStudentId, 0)/>
+                            <cfif structKeyExists(insertedNotificationStatus, "error")>
+                                <cfthrow detail = "#insertedNotificationStatus.error#">
+                            </cfif>
+                        </cfloop>
+                    </cfif>
+                    
+                    <!---if every query get successfully executed then commit actoin get called--->
+                    <cftransaction action="commit" />
+                <cfcatch type="any">
+                    <cflog  text="batchService: addNotification()-> #cfcatch# #cfcatch.detail#">
+                    <cfset batchNotification.error = "some error occurred.Please try after sometimes"/>
+                </cfcatch>
+                </cftry>
+
+                <cfif structKeyExists(batchNotification, "error")>
+                    <cfset errorMsgs["insertion"]=false/>
+                <cfelse>
+                    <cfset errorMsgs["insertion"]=true/>
+                </cfif>
+            </cftransaction>
         </cfif>
         <cfreturn errorMsgs/>
     </cffunction>
@@ -402,15 +432,13 @@ Functionality: This file contains the functions which help to give required serv
 
     <!---function to retrieve the all batches of specific teacher--->
     <cffunction  name="getMyBatch" output="false" access="public" returntype="struct">
-        <!---arguments--->
-        <cfargument  name="userId" type="any" required="true"/>
         <!---creating a structure for returning data--->
         <cfset var batches={}/>
         <!---calling required function as user type--->
         <cfif session.stLoggedInUser.role EQ 'Teacher'>
             <cfset batches=databaseServiceObj.collectTeacherBatch(session.stLoggedInUser.userID)/>
-<!---         <cfelseif session.stLoggedInUser.role EQ 'Student'> --->
-            
+        <cfelseif session.stLoggedInUser.role EQ 'Student'> 
+            <cfset batches=databaseServiceObj.collectStudentBatch(session.stLoggedInUser.userId)/>
         </cfif>
         <cfreturn batches/>
     </cffunction>
@@ -421,11 +449,19 @@ Functionality: This file contains the functions which help to give required serv
         <cfargument  name="batchId" type="numeric" required="true">
         <!---creating a variable for storing the returned value from database function call--->
         <cfset var batchDetails = {}/>
-        <cfset batchDetails.overview = getBatchOverviewById(arguments.batchId)/>
-        <cfset batchDetails.address = databaseServiceObj.getMyAddress(session.stLoggedInUser.UserId)/>
-        <cfset var batchDetails.timing = getBatchTimingById(arguments.batchId)/>
-        <cfset var batchDetails.notification = getBatchNotifications(arguments.batchId)/>
-        
+        <!---checking the batch is of the requested user--->
+        <cfset var batchInfo = getBatchOverviewById(arguments.batchId)/>
+        <cfif batchInfo.batch.batchOwnerId EQ session.stLoggedInUser.userId>
+            <cfset batchDetails.overview = batchInfo/>
+            <cfset batchDetails.address = databaseServiceObj.getMyAddress(session.stLoggedInUser.UserId)/>
+            <cfset batchDetails.timing = getBatchTimingById(arguments.batchId)/>
+            <cfset batchDetails.notification = getBatchNotifications(arguments.batchId)/>
+            <cfset batchDetails.request = getBatchRequests(arguments.batchId)/>
+            <cfset batchDetails.enrolledStudent =databaseServiceObj.getEnrolledStudent(batchId=arguments.batchId)/>
+        <cfelse>
+            <cfset batchDetails.warning = "Sorry, the Batch you are looking for is not present"/>
+        </cfif>
+    
         <cfreturn batchDetails/>
         
     </cffunction>
@@ -482,9 +518,20 @@ Functionality: This file contains the functions which help to give required serv
     <cffunction  name="getBatchNotifications" access="remote" output="false" returntype="struct" returnformat="json">
         <!---argument--->
         <cfargument  name="batchId" type="numeric" required="true">
+
         <!---declaring a structure for returning the value of batch overview--->
         <cfset var batchFeedback = databaseServiceObj.getBatchNotifications(arguments.batchId)/>
         <cfreturn batchFeedback/>
+    </cffunction>
+
+    <!---function to all the notification of the user--->
+    <cffunction  name="getMyNotification" output="false" access="remote" returntype="struct" returnformat="json">
+        <cfif NOT structKeyExists(session, "stLoggedInUser")>
+            <cfset notificationInfo.warning = "Sorry you are not logged in"/>
+        <cfelseif session.stLoggedInUser.role EQ 'Student'>
+            <cfset notificationInfo = databaseServiceObj.getMyNotification(session.stLoggedInUser.userId)/>
+        </cfif>
+        <cfreturn notificationInfo/>
     </cffunction>
 
     <!---function to delete notification from notification table using it's iD--->
@@ -501,7 +548,7 @@ Functionality: This file contains the functions which help to give required serv
         <!---arguments--->
         <cfargument  name="country" type="string" required="false">
         <cfargument  name="state" type="string" required="false">
-
+        <cflog  text="#arguments.country#">
         <cfif arguments.country NEQ '' AND arguments.state EQ ''>
             <!---calling function for retrieving the batches by country--->
             <cfset var batches = databaseServiceObj.getNearByBatch(country=arguments.country)/>
@@ -528,14 +575,14 @@ Functionality: This file contains the functions which help to give required serv
         <!---creating a variable for returning purpose for status of the request--->
         <cfset var requestStatus = {}/>
         <!---checking if the user is already requested for the batch--->
-        <cfset var isRequested = databaseServiceObj.getBatchRequests(arguments.batchId, session.stLoggedInUser.userId)/>
+        <cfset var isRequested = databaseServiceObj.getMyRequests(studentId=session.stLoggedInUser.userId, batchId=arguments.batchId)/>
         <cfif structKeyExists(isRequested, "error")>
-            <cflog  text="erro">
+            <cflog  text="#cfcatch.detail#">
             <cfset requestStatus['error'] = "failed to make a request. Please try after sometime"/>
-        <cfelseif isRequested.requestData.recordCount GT 0>
+        <cfelseif isRequested.requests.recordCount GT 0>
             <cflog  text="error">
             <cfset requestStatus['warning'] = "Already you have requested for this batch. check your request status in your request option"/>
-        <cfelseif isRequested.requestData.recordCount EQ 0>
+        <cfelseif isRequested.requests.recordCount EQ 0>
             <cfset requestStatus = databaseServiceObj.insertRequest(arguments.batchId, session.stLoggedInUser.userId, "Pending")/>
         </cfif>
 
@@ -581,5 +628,19 @@ Functionality: This file contains the functions which help to give required serv
             <cfset updateInfo = databaseServiceObj.updateBatchRequest(arguments.batchRequestId, arguments.requestStatus)/>
         </cfif>
         <cfreturn updateInfo/>
+    </cffunction>
+
+    <!---function to get the batch enrolled student--->
+    <cffunction  name="getMyStudent" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---variable to get the students info--->
+        <cfset var enrolledStudentInfo ={}/>
+        <!---checking if the user is teacher or not--->
+        <cfif session.stLoggedInUser.role EQ 'Teacher'>
+            <cfset enrolledStudentInfo = databaseServiceObj.getEnrolledStudent(teacherId=session.stLoggedInUser.userId)/>
+        <cfelse>
+            <cfset enrolledStudentInfo.warning = "Sorry, You don't have any students"/>
+        </cfif>
+        
+        <cfreturn enrolledStudentInfo/>
     </cffunction>
 </cfcomponent>

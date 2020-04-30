@@ -93,9 +93,9 @@ function makeAjaxCall(country ,state)
                 var data = returnData.REQUESTS.DATA;
                 for(let request=0;request<data.length;request++)
                 {
-                    myRequestIds.set(data[request][1], data[request][3]);
-                    sendRequest(myRequestIds,country ,state);
+                    myRequestIds.set(data[request][4], data[request][2]);
                 }
+                sendRequest(myRequestIds,country ,state);
             }  
         }
     });  
