@@ -649,9 +649,43 @@ Functionality: This file contains the functions which help to give required serv
     <!---function to submit the feedback--->
     <cffunction  name="submitFeedback" output="false" access="remote" returntype="struct" returnformat="json">
         <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
         <cfargument  name="feedback" type="string" required="false">
+        <cfargument  name="rating" type="numeric" required="true">
         <!---returning the structure--->
-        <cfset var r={}/>
-        <cfreturn url>
+        <cfset var feedbackSubmitInfo = {}/>
+        <!---variable for student is enrolled--->
+        <cfset var isEnrolled = false/>
+        <cfset var enrolledStudentId = ''/>
+        <!---if the user is enrolled to batch--->
+        <cfset checkEnrollment = databaseServiceObj.collectStudentBatch(session.stLoggedInUser.userId)/>
+        <!---if error occurred--->
+        <cfif structKeyExists(checkEnrollment, "error")>
+            <cfset feedbackSubmitInfo.error = "Some error occurred.Please, try after sometime"/>
+        <cfelseif structKeyExists(checkEnrollment, "batches")>
+            <!---loop over the batch data--->
+            <cfloop query="checkEnrollment.batches">
+                <cfif arguments.batchId EQ batchId>
+                    <cfset isEnrolled = true/>
+                    <cfset enrolledStudentId =batchEnrolledStudentId>
+                    <cfbreak>
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif NOT structKeyExists(feedbackSubmitInfo, "error") AND isEnrolled>
+            <cfset feedbackSubmitInfo = databaseServiceObj.insertFeedback(arguments.batchId, enrolledStudentId, 
+                                                                            arguments.feedback, arguments.rating)/>
+        </cfif>
+        
+        <cfreturn feedbackSubmitInfo>
+    </cffunction>
+
+    <!---function to get the feedbacks of particular batch--->
+    <cffunction  name="retrieveBatchFeedback" output="false" access="remote" returntype="struct" returnformat="json">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <!---struct--->
+        <cfset var retrieveBatchFeedbackInfo = databaseServiceObj.retrieveBatchFeedback(arguments.batchId)/>
+        <cfreturn retrieveBatchFeedbackInfo>
     </cffunction>
 </cfcomponent>

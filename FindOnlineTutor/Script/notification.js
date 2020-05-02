@@ -121,7 +121,6 @@ function getNotification(button)
                 $(tRow).removeClass('font-weight-bold');
                 $(tRow).removeClass('font-weight-light');
                 $(tRow).addClass('font-weight-light');
-                console.log(notification.NOTIFICATION.DATA)
                 //display the model
                 $("#notificationTitle").text(notification.NOTIFICATION.DATA[0][3])
                 $("#notificationDateTime").text(notification.NOTIFICATION.DATA[0][2])

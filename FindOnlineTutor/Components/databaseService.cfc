@@ -661,6 +661,72 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn notificationStatusInfo>
     </cffunction>
 
+    <!---function to insert the feedback--->
+    <cffunction  name="insertFeedback" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <cfargument  name="enrolledStudentId" type="numeric" required="true">
+        <cfargument  name="feedback" type="string" required="false">
+        <cfargument  name="rating" type="numeric" required="true">
+        <!---structure to store the insert info--->
+        <cfset var insertFeedbackInfo = {}/>
+        <!---variable to store the returned value of query--->
+        <cfset var insertedFeedback = ''/>
+        <!---query--->
+        <cftry>
+            <cfquery>
+                INSERT INTO     [dbo].[BatchFeedback]
+                                (batchId, batchEnrolledStudentId, feedbackDateTime, feedback, rating)
+                VALUES          (
+                                <cfqueryparam value="#arguments.batchId#" cfsqltype='cf_sql_bigint'>,
+                                <cfqueryparam value="#arguments.enrolledStudentId#" cfsqltype='cf_sql_bigint'>,
+                                <cfqueryparam value="#now()#" cfsqltype='cf_sql_timestamp'>,
+                                <cfqueryparam value="#arguments.feedback#" cfsqltype='cf_sql_varchar'>,
+                                <cfqueryparam value="#arguments.rating#" cfsqltype='cf_sql_tinyint'>
+                )
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: insertFeedback()-> #cfcatch# #cfcatch.detail#">
+            <cfset insertFeedbackInfo.error = "Some error occured.Please, try after sometime">
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(insertFeedbackInfo, "error")>
+            <cfset insertFeedbackInfo.insertFeedback = true/>
+        </cfif>
+        <cfreturn insertFeedbackInfo/>
+    </cffunction>
+
+    <!---function to retrieve the batch feedback--->
+    <cffunction  name="retrieveBatchFeedback" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <!---structure for retrieve batch feedback function information--->
+        <cfset var retrieveBatchFeedbackInfo = {}/>
+        <!---variable to store the query result--->
+        <cfset var feedbacks = ''/>
+        <cftry>
+            <cfquery name="feedback">
+                SELECT  [dbo].[BatchFeedback].[batchFeedbackId], [dbo].[BatchFeedback].[batchId], [dbo].[BatchFeedback].[feedbackDateTime], [dbo].[BatchFeedback].[feedback], [dbo].[BatchFeedback].[rating],
+                        [dbo].[User].[userId], [dbo].[User].[firstName]+' '+[dbo].[User].[lastName] AS 'Student'
+                FROM    ([dbo].[BatchFeedback]
+                JOIN    [dbo].[Batch] ON ([dbo].[Batch].[batchId] = [dbo].[BatchFeedback].[batchId])
+                JOIN    [dbo].[BatchEnrolledStudent]  ON ([dbo].[BatchFeedback].[batchEnrolledStudentId] = [dbo].[BatchEnrolledStudent].[batchEnrolledStudentId])
+                JOIN    [dbo].[User] ON ([dbo].[BatchEnrolledStudent].[studentId] = [dbo].[User].[userId]))
+
+                WHERE   [dbo].[BatchFeedback].[batchId] = <cfqueryparam value="#arguments.batchId#" cfsqltype='cf_sql_bigint'>
+                ORDER BY    [dbo].[BatchFeedback].[feedbackDateTime] DESC
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: retrieveBatchFeedback()-> #cfcatch# #cfcatch.detail#">
+            <cfset retrieveBatchFeedbackInfo.error = "Some error occurred.Please, try after sometime"/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(retrieveBatchFeedbackInfo, "error")>
+            <cfset retrieveBatchFeedbackInfo.feedback = feedback/>
+        </cfif>
+        <cfreturn retrieveBatchFeedbackInfo/>
+    </cffunction>
+
     <!---function to get all notification--->
     <cffunction  name="getMyNotification" access="public" output="false" returntype="struct">
         <!---argument--->

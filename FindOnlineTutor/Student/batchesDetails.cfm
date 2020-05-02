@@ -5,7 +5,6 @@
     </cfif>
     <!---creating object for getting the batch data--->
     <cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
-    
     <!---getting the information required for this page--->
     <cfset batchInfo = batchServiceObj.getBatchDetailsById(url.id)/>
     <div class="container">
@@ -22,6 +21,9 @@
 			<textarea type="text" id="feedback" name="feedback" rows="5"  placeholder="Your feedback here...." class="form-control d-inline"></textarea>
             <span></span>
 			<button id="submitFeedback" class="btn button-color shadow my-2">Submit</button>
+        </div>
+        <div id="feedbackSection" class="row mt-3">
+            <cfinclude  template="../Include/batchFeedback.cfm">
         </div>
     </div>
 
