@@ -9,7 +9,7 @@ Functionality: It is a batch page which contains all the related information for
 
 <h1 class="d-inline text-info">Batches</h1>
 
-<button type="button" class="btn btn-outline-info float-right" data-toggle="modal" data-target="#addNewBatch">
+<button type="button" class="btn button-color shadow float-right" data-toggle="modal" data-target="#addNewBatch">
     Add new Batch
 </button>
 <hr>
@@ -17,6 +17,7 @@ Functionality: It is a batch page which contains all the related information for
 <!---Display the batches---> 
     <cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
     <cfset batchInfo = batchServiceObj.getMyBatch()/>
+
     <div id="batchDiv" class="m-3">
         <cfif structKeyExists(batchInfo, "error")>
             <div class="alert alert-danger pt-3 pb-3 rounded-top">
@@ -28,11 +29,10 @@ Functionality: It is a batch page which contains all the related information for
             </div>
         <cfelse>
             <cfoutput query="batchInfo.batches">
-                <a href="batchesDetails.cfm?id=#batchId#" class="row m-3 p-3 shadow bg-light rounded">
+                <a href="batchesDetails.cfm?id=#batchId#" class="row m-3 p-3 shadow bg-white rounded">
                     <div class="col-md-12 border-bottom pb-2">
                         <h3 class=" text-dark d-inline">#batchName#<span class="text-info h6 ml-2">#batchType#</span></h3>
                         <small class="bg-danger float-right d-inline rounded p-1 text-light mx-1">Request</small>
-                        <small class="bg-danger float-right d-inline rounded p-1 text-light mx-1">Notification</small> 
                     </div>
                     
                     <div class="col-md-12">

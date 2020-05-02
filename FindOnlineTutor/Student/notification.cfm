@@ -10,10 +10,9 @@ Functionality: It is a cfm file containing the all notification .
     <!---creating the batchService object--->
     <cfset batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
     <cfset notificationInfo = batchServiceObj.getMyNotification()/>
-    <cfdump  var="#notificationInfo#">
 
     <div class="container">
-        <!---if warning key is present then 
+        <!---if warning key is present then --->
         <cfif structKeyExists(notificationInfo, "warning")>
 
         </cfif>
@@ -21,45 +20,27 @@ Functionality: It is a cfm file containing the all notification .
         <cfif structKeyExists(notificationInfo, "error")>
 
         </cfif>
-        <!---displaying the notifications--->
-        <cfif structKeyExists(notificationInfo, "notifications")>
-            <!---<table class="table">
-                <thead>
-                    <tr  class="bg-info">
-                    <th class="text-light" scope="col">No.</th>
-                    <th class="text-light" scope="col">Notification Title</th>
-                    <th class="text-light" scope="col">Batch</th>
-                    <th class="text-light" scope="col">Date</th>
-                    <th class="text-light" scope="col">Time</th>
-                    <th class="text-light" scope="col"></th>
-                    </tr>
-                </thead>
-                <cfif notificationInfo.notifications.recordCount EQ 0>
-                    <div class="alert alert-secondary pt-5 pb-5 rounded-top">
-                        <p class="text-secondary text-center">You don't have any Notification.</p>
-                    </div>
-                </cfif>
-                <tbody>
-                    <cfset notificationNumber = 1/>
-                    <cfoutput query="notificationInfo.notifications">
-                        <tr 
-                            <cfif notificationStatus EQ 0> 
-                                class="font-weight-bold"
-                            <cfelse>
-                                class="font-weight-light"
-                            </cfif>
-                        >
-                            <th scope="row">#notificationNumber#.</th>
-                            <td class="text-capitalize">#notificationTitle#</td>
-                            <td>#batchName#</td>
-                            <td>#dateFormat(dateTime)#</td>
-                            <td>#timeFormat(dateTime)#</td>
-                            <td><button class="btn btn-success rounded px-3">View</button></td>
-                        </tr>
-                        <cfset notificationNumber = notificationNumber+1/>
-                    </cfoutput>
-                </tbody>
-            </table>--->
-        </cfif>--->
+    </div>
+
+    <div class="modal fade" id="showNotification">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title pl-2">Notification Details</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <h4 id="notificationTitle" class="text-primary d-inline"></h4>
+                    <small id="notificationDateTime" class="float-right text-secondary d-inline bg-light px-3 border"></small>
+                    <p id="notificationDetail" class="alert alert-secondary border p-2 m-2 text-secondary"></p>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn button-color shadow" data-dismiss="modal">Done</button>
+                </div>
+            </div>
+        </div>
     </div>
 </cf_header>

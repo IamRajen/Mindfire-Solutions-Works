@@ -681,6 +681,7 @@ Functionality: This file has services/functions related to the data in the datab
                 JOIN    [dbo].[BatchNotificationStatus] ON ([dbo].[BatchNotificationStatus].[batchNotificationId]=[dbo].[BatchNotification].[batchNotificationId])
 
                 WHERE   [dbo].[BatchEnrolledStudent].[studentId] = <cfqueryparam value="#arguments.studentId#" cfsqltype='cf_sql_bigint'>
+                ORDER BY [dbo].[BatchNotification].[dateTime] DESC
             </cfquery>
         <cfcatch type="any">
             <cflog  text="databaseService: getMyNotification()-> #cfcatch# #cfcatch.detail#">
@@ -691,6 +692,42 @@ Functionality: This file has services/functions related to the data in the datab
             <cfset notificationInfo.notifications = notifications/>
         </cfif> 
         <cfreturn notificationInfo>
+    </cffunction>
+
+    <!---function to mark notification status as read and give the notification detail--->
+    <cffunction  name="markNotificationAsRead" output="false" access="public" returntype="struct">
+        <!---argument--->
+        <cfargument  name="notificationStatusId" type="numeric" required="true">
+        <cfargument  name="notificationId" type="numeric" required="true">
+        
+        <!---variable to store the information--->
+        <cfset var notificationInfo = {}/>
+        <cfset var notification=''/>
+        <!---transaction to mark notification as read---> 
+        <cftransaction>
+            <cftry>
+                <!---setting the notification status as read--->
+                <cfquery>
+                    UPDATE  [dbo].[BatchNotificationStatus]
+                    SET     notificationStatus = 1
+                    WHERE   batchNotificationStatusId = <cfqueryparam value="#arguments.notificationStatusId#" cfsqltype="cf_sql_bigint">
+                </cfquery>
+                <cfset notification = getNotificationByID(arguments.notificationId)/>
+                <cfif structKeyExists(notification, "error")>
+                    <cfthrow detail = "#notification.error#">
+                </cfif>
+                <cftransaction action="commit" />
+            <cfcatch type="any">
+                <cflog  text="databaseService: markNotificationAsRead()-> #cfcatch# #cfcatch.detail#">
+                <cftransaction action="rollback">
+                <cfset notificationInfo.error = "Some error occurred.Please, try after sometime">
+            </cfcatch>
+            </cftry>
+        </cftransaction>
+        <cfif NOT structKeyExists(notificationInfo, "error")>
+            <cfset notificationInfo = notification/>
+        </cfif>
+        <cfreturn notificationInfo/>
     </cffunction>
 
     <!---function to insert new batch--->

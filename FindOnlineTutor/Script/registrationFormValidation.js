@@ -23,14 +23,14 @@ var patternExperience=/^[0-9]+$/;
 //document ready function
 $(document).ready(function()
 {
-    window.addEventListener("pageshow", function ( event ) {
-        var historyTraversal = event.persisted || 
-                               (typeof window.performance!="undefined" && window.performance.navigation.type===2);
-        if (historyTraversal) {
-          // Handle page restore.
-          window.location.reload(true);
-        }
-    });
+    // window.addEventListener("pageshow", function ( event ) {
+    //     var historyTraversal = event.persisted || 
+    //                            (typeof window.performance!="undefined" && window.performance.navigation.type===2);
+    //     if (historyTraversal) {
+    //       // Handle page restore.
+    //       window.location.reload(true);
+    //     }
+    // });
     inputFields.set("firstName",{id:"firstName", errorMsg:"Please Provide Your Name", value:""});
     inputFields.set("lastName",{id:"lastName", errorMsg:"Please Provide Your Last Name", value:""});
     inputFields.set("emailAddress",{id:"emailAddress", errorMsg:"Mandatory Field!! Provide EmailId", value:""});
@@ -56,7 +56,7 @@ $(document).ready(function()
     alternativeAddress=["alternativeAddress","alternativeCountry","alternativeState","alternativeCity","alternativePincode"];
     
     //Adding submit button..
-    $("#buttonDiv").append($("<input>").attr({"id":"submitButton","type":"submit","value":"SUBMIT","name":"submitButton"}).addClass("btn btn-danger btn-block"));
+    $("#buttonDiv").append($("<input>").attr({"id":"submitButton","type":"submit","value":"SUBMIT","name":"submitButton"}).addClass("btn button-color shadow btn-block"));
     
     $("#teacherSection").hide()
     

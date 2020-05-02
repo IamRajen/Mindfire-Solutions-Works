@@ -62,13 +62,10 @@ Functionality: This file show the search result of teachers for batches.
                             <span id="batchType" class="text-info h6 ml-2">#batchType#</span>
                             <div id="requestStatus" class="d-inline">
                                 <cfif structKeyExists(requestIds, "#batchId#") AND requestIds["#batchId#"] EQ 'Pending'>
-                                    requestIds["#batchId#"]
                                     <button class="btn btn-success float-right d-inline rounded text-light shadow mx-1 disabled">Pending...</button> 
                                 <cfelseif structKeyExists(requestIds, "#batchId#") AND requestIds["#batchId#"] EQ 'Approved'>
-                                    requestIds["#batchId#"]
                                     <small class="alert alert-success mt-2 text-success d-inline float-right p-1 px-2">Enrolled</small> 
                                 <cfelse>
-                                    requestIds["#batchId#"]
                                     <button class="btn btn-success float-right d-inline rounded text-light shadow mx-1" onclick="enrollStudent(this)">Enroll</button> 
                                 </cfif>
                             </div>

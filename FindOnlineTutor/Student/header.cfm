@@ -13,11 +13,11 @@ Functionality: It is a header file which is included probably in student section
 			
 			<meta charset="utf-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1">
-
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 			<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+			
 			<cfif  structKeyExists(attributes, "scriptPath")>
 				<script src="<cfoutput>#attributes.scriptPath#</cfoutput>"></script>
 			</cfif>
@@ -37,7 +37,7 @@ Functionality: It is a header file which is included probably in student section
 				<cfset createObject("component",'FindOnlineTutor.Components.authenticationService').doLogout() />
 				<cflocation  url="/assignments_mindfire/FindOnlineTutor/index.cfm">
 			</cfif>
-			<nav class="navbar navbar-expand-lg navbar-fixed-top navbar-dark shadow-sm p-3 mb-3 bg-dark">
+			<nav class="navbar navbar-expand-lg navbar-fixed-top navbar-light shadow-sm p-3 mb-3 bg-light">
 				<div class="container-fluid">
 					<div class="navbar-header">
 						<img  src="<cfoutput>#attributes.logoPath#</cfoutput>" class="img-fluid mr-2" alt="logo">
@@ -49,23 +49,23 @@ Functionality: It is a header file which is included probably in student section
 					<div class="collapse navbar-collapse " id="navbarSupportedContent">
 					<ul class="navbar-nav ml-auto">
 						<li class="nav-item mx-2">
-							<a class="nav-link text-light" href="../index.cfm">Home</a>
+							<a class="nav-link text-dark" href="../index.cfm">Home</a>
 						</li>
 						<cfif structKeyExists(session, "stLoggedInUser") >
 							<li class="nav-item mx-2">
-								<a class="nav-link text-light" href="batches.cfm">Your Batch</a>
+								<a class="nav-link text-dark" href="batches.cfm">Your Batch</a>
 							</li>
                             <li class="nav-item mx-2">
-								<a class="nav-link text-light" href="../searchResult.cfm">find Batch</a>
+								<a class="nav-link text-dark" href="../searchResult.cfm">find Batch</a>
 							</li>
 							<li class="nav-item mx-2">
-								<a class="nav-link text-light" href="notification.cfm">Notifications<span class="text-warning">*</span></a>
+								<a class="nav-link text-dark" href="notification.cfm">Notification</a>
 							</li>
 							<li class="nav-item mx-2">
-								<a class="nav-link text-light" href="../profile.cfm">Profile</a>
+								<a class="nav-link text-dark" href="../profile.cfm">Profile</a>
 							</li>
 							<li class="nav-item mx-2">
-								<a class="nav-link text-light" href="/assignments_mindfire/FindOnlineTutor/index.cfm?logout">Logout</a>
+								<a class="btn button-color shadow text-white" href="/assignments_mindfire/FindOnlineTutor/index.cfm?logout">Logout</a>
 							</li>
 						</cfif>
 					

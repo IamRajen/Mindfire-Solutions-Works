@@ -19,30 +19,18 @@ Functionality: This is the signup page helps the user to validate and register i
 </noscript>
 
 
-<div class="container-fuild w-100 mx-auto pb-4 mb-5 shadow rounded bg-light">
+<div class="container-fuild w-100 mx-auto pb-4 mb-5 shadow rounded bg-light border">
 
 	<!---Heading Field--->
-	<div class="bg-dark pt-3 pb-3 rounded-top">
-		<h4 class="text-light text-center">REGISTRATION FORM</h4>
+	<div class="bg-light pt-3 pb-3 rounded-top">
+		<h4 class="text-dark text-center">REGISTRATION FORM</h4>
 	</div>
+	<hr class="border border-info">
 
 
 	<!---Form Field--->
 	<form class="pt-4 disabledbutton" id="form-registration" method="POST" action="login.cfm">
 
-
-	<!--Profile Photo Field-->
-		<!--<div class="row mr-2 ml-2">
-			<div class="col-md-12 text-center">
-				<img id="profilePhoto" class="profile_photo rounded-circle" src="Images/profile.jpg" >
-				<span class="text-danger small"></span>
-			</div>
-		</div>
-		<div class="row mr-2 ml-2">
-			<div class="col-md-12 text-center">
-				<input accept="image/*" id="img" type="file" name="files[]" onChange="loadImage(this);" onclick="makeErrorMsgEmpty()" /> 
-			</div>
-		</div>-->
 
 
 	<!---Name Field--->

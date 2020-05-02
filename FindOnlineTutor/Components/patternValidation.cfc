@@ -71,7 +71,7 @@ Functionality: This file contains some functions which validate a specific patte
     <cffunction  name="validText"  access="public" output="false" returntype="boolean">
         <cfargument  name="text" type="string" required="true"/>
         <cfset var valid=true/>
-        <cfif NOT isValid("regex", text, "^[a-zA-Z0-9\s,'-]*$")>
+        <cfif NOT isValid("regex", text, "^[a-zA-Z0-9\s.,'-]*$")>
             <cfset valid=false/>
         </cfif>
         <cfreturn valid/>

@@ -28,8 +28,13 @@ body, html {
 }
 .button-color
 {
-	background-color: maroon;
-	color: white;
+	background-color:  #4285f4;
+  color: white;
+}
+button
+{
+  background-color:  #4285f4;
+  color: white;
 }
 .btn-round-lg{
   border-radius: 22.5px;
@@ -82,10 +87,7 @@ canvas
 
 .section-div
 {
-  /* background-color: #101820FF; */
-  /* height: 170px; */
   border-radius: 25px;
-  /* padding: 20px; */
 }
 a:hover{
   text-decoration: none;

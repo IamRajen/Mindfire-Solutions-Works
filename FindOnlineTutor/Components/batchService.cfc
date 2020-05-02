@@ -450,18 +450,13 @@ Functionality: This file contains the functions which help to give required serv
         <!---creating a variable for storing the returned value from database function call--->
         <cfset var batchDetails = {}/>
         <!---checking the batch is of the requested user--->
-        <cfset var batchInfo = getBatchOverviewById(arguments.batchId)/>
-        <cfif batchInfo.batch.batchOwnerId EQ session.stLoggedInUser.userId>
-            <cfset batchDetails.overview = batchInfo/>
-            <cfset batchDetails.address = databaseServiceObj.getMyAddress(session.stLoggedInUser.UserId)/>
-            <cfset batchDetails.timing = getBatchTimingById(arguments.batchId)/>
-            <cfset batchDetails.notification = getBatchNotifications(arguments.batchId)/>
-            <cfset batchDetails.request = getBatchRequests(arguments.batchId)/>
-            <cfset batchDetails.enrolledStudent =databaseServiceObj.getEnrolledStudent(batchId=arguments.batchId)/>
-        <cfelse>
-            <cfset batchDetails.warning = "Sorry, the Batch you are looking for is not present"/>
-        </cfif>
-    
+        <cfset batchDetails.overview = getBatchOverviewById(arguments.batchId)/>
+        <cfset batchDetails.address = databaseServiceObj.getMyAddress(session.stLoggedInUser.UserId)/>
+        <cfset batchDetails.timing = getBatchTimingById(arguments.batchId)/>
+        <cfset batchDetails.notification = getBatchNotifications(arguments.batchId)/>
+        <cfset batchDetails.request = getBatchRequests(arguments.batchId)/>
+        <cfset batchDetails.enrolledStudent =databaseServiceObj.getEnrolledStudent(batchId=arguments.batchId)/>
+<!---         <cfset batchDetails.feedback = databaseServiceObj.getBatchFeedback(arguments.batchId)/> --->
         <cfreturn batchDetails/>
         
     </cffunction>
@@ -526,13 +521,20 @@ Functionality: This file contains the functions which help to give required serv
 
     <!---function to all the notification of the user--->
     <cffunction  name="getMyNotification" output="false" access="remote" returntype="struct" returnformat="json">
-        <cfif NOT structKeyExists(session, "stLoggedInUser")>
+        <!---argument--->
+        <cfargument  name="notificationStatusId" type="numeric" required="false">
+        <cfargument  name="notificationId" type="numeric" required="false">
+        
+        <cfif structKeyExists(arguments, "notificationStatusId") AND structKeyExists(arguments, "notificationId")>
+            <cfset notificationInfo = databaseServiceObj.markNotificationAsRead(arguments.notificationStatusId, arguments.notificationId)/>
+        <cfelseif NOT structKeyExists(session, "stLoggedInUser")>
             <cfset notificationInfo.warning = "Sorry you are not logged in"/>
         <cfelseif session.stLoggedInUser.role EQ 'Student'>
             <cfset notificationInfo = databaseServiceObj.getMyNotification(session.stLoggedInUser.userId)/>
         </cfif>
         <cfreturn notificationInfo/>
     </cffunction>
+
 
     <!---function to delete notification from notification table using it's iD--->
     <cffunction  name="deleteNotification" access="remote" output="false" returntype="struct" returnformat="json">
@@ -642,5 +644,14 @@ Functionality: This file contains the functions which help to give required serv
         </cfif>
         
         <cfreturn enrolledStudentInfo/>
+    </cffunction>
+
+    <!---function to submit the feedback--->
+    <cffunction  name="submitFeedback" output="false" access="remote" returntype="struct" returnformat="json">
+        <!---arguments--->
+        <cfargument  name="feedback" type="string" required="false">
+        <!---returning the structure--->
+        <cfset var r={}/>
+        <cfreturn url>
     </cffunction>
 </cfcomponent>

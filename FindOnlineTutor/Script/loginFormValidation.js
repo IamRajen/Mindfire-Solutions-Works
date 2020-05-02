@@ -12,7 +12,7 @@ $(document).ready(function()
 {
     generateCaptcha();
     //adding login button..
-    $("#buttonDiv").append($("<input>").attr({"id":"submitButton","type":"submit","value":"SUBMIT","name":"submitButton"}).addClass("btn btn-danger btn-block"));
+    $("#buttonDiv").append($("<input>").attr({"id":"submitButton","type":"submit","value":"SUBMIT","name":"submitButton"}).addClass("btn button-color shadow btn-block"));
     inputFields.set("username",{id:"username", errorMsg:"Enter your username", value:""});
     inputFields.set("password",{id:"password", errorMsg:"Enter your password", value:""});
     inputFields.set("captcha",{id:"captcha", errorMsg:"Mandatory Field", value:""});

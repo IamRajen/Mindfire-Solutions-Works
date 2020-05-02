@@ -13,12 +13,13 @@ Functionality: login page for non logged-In user.
 <cf_header homeLink="index.cfm"  logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/loginFormValidation.js">
 <div class="container mt-5">
 <!--- <cfdump  var="#session#"> --->
-<div class="container-fuild w-50 mx-auto pb-4 mb-5 shadow rounded bg-light">
+<div class="container-fuild w-50 mx-auto pb-4 mb-5 shadow rounded bg-light border">
 	<!--- Registration Page starts here --->
 
-	<div class="bg-dark pt-3 pb-3 rounded-top">
-		<h4 class="text-light text-center">LOGIN</h4>
+	<div class="bg-light pt-3 pb-1 rounded-top">
+		<h4 class="text-dark text-center">LOGIN</h4>
 	</div>
+	<hr class="border border-info">
 
 	<form class="pt-4" name="form-registration" id="form-registration" method="POST" action="index.cfm">
 
@@ -68,7 +69,7 @@ Functionality: login page for non logged-In user.
 		</div>
 
 	</form>
-	<!---Registration Page Ends here--->
+	<!---Login Page Ends here--->
 
 	<div class="row mt-3 mr-2 ml-2">	
 		<div class="col-md-12">

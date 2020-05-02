@@ -38,7 +38,7 @@ Functionality: It is a header file which is included probably in every pages.
 				<cflocation  url="/assignments_mindfire/FindOnlineTutor/index.cfm">
 			</cfif>
 			<!---navbar start from here--->
-			<nav class="navbar navbar-expand-lg navbar-fixed-top navbar-dark shadow-sm p-3 bg-dark">
+			<nav class="navbar navbar-expand-lg navbar-light shadow-sm p-3 bg-light">
 				<div class="container-fluid">
 					<div class="navbar-header">
 						<img  src="<cfoutput>#attributes.logoPath#</cfoutput>" class="img-fluid mr-2" alt="logo"/>
@@ -50,21 +50,21 @@ Functionality: It is a header file which is included probably in every pages.
 					<div class="collapse navbar-collapse " id="navbarSupportedContent">
 					<ul class="navbar-nav ml-auto">
 						<li class="nav-item mx-2">
-							<a class="nav-link text-light" href="index.cfm">Home</a>
+							<a class="nav-link text-dark" href="index.cfm">Home</a>
 						</li>
 						<!---if user is logged in--->
 						<cfif structKeyExists(session, "stLoggedInUser") >
 							<li class="nav-item mx-2">
-								<a class="nav-link text-light" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/batches.cfm">Your Batch</a>
+								<a class="nav-link text-dark" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/batches.cfm">Your Batch</a>
 							</li>
 							
 							<!---teacher's facilities start here--->
 							<cfif session.stLoggedInUser.role EQ 'Teacher'>
 								<li class="nav-item mx-2">
-									<a class="nav-link text-light" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/request.cfm">Requests<span class="text-warning">*</span></a>
+									<a class="nav-link text-dark" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/request.cfm">Requests<span class="text-warning">*</span></a>
 								</li>
 								<li class="nav-item mx-2">
-									<a class="nav-link text-light" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/students.cfm">Students</a>
+									<a class="nav-link text-dark" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/students.cfm">Students</a>
 								</li>
 							</cfif>
 							<!---teacher's faclities end here--->
@@ -72,27 +72,28 @@ Functionality: It is a header file which is included probably in every pages.
 							<!---student's faclities starts here--->
 							<cfif session.stLoggedInUser.role EQ 'Student'>
 								<li class="nav-item mx-2">
-									<a class="nav-link text-light" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/notification.cfm">Notification</a>
+									<a class="nav-link text-dark" href="searchResult.cfm">find Batch</a>
 								</li>
 								<li class="nav-item mx-2">
-									<a class="nav-link text-light" href="searchResult.cfm">find Batch</a>
+									<a class="nav-link text-dark" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/notification.cfm">Notification</a>
 								</li>
+								
 							</cfif>
 							<!---student's faclities ends here--->
 
 							<li class="nav-item mx-2">
-								<a class="nav-link text-light" href="profile.cfm">Profile</a>
+								<a class="nav-link text-dark" href="profile.cfm">Profile</a>
 							</li>
 							<li class="nav-item mx-2">
-								<a class="nav-link text-light" href="/assignments_mindfire/FindOnlineTutor/index.cfm?logout">Logout</a>
+								<a class="btn button-color shadow text-white" href="/assignments_mindfire/FindOnlineTutor/index.cfm?logout">Logout</a>
 							</li>
 						<!---if user is not logged in--->
 						<cfelse>
 							<li class="nav-item mx-2">
-								<a class="nav-link text-light" href="login.cfm">LogIn</a>
+								<a class="nav-link text-dark" href="login.cfm">LogIn</a>
 							</li>
 							<li class="nav-item mx-2">
-								<a class="btn btn-danger my-2 my-sm-0 pl-3 pr-3" href="signup.cfm">Register</a>
+								<a class="btn button-color shadow text-white" href="signup.cfm">Register</a>
 							</li>
 						</cfif>
 					
