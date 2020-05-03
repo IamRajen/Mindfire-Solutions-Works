@@ -1043,7 +1043,7 @@ Functionality: This file has services/functions related to the data in the datab
     <!---function to get near by batches--->
     <cffunction  name="getNearByBatch" output="false" access="public" returntype="struct">
         <!---arguments--->
-        <cfargument  name="pincode" type="numeric" required="false">
+        <cfargument  name="pincode" type="string" required="false">
         <cfargument  name="country" type="string" required="false">
         <cfargument  name="state" type="string" required="false">
         

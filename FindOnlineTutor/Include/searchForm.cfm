@@ -1,6 +1,6 @@
 <cfset searchQuery = ''/>
 <cfif structKeyExists(url, "query")>
-<cfset searchQuery = url.QUERY/>
+    <cfset searchQuery = url.QUERY/>
 </cfif>
 <form class="form-inline my-2 my-lg-0 p-5" method="get" action="searchResult.cfm">
     <div class="text-center d-block w-100">

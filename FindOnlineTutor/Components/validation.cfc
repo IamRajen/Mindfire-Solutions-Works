@@ -43,6 +43,7 @@ Functionality: This file has function that validated the registration form and i
         <cfset errorMsgs={}>
 
         <cfset errorMsgs["validatedSuccessfully"]=true/>
+        <cflog  text="#errorMsgs["validatedSuccessfully"]#">
         <cfset errorMsgs["firstName"]=validateName(arguments.firstName)/>
         <cfset errorMsgs["lastName"]=validateName(arguments.lastName)/>
         <cfset errorMsgs["emailAddress"]=validateEmail(arguments.emailAddress)/>
@@ -85,7 +86,7 @@ Functionality: This file has function that validated the registration form and i
         <cfif arguments.bio NEQ ''>
             <cfset errorMsgs["bio"]=validateText(arguments.bio)/>
         </cfif>
-        
+        <cflog  text="#errorMsgs["validatedSuccessfully"]#">
         <!---looping the errorMsgs struct for validation--->
         <cfloop collection="#errorMsgs#" item="key">
             <cfif key NEQ 'validatedSuccessfully' and structKeyExists(errorMsgs[key],"error")>
@@ -161,7 +162,7 @@ Functionality: This file has function that validated the registration form and i
                     </cfif>
                 </cfif>
             <cfcatch type="any">
-                <cflog text = "Email validation error: #cfcatch#"/>
+                <cflog text = "Email validation error: #cfcatch# #cfcatch.detail#"/>
             </cfcatch>
             </cftry>   
         </cfif>

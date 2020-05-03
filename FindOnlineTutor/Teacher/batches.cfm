@@ -7,15 +7,15 @@ Functionality: It is a batch page which contains all the related information for
 --->
 <cf_header homeLink="../index.cfm" logoPath="../Images/logo.png" stylePath="../Styles/style.css" scriptPath="../Script/batchValidation.js">
 
-<h1 class="d-inline text-info">Batches</h1>
+<cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
 
+<h1 class="d-inline text-info">Batches</h1>
 <button type="button" class="btn button-color shadow float-right" data-toggle="modal" data-target="#addNewBatch">
     Add new Batch
 </button>
 <hr>
 
 <!---Display the batches---> 
-    <cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
     <cfset batchInfo = batchServiceObj.getMyBatch()/>
 
     <div id="batchDiv" class="m-3">

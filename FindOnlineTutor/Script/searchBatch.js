@@ -8,13 +8,14 @@ Functionality: This javascript file helps the user to filter the batches and enr
 
 var countryMap=new Map();
 var stateMap=new Map();
-
+var myRequestIds = new Map();
+var isStudent = false;
 var batchFormat;
 
 $(document).ready(function(){
     loadCountryStateMap();
     batchFormat = $($("#batchesDiv").children()[0]).clone();
-
+    isStudent = $("#filterDiv").children('p').text();
 
     $("input[name=filterOption]").change(function()
     {
@@ -61,44 +62,51 @@ $(document).ready(function(){
 
 function makeAjaxCall(country ,state)
 {
-    //making an ajax call for retrieving the requests made by the user previously..
-    $.ajax({
-        type:"POST",
-        url:"Components/batchService.cfc?method=getMyRequests",
-        cache: false,
-        timeout: 2000,
-        error: function(){
-            swal({
-                title: "Failed to retrieve the Batches",
-                text: "Some error occured. Please try after sometime.",
-                icon: "error",
-                button: "Ok",
-            });
-        },
-        success: function(returnData) {
-            
-            var myRequestIds = new Map();
-            returnData = JSON.parse(returnData);
-            if(returnData.hasOwnProperty("error"))
-            {
+    if(isStudent == "true")
+    {
+        //making an ajax call for retrieving the requests made by the user previously..
+        $.ajax({
+            type:"POST",
+            url:"Components/batchService.cfc?method=getMyRequests",
+            cache: false,
+            timeout: 2000,
+            error: function(){
                 swal({
                     title: "Failed to retrieve the Batches",
                     text: "Some error occured. Please try after sometime.",
                     icon: "error",
                     button: "Ok",
                 });
-            }
-            else 
-            {
-                var data = returnData.REQUESTS.DATA;
-                for(let request=0;request<data.length;request++)
+            },
+            success: function(returnData) {
+                
+                myRequestIds.clear();
+                returnData = JSON.parse(returnData);
+                if(returnData.hasOwnProperty("error"))
                 {
-                    myRequestIds.set(data[request][4], data[request][2]);
+                    swal({
+                        title: "Failed to retrieve the Batches",
+                        text: "Some error occured. Please try after sometime.",
+                        icon: "error",
+                        button: "Ok",
+                    });
                 }
-                sendRequest(myRequestIds,country ,state);
-            }  
-        }
-    });  
+                else 
+                {
+                    var data = returnData.REQUESTS.DATA;
+                    for(let request=0;request<data.length;request++)
+                    {
+                        myRequestIds.set(data[request][4], data[request][2]);
+                    }
+                    sendRequest(myRequestIds,country ,state);
+                }  
+            }
+        });  
+    }
+    else 
+    {
+        sendRequest(myRequestIds,country ,state);
+    }
 }
 
 function sendRequest(myRequestIds,country ,state)
@@ -165,7 +173,11 @@ function sendRequest(myRequestIds,country ,state)
                         $(data).find("#batchCapacity").text(batches[batch][12]);
                         $(data).find("#batchEnrolled").text(batches[batch][13]);
                         $(data).find("#requestStatus").empty();
-                        if( myRequestIds.has(batches[batch][0]) )
+                        if(isStudent == "false")
+                        {
+                            $('<small class="alert alert-danger mt-2 d-inline float-right p-1 px-2">Please, LogIn to enroll</small>').appendTo($(data).find("#requestStatus"));
+                        }
+                        else if( myRequestIds.has(batches[batch][0]) )
                         {
                             if( myRequestIds.get(batches[batch][0]) == "Pending" )
                             {

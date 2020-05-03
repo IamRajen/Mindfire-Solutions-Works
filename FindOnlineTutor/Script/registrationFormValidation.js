@@ -23,14 +23,6 @@ var patternExperience=/^[0-9]+$/;
 //document ready function
 $(document).ready(function()
 {
-    // window.addEventListener("pageshow", function ( event ) {
-    //     var historyTraversal = event.persisted || 
-    //                            (typeof window.performance!="undefined" && window.performance.navigation.type===2);
-    //     if (historyTraversal) {
-    //       // Handle page restore.
-    //       window.location.reload(true);
-    //     }
-    // });
     inputFields.set("firstName",{id:"firstName", errorMsg:"Please Provide Your Name", value:""});
     inputFields.set("lastName",{id:"lastName", errorMsg:"Please Provide Your Last Name", value:""});
     inputFields.set("emailAddress",{id:"emailAddress", errorMsg:"Mandatory Field!! Provide EmailId", value:""});
@@ -93,7 +85,8 @@ $(document).ready(function()
                     successfullyValidated=false;
                 }
             }
-            if(i.length>7 && i.slice(0,-7)=="Country")
+
+            if((i.length>7 && i.slice(0,-7)=="Country"))
             {
                 inputFields.get(i).value=countryMap.get($("#"+id).val());
             }
@@ -671,7 +664,7 @@ function checkAlternativeAddress(alternativeAddress)
     var havingAlternativeAddress=true;
     for(let i=0;i<alternativeAddress.length;i++)
     {
-        if($("#"+alternativeAddress[i]).val() == "")
+        if($.trim($("#"+alternativeAddress[i]).val()) == "")
         {
             havingAlternativeAddress=false;
         }

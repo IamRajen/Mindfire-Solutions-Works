@@ -550,18 +550,20 @@ Functionality: This file contains the functions which help to give required serv
         <!---arguments--->
         <cfargument  name="country" type="string" required="false">
         <cfargument  name="state" type="string" required="false">
-        <cflog  text="#arguments.country#">
+
         <cfif arguments.country NEQ '' AND arguments.state EQ ''>
             <!---calling function for retrieving the batches by country--->
             <cfset var batches = databaseServiceObj.getNearByBatch(country=arguments.country)/>
         <cfelseif arguments.state NEQ ''>
             <!---calling function for retrieving the batches by state--->
             <cfset var batches = databaseServiceObj.getNearByBatch(country=arguments.country, state=arguments.state)/>
+        <cfelseif NOT structKeyExists(session, "stLoggedInUser")>
+            <cfset var batches = databaseServiceObj.getNearByBatch(pincode='')/>
         <cfelse>
             <!---calling function for retrieving the near by batches--->
             <cfset var userAddress = databaseServiceObj.getMyAddress(session.stLoggedInUser.UserId)/>
             <cfif structKeyExists(userAddress, "Address")>
-                <cfset var batches = databaseServiceObj.getNearByBatch(left(userAddress.Address.PINCODE[1],3))/>
+                <cfset var batches = databaseServiceObj.getNearByBatch(pincode=left(userAddress.Address.PINCODE[1],3))/>
             <cfelse>
                 <cfset batches.error = "some error occurred. Please, try after sometimes."/>
             </cfif>

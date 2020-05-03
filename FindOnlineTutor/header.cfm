@@ -52,6 +52,13 @@ Functionality: It is a header file which is included probably in every pages.
 						<li class="nav-item mx-2">
 							<a class="nav-link text-dark" href="index.cfm">Home</a>
 						</li>
+						<!---if the user is not a teacher but student or visitor--->
+						<cfif NOT structKeyExists(session, "stLoggedInUser") OR session.stLoggedInUser.role EQ 'Student'>
+							<li class="nav-item mx-2">
+								<a class="nav-link text-dark" href="searchResult.cfm">find Batch</a>
+							</li>
+						</cfif>
+						
 						<!---if user is logged in--->
 						<cfif structKeyExists(session, "stLoggedInUser") >
 							<li class="nav-item mx-2">
@@ -69,11 +76,9 @@ Functionality: It is a header file which is included probably in every pages.
 							</cfif>
 							<!---teacher's faclities end here--->
 
+							
 							<!---student's faclities starts here--->
 							<cfif session.stLoggedInUser.role EQ 'Student'>
-								<li class="nav-item mx-2">
-									<a class="nav-link text-dark" href="searchResult.cfm">find Batch</a>
-								</li>
 								<li class="nav-item mx-2">
 									<a class="nav-link text-dark" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/notification.cfm">Notification</a>
 								</li>

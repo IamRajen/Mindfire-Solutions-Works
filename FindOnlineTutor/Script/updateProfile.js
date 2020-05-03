@@ -26,14 +26,6 @@ var patternExperience=/^[0-9]+$/;
 //document ready function
 $(document).ready(function()
 {
-    window.addEventListener("pageshow", function ( event ) {
-        var historyTraversal = event.persisted || 
-                               (typeof window.performance!="undefined" && window.performance.navigation.type===2);
-        if (historyTraversal) {
-          // Handle page restore.
-          window.location.reload(true);
-        }
-      });
     //Adding submit button..
     $("#buttonUserDetailDiv").html($("<input>").attr({"id":"submitButton1","type":"submit","value":"UPDATE","name":"submitButton"}).addClass("btn btn-danger"));
     $("#buttonUserPhoneDetailDiv").html($("<input>").attr({"id":"submitButton2","type":"submit","value":"UPDATE","name":"submitButton"}).addClass("btn btn-danger"));

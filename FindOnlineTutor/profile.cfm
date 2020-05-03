@@ -359,7 +359,6 @@ Functionality: This file show the profile data to user and allows to modify it.
 <!---if user not logged in he/she will be redirected to homepage--->
 <cfelse>
     <cflocation  url="/assignments_mindfire/FindOnlineTutor"/>
-
 </cfif>
 </div>
 
