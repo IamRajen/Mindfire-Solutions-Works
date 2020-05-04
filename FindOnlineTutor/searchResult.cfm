@@ -15,10 +15,10 @@ Functionality: This file show the search result of teachers for batches.
 <!---creating objects of batch service component--->
 <cfset batchServiceObj  = createObject("component","FindOnlineTutor.Components.batchService")/>
 <cfset databaseServiceObj = createObject("component","FindOnlineTutor.Components.databaseService")/>
+
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" profilePath="profile.cfm" scriptPath="Script/searchBatch.js">
 
 <div class="container">
-
 
     <!---display the users near by batches--->
     <cfset myNearBatches = batchServiceObj.getNearByBatch(country='' , state='')/>

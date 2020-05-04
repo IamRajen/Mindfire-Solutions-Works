@@ -1292,4 +1292,36 @@ Functionality: This file has services/functions related to the data in the datab
         </cfif>
         <cfreturn enrolledStudentInfo>
     </cffunction>
+
+    <!---function to get the teachers--->
+    <cffunction  name="getTeacher" access="public" output="false" returntype="struct">
+        <!---structure will contain the getTeachers info--->
+        <cfset var getTeacherInfo = {}/>
+        <!---variable to store the query data--->
+        <cfset var teachers = ''/>
+        <!---query--->
+        <cftry>
+            <cfquery name="teachers">
+                SELECT  [dbo].[User].[userId], [dbo].[User].[firstName]+' '+[dbo].[User].[lastName] AS 'Teacher',
+                        [dbo].[User].[emailId], [dbo].[User].[dob], [dbo].[User].[yearOfExperience], [dbo].[User].[homeLocation],
+                        [dbo].[User].[Online], [dbo].[User].[otherLocation], [dbo].[User].[bio]
+                        <!---[dbo].[UserAddress].[address], [dbo].[UserAddress].[country], [dbo].[UserAddress].[state], 
+                        [dbo].[UserAddress].[city], [dbo].[UserAddress].[pincode]--->
+
+
+                FROM    [dbo].[User]
+                -- JOIN    [dbo].[UserAddress] ON ([dbo].[User].[userId]=[dbo].[UserAddress].[userId])
+                WHERE   [dbo].[User].[isTeacher]=1 
+                -- GROUP BY [dbo].[User].[userId]
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: getTeacher()-> #cfcatch# #cfcatch.detail#">
+            <cfset getTeacherInfo.error = "some error ocuured. Please, try after sometime"/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(getTeacherInfo, "error")>
+            <cfset getTeacherInfo.teachers = teachers/>
+        </cfif>
+        <cfreturn getTeacherInfo/>
+    </cffunction>
 </cfcomponent>

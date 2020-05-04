@@ -57,6 +57,9 @@ Functionality: It is a header file which is included probably in every pages.
 							<li class="nav-item mx-2">
 								<a class="nav-link text-dark" href="searchResult.cfm">find Batch</a>
 							</li>
+							<li class="nav-item mx-2">
+								<a class="nav-link text-dark" href="teachers.cfm">Teachers</a>
+							</li>
 						</cfif>
 						
 						<!---if user is logged in--->
