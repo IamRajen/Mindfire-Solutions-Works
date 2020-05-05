@@ -8,9 +8,9 @@
         
         <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher'>
             <cfif structKeyExists(url, "batch")>
-                <button class="btn btn-danger d-inline float-right px-3 py-1" data-toggle="modal" data-target="#editBatchModal" onclick="loadBatchOverview()">Edit</button>
+                <button class="btn button-color d-inline float-right px-3 py-1" data-toggle="modal" data-target="#editBatchModal" onclick="loadBatchOverview()">Edit</button>
             <cfelse>
-                <a href="Teacher/batchDetails.cfm?batch=<cfoutput>#batchId#</cfoutput>" class="btn button-color px-3 float-right shadow rounded">Details</a>
+                <a href="batchDetails.cfm?batch=<cfoutput>#batchId#</cfoutput>" class="btn button-color px-3 float-right shadow rounded">Details</a>
             </cfif>
         <cfelseif structKeyExists(url, "user") OR (structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student' AND NOT structKeyExists(url, "batch"))>
             <a href="batchDetails.cfm?batch=<cfoutput>#batchId#</cfoutput>" class="btn button-color px-3 float-right shadow rounded">Details</a>

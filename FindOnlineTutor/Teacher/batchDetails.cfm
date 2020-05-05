@@ -1,14 +1,14 @@
 <cf_header homeLink="../index.cfm" logoPath="../Images/logo.png" stylePath="../Styles/style.css" scriptPath="../Script/editBatchDetails.js">
 
-    <cfif NOT structKeyExists(url, "id")>
+    <cfif NOT structKeyExists(url, "batch")>
         <cflocation  url="/assignments_mindfire/FindOnlineTutor">
     </cfif>
     <!---creating object for getting the batch data--->
     <cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
 
     <!---getting the information required for this page--->
-    <cfset batchInfo = batchServiceObj.getBatchDetailsById(url.id)/>
-    <cfdump  var="#batchInfo.enrolledStudent#">
+    <cfset batchInfo = batchServiceObj.getBatchDetailsById(url.batch)/>
+    
     <!---all output processes start from here--->
     <cfif structKeyExists(batchInfo.overview, "batch")>
 
@@ -16,7 +16,7 @@
         <h1 class="d-inline text-info"><cfoutput>#batchInfo.overview.batch.batchName#</cfoutput><span id="batchType" class="text-danger h6 ml-2"><cfoutput>#batchInfo.overview.batch.batchType#</cfoutput></span></h1>
         <hr>
 
-        <cfoutput query="batchInfo.batchInfo.batch">
+        <cfoutput query="batchInfo.overview.batch">
             <cfinclude  template="../Include/batchOverview.cfm">
         </cfoutput>
         <cfinclude  template="../Include/batchAddress.cfm">
@@ -27,6 +27,17 @@
             <cfinclude  template="../Include/batchNotification.cfm">
             <cfinclude  template="../Include/batchRequest.cfm">
             <cfinclude  template="../Include/batchEnrolledStudent.cfm">     
+        </div>
+        <h4 class="text-secondary">Feedbacks</h4>
+        <hr>
+        <div class="row my-3">
+            <cfif batchInfo.feedback.feedback.recordCount EQ 0>
+                <p class="alert alert-secondary p-5 d-block w-100 text-center">This batch not have any feedback yet</p>
+            <cfelse>
+                <cfoutput query="batchInfo.feedback.feedback">
+                    <cfinclude  template="../Include/batchFeedback.cfm">
+                </cfoutput>
+            </cfif>
         </div>
 
         <!---all output processes ends here--->

@@ -17,7 +17,7 @@ Functionality: It is a batch page which contains all the related information for
 
 <!---Display the batches---> 
     <cfset batchInfo = batchServiceObj.getMyBatch()/>
-    <cfdump  var="#batchInfo#">
+    
     <div id="batchDiv" class="m-3">
         <cfif structKeyExists(batchInfo, "error")>
             <div class="alert alert-danger pt-3 pb-3 rounded-top">
@@ -29,6 +29,8 @@ Functionality: It is a batch page which contains all the related information for
             </div>
         <cfelse>
             <cfoutput query="batchInfo.batches">
+                <cfinclude  template="../Include/batchOverview.cfm">
+            <!---
                 <a href="batchesDetails.cfm?id=#batchId#" class="row m-3 p-3 shadow bg-white rounded">
                     <div class="col-md-12 border-bottom pb-2">
                         <h3 class=" text-dark d-inline">#batchName#<span class="text-info h6 ml-2">#batchType#</span></h3>
@@ -54,7 +56,7 @@ Functionality: It is a batch page which contains all the related information for
                         <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Fee: </span>#fee#</p>
                     </div> 
                     
-                </a>
+                </a>--->
             </cfoutput>
         </cfif>
     </div>
