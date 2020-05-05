@@ -7,10 +7,10 @@ Functionality: This page get first executed whenever a request comes to the webs
 --->
 <cfcomponent output="false">
 	<cfset this.name = 'FindOnlineTutor' />
-	<cfset this.applicationTimeout = createtimespan(1,0,0,0) />
+	<cfset this.applicationTimeout = createtimespan(10,0,0,0) />
 	<cfset this.datasource = 'DBFindOnlineTutor' />
 	<cfset this.sessionManagement = true />
-	<cfset this.sessionTimeout = createTimespan(1,0,0,0) />
+	<cfset this.sessionTimeout = createTimespan(9,0,0,0) />
 
 	<!---OnApplicationStart() method--->
 	<cffunction name="onApplicationStart" returntype="boolean" >

@@ -727,6 +727,37 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn retrieveBatchFeedbackInfo/>
     </cffunction>
 
+    <!---function to retrieve all batches feedback of a particular teacher--->
+    <cffunction  name="retrieveTeacherFeedback" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="teacherId" type="numeric" required="true">
+        <!---struct to store retrieveTeacherFeedback information--->
+        <cfset var retrieveTeacherFeedbackInfo = {}/>
+        <!---variable to store the query data--->
+        <cfset var feedbacks = ''/>
+        <!---query--->
+        <cftry>
+            <cfquery name="feedbacks">
+                SELECT  [dbo].[Batch].[batchId], [dbo].[Batch].[BatchName], 
+                        [dbo].[User].[firstName]+' '+[dbo].[User].[lastName] AS 'Student',
+                        [dbo].[BatchFeedback].[feedback], [dbo].[BatchFeedback].[feedbackDateTime]
+                FROM    [dbo].[BatchFeedback]
+                JOIN    [dbo].[Batch] ON ([dbo].[BatchFeedback].[batchId] = [dbo].[Batch].[batchId])
+                JOIN    [dbo].[BatchEnrolledStudent] ON ([dbo].[BatchFeedback].[batchEnrolledStudentId] = [dbo].[BatchEnrolledStudent].[batchEnrolledStudentId])
+                JOIN    [dbo].[User] ON ([dbo].[User].[userId] = [dbo].[BatchEnrolledStudent].[studentId])
+                WHERE   [dbo].[Batch].[batchOwnerId] = <cfqueryparam value="#arguments.teacherId#" cfsqltype='cf_sql_bigint'>
+                ORDER BY    [dbo].[BatchFeedback].[feedbackDateTime] DESC
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: retrieveTeacherFeedback()-> #cfcatch# #cfcatch.detail#">
+            <cfset retrieveTeacherFeedbackInfo.error = "some error occurred please try after sometime"/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(retrieveTeacherFeedbackInfo, "error")>
+            <cfset retrieveTeacherFeedbackInfo.feedbacks = feedbacks/>
+        </cfif>
+        <cfreturn retrieveTeacherFeedbackInfo>
+    </cffunction>
     <!---function to get all notification--->
     <cffunction  name="getMyNotification" access="public" output="false" returntype="struct">
         <!---argument--->
@@ -1295,33 +1326,36 @@ Functionality: This file has services/functions related to the data in the datab
 
     <!---function to get the teachers--->
     <cffunction  name="getTeacher" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="isTeacher" type="boolean" required="false">
+        <cfargument  name="userId" type="numeric" required="false">
         <!---structure will contain the getTeachers info--->
-        <cfset var getTeacherInfo = {}/>
+        <cfset var getUserInfo = {}/>
         <!---variable to store the query data--->
         <cfset var teachers = ''/>
         <!---query--->
         <cftry>
             <cfquery name="teachers">
-                SELECT  [dbo].[User].[userId], [dbo].[User].[firstName]+' '+[dbo].[User].[lastName] AS 'Teacher',
+                SELECT  [dbo].[User].[userId], [dbo].[User].[firstName]+' '+[dbo].[User].[lastName] AS 'User',
                         [dbo].[User].[emailId], [dbo].[User].[dob], [dbo].[User].[yearOfExperience], [dbo].[User].[homeLocation],
-                        [dbo].[User].[Online], [dbo].[User].[otherLocation], [dbo].[User].[bio]
-                        <!---[dbo].[UserAddress].[address], [dbo].[UserAddress].[country], [dbo].[UserAddress].[state], 
-                        [dbo].[UserAddress].[city], [dbo].[UserAddress].[pincode]--->
-
+                        [dbo].[User].[Online], [dbo].[User].[otherLocation], [dbo].[User].[bio], [dbo].[User].[isTeacher]
 
                 FROM    [dbo].[User]
-                -- JOIN    [dbo].[UserAddress] ON ([dbo].[User].[userId]=[dbo].[UserAddress].[userId])
-                WHERE   [dbo].[User].[isTeacher]=1 
-                -- GROUP BY [dbo].[User].[userId]
+                WHERE   
+                    <cfif structKeyExists(arguments, "isTeacher")>
+                        [dbo].[User].[isTeacher]=<cfqueryparam value="#arguments.isTeacher#" cfsqltype='cf_sql_bit'>
+                    <cfelseif structKeyExists(arguments, "userId")>
+                          AND [dbo].[User].[userId] = <cfqueryparam value="#arguments.userId#" cfsqltype='cf_sql_bigint'>
+                    </cfif>
             </cfquery>
         <cfcatch type="any">
             <cflog  text="databaseService: getTeacher()-> #cfcatch# #cfcatch.detail#">
-            <cfset getTeacherInfo.error = "some error ocuured. Please, try after sometime"/>
+            <cfset getUserInfo.error = "some error ocuured. Please, try after sometime"/>
         </cfcatch>
         </cftry>
         <cfif NOT structKeyExists(getTeacherInfo, "error")>
-            <cfset getTeacherInfo.teachers = teachers/>
+            <cfset getUserInfo.teachers = teachers/>
         </cfif>
-        <cfreturn getTeacherInfo/>
+        <cfreturn getUserInfo/>
     </cffunction>
 </cfcomponent>
