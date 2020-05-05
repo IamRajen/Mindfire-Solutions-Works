@@ -1,8 +1,8 @@
-<cfset teacherAddress = databaseServiceObj.getMyAddress(url.Id)/>
+<cfset userAddress = databaseServiceObj.getMyAddress(url.Id)/>
 
 <div class="p-3 shadow rounded border">
     <cfset currentRow = 1/>
-    <cfoutput query="teacherAddress.Address">
+    <cfoutput query="userAddress.Address">
         <small class="text-primary">
             <cfif currentRow == 1>
                 Current Address : 

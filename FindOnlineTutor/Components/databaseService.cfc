@@ -1332,10 +1332,10 @@ Functionality: This file has services/functions related to the data in the datab
         <!---structure will contain the getTeachers info--->
         <cfset var getUserInfo = {}/>
         <!---variable to store the query data--->
-        <cfset var teachers = ''/>
+        <cfset var user = ''/>
         <!---query--->
         <cftry>
-            <cfquery name="teachers">
+            <cfquery name="user">
                 SELECT  [dbo].[User].[userId], [dbo].[User].[firstName]+' '+[dbo].[User].[lastName] AS 'User',
                         [dbo].[User].[emailId], [dbo].[User].[dob], [dbo].[User].[yearOfExperience], [dbo].[User].[homeLocation],
                         [dbo].[User].[Online], [dbo].[User].[otherLocation], [dbo].[User].[bio], [dbo].[User].[isTeacher]
@@ -1345,7 +1345,7 @@ Functionality: This file has services/functions related to the data in the datab
                     <cfif structKeyExists(arguments, "isTeacher")>
                         [dbo].[User].[isTeacher]=<cfqueryparam value="#arguments.isTeacher#" cfsqltype='cf_sql_bit'>
                     <cfelseif structKeyExists(arguments, "userId")>
-                          AND [dbo].[User].[userId] = <cfqueryparam value="#arguments.userId#" cfsqltype='cf_sql_bigint'>
+                        [dbo].[User].[userId] = <cfqueryparam value="#arguments.userId#" cfsqltype='cf_sql_bigint'>
                     </cfif>
             </cfquery>
         <cfcatch type="any">
@@ -1353,8 +1353,8 @@ Functionality: This file has services/functions related to the data in the datab
             <cfset getUserInfo.error = "some error ocuured. Please, try after sometime"/>
         </cfcatch>
         </cftry>
-        <cfif NOT structKeyExists(getTeacherInfo, "error")>
-            <cfset getUserInfo.teachers = teachers/>
+        <cfif NOT structKeyExists(getUserInfo, "error")>
+            <cfset getUserInfo.user = user/>
         </cfif>
         <cfreturn getUserInfo/>
     </cffunction>
