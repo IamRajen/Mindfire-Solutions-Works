@@ -9,7 +9,9 @@
                     Student
                 </cfif>
             </h4>
-            <a href="teacherDetails.cfm?id=<cfoutput>#userId#</cfoutput>" class="btn button-color px-3 float-right shadow rounded">Details</a>
+            <cfif NOT structKeyExists(url, "user")>
+                <a href="teacherDetails.cfm?user=<cfoutput>#userId#</cfoutput>" class="btn button-color px-3 float-right shadow rounded">Details</a>
+            </cfif>
         </div>
         <hr>
         <h3 class="p-0 m-0"><cfoutput>#User#</cfoutput></h3>

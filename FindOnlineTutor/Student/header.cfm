@@ -51,13 +51,17 @@ Functionality: It is a header file which is included probably in student section
 						<li class="nav-item mx-2">
 							<a class="nav-link text-dark" href="../index.cfm">Home</a>
 						</li>
+						<li class="nav-item mx-2">
+							<a class="nav-link text-dark" href="../searchResult.cfm">find Batch</a>
+						</li>
+						<li class="nav-item mx-2">
+							<a class="nav-link text-dark" href="../teachers.cfm">Teachers</a>
+						</li>
 						<cfif structKeyExists(session, "stLoggedInUser") >
 							<li class="nav-item mx-2">
 								<a class="nav-link text-dark" href="batches.cfm">Your Batch</a>
 							</li>
-                            <li class="nav-item mx-2">
-								<a class="nav-link text-dark" href="../searchResult.cfm">find Batch</a>
-							</li>
+                            
 							<li class="nav-item mx-2">
 								<a class="nav-link text-dark" href="notification.cfm">Notification</a>
 							</li>

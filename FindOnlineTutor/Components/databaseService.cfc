@@ -42,21 +42,30 @@ Functionality: This file has services/functions related to the data in the datab
 
     <!---get user addresses--->
     <cffunction  name="getMyAddress" access="remote" output="false" returnformat="json" returntype="struct">
-        <cfargument  name="userId" type="any" required="true"/>
+        <cfargument  name="userId" type="numeric" required="false">
+        <cfargument  name="addressId" type="numeric" required="false">
         <cfset var userAddress={}/>
         <cfset var address = ''>
         <cftry>
             <cfquery name="address">
                 SELECT userAddressId,address,country,state,city,pincode
                 FROM [dbo].[UserAddress]
-                WHERE userId = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_bigint" />
+                WHERE
+                    <cfif structKeyExists(arguments, "userId")>
+                        userId = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_bigint" />
+                    <cfelseif structKeyExists(arguments, "addressId")>
+                        userAddressId = <cfqueryparam value="#arguments.addressId#" cfsqltype="cf_sql_bigint" />
+                    </cfif>
+                 
             </cfquery>
         <cfcatch type="any">
-            <cflog  text="#arguments.userId# : #cfcatch#">
+            <cflog  text="#arguments.userId# : #cfcatch# #cfcatch.detail#">
             <cfset userAddress.error="Some Error occurred while fetching the data. Please, try after sometimes!!"/>
         </cfcatch>
         </cftry>
-        <cfset userAddress.address = address>
+        <cfif NOT structKeyExists(userAddress, "error")>
+            <cfset userAddress.address = address>
+        </cfif>
         <cfreturn userAddress/>
     </cffunction>
 
@@ -536,6 +545,7 @@ Functionality: This file has services/functions related to the data in the datab
         </cfif>
         <cfreturn batchInfo/>
     </cffunction>
+
 
     <!---function to collect batches of teacher--->
     <cffunction  name="collectStudentBatch" output="false" access="public" returntype="struct">
@@ -1322,6 +1332,36 @@ Functionality: This file has services/functions related to the data in the datab
             <cfset enrolledStudentInfo.enrolledStudents = enrolledStudents/>
         </cfif>
         <cfreturn enrolledStudentInfo>
+    </cffunction>
+
+    <!---function to see the that is student is enrolled to a particular batch--->
+    <cffunction  name="isStudentEnrolled" access="public" output="false" returntype="struct">
+        <!---argument--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <cfargument  name="studentId" type="numeric" required="true">
+        <!---structure that will contain the function information--->
+        <cfset var isStudentEnrolledInfo = {}/>
+        <!---query--->
+        <cftry>
+            <cfquery name="enrolledStudent">
+                SELECT  *
+                FROM    [dbo].[BatchEnrolledStudent]
+                WHERE   [dbo].[BatchEnrolledStudent].[batchId] = <cfqueryparam value="#arguments.batchId#" cfsqltype='cf_sql_bigint'> 
+                AND     [dbo].[BatchEnrolledStudent].[studentId] = <cfqueryparam value="#arguments.studentId#" cfsqltype='cf_sql_bigint'>
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: isStudentEnrolled()-> #cfcatch# #cfcatch.detail#">
+            <cfset isStudentEnrolledInfo.error = "some error occurred.Please try after sometime"/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(isStudentEnrolledInfo, "error")>
+            <cfif enrolledStudent.recordCount EQ 1>
+                <cfset isStudentEnrolledInfo.enrolled = true/>
+            <cfelse>
+                <cfset isStudentEnrolledInfo.enrolled = false/>
+            </cfif>
+        </cfif>
+        <cfreturn isStudentEnrolledInfo>
     </cffunction>
 
     <!---function to get the teachers--->

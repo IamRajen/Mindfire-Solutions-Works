@@ -159,11 +159,16 @@ function sendRequest(myRequestIds,country ,state)
                             var data = $($("#batchesDiv").children()[0]).clone();
                         } 
                         //checking the request info of the batch made by the user
-                        
-                        $(data).find('a').attr("href", "batchesDetails.cfm?id="+batches[batch][0]);
+                        $(data).find('a').attr("href", "batchDetails.cfm?batch="+batches[batch][0]);
                         $(data).find('#batchName').html(batches[batch][1]);
                         $(data).find("#batchDetails").text(batches[batch][2]);
+                        if(batches[batch][10] == 'online')
+                        {
+                            $(data).find("#batchAddress").text('Online');
+                        }
+                        else{
                         $(data).find("#batchAddress").text(batches[batch][3]+", "+batches[batch][4]+", "+batches[batch][5]+", "+batches[batch][6]+", "+batches[batch][7]);
+                        }
                         var startDate = new Date(batches[batch][8]);
                         var endDate = new Date(batches[batch][9]);
                         $(data).find("#batchStartDate").text(startDate.getFullYear()+"-"+("0"+startDate.getMonth()).slice(-2)+"-"+("0"+startDate.getDate()).slice(-2));

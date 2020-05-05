@@ -16,7 +16,9 @@
         <h1 class="d-inline text-info"><cfoutput>#batchInfo.overview.batch.batchName#</cfoutput><span id="batchType" class="text-danger h6 ml-2"><cfoutput>#batchInfo.overview.batch.batchType#</cfoutput></span></h1>
         <hr>
 
-        <cfinclude  template="../Include/batchOverview.cfm">
+        <cfoutput query="batchInfo.batchInfo.batch">
+            <cfinclude  template="../Include/batchOverview.cfm">
+        </cfoutput>
         <cfinclude  template="../Include/batchAddress.cfm">
         
         <!---this div contains all the other batch deatils except the overview--->

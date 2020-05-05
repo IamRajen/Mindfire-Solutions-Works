@@ -17,7 +17,7 @@ Functionality: It is a batch page which contains all the related information for
 
 <!---Display the batches---> 
     <cfset batchInfo = batchServiceObj.getMyBatch()/>
-
+    <cfdump  var="#batchInfo#">
     <div id="batchDiv" class="m-3">
         <cfif structKeyExists(batchInfo, "error")>
             <div class="alert alert-danger pt-3 pb-3 rounded-top">

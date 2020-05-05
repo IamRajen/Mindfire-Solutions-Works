@@ -57,7 +57,6 @@ $(document).ready(function()
 
 function retrieveFeedback()
 {
-    console.log("caled")
     $.ajax({
         type:"POST",
         url:"../Components/batchService.cfc?method=retrieveBatchFeedback",
@@ -65,7 +64,7 @@ function retrieveFeedback()
         timeout: 2000,
         error: function(){
             swal({
-                title: "Failed to retrieve the Notification details!!",
+                title: "Failed to retrieve the Feedbacks!!",
                 text: "Some error occured. Please try after sometime",
                 icon: "error",
                 button: "Ok",
@@ -77,6 +76,7 @@ function retrieveFeedback()
         success: function(feedbackInfo) 
         {   
             feedbackInfo = JSON.parse(feedbackInfo);
+            console.log(feedbackInfo)
             if(feedbackInfo.hasOwnProperty("ERROR"))
             {
 

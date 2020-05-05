@@ -58,7 +58,7 @@ Functionality: This file contains the functions which help to give required serv
         </cfloop>
 
         <cfif errorMsgs["validatedSuccessfully"]>
-            <cfset var myAddress = databaseServiceObj.getMyAddress(session.stLoggedInUser.UserId)/>
+            <cfset var myAddress = databaseServiceObj.getMyAddress(userId = session.stLoggedInUser.UserId)/>
             <cfset var newBatch = databaseServiceObj.insertBatch(
                 #session.stloggedinUser.userID#, name, type, details, startDate,endDate,LSParseNumber(capacity),
                 LSParseNumber(fee), 0,myAddress.address.userAddressId[1],"")/>
@@ -449,14 +449,55 @@ Functionality: This file contains the functions which help to give required serv
         <cfargument  name="batchId" type="numeric" required="true">
         <!---creating a variable for storing the returned value from database function call--->
         <cfset var batchDetails = {}/>
-        <!---checking the batch is of the requested user--->
-        <cfset batchDetails.overview = getBatchOverviewById(arguments.batchId)/>
-        <cfset batchDetails.address = databaseServiceObj.getMyAddress(session.stLoggedInUser.UserId)/>
-        <cfset batchDetails.timing = getBatchTimingById(arguments.batchId)/>
-        <cfset batchDetails.notification = getBatchNotifications(arguments.batchId)/>
-        <cfset batchDetails.request = getBatchRequests(arguments.batchId)/>
-        <cfset batchDetails.enrolledStudent =databaseServiceObj.getEnrolledStudent(batchId=arguments.batchId)/>
-<!---         <cfset batchDetails.feedback = databaseServiceObj.getBatchFeedback(arguments.batchId)/> --->
+
+        <cftry> 
+            <!---checking the batch is of the requested user--->
+            <cfset batchDetails.overview = getBatchOverviewById(arguments.batchId)/>
+            <cfif structKeyExists(batchDetails.overview, "error")>
+                <cfthrow detail = "#batchDetails.overview.error#">
+            </cfif>
+            <cfset batchDetails.timing = getBatchTimingById(arguments.batchId)/>
+            <cfif structKeyExists(batchDetails.timing, "error")>
+                <cfthrow detail = "#batchDetails.timing.error#">
+            </cfif>
+            <!---getting the batch address--->
+            <cfif structKeyExists(session, 'stLoggedInUser') AND session.stLoggedInUser.role EQ 'Teacher'>
+                <cfset batchDetails.address = databaseServiceObj.getMyAddress(userId = session.stLoggedInUser.UserId)/>
+            <cfelse>
+                <cfif batchDetails.overview.batch.batchType EQ 'online'>
+                    <cfset batchDetails.address = batchDetails.overview.batch.addressLink/>
+                <cfelse>
+                    <cfset batchDetails.address = databaseServiceObj.getMyAddress(addressId = batchDetails.overview.batch.addressId)/>
+                </cfif>
+            </cfif>
+
+            <!---getting the notifications of batch--->
+            <cfif structKeyExists(session, "stLoggedInUser")>
+                <!---if student is enrolled then only he will get the notification--->
+                <cfif session.stLoggedInUser.role EQ 'Student'>
+                    <cfset var isEnrolled = databaseServiceObj.isStudentEnrolled(arguments.batchId, session.stLoggedInUser.userId)/>
+                </cfif>
+                <cfif session.stLoggedInUser.role EQ 'Teacher' OR isEnrolled.enrolled>
+                    <cfset batchDetails.notification = getBatchNotifications(arguments.batchId)/>
+                </cfif>
+            </cfif>
+            <cfif structKeyExists(batchDetails, "notification") AND structKeyExists(batchDetails.notification, "error")>
+                <cfthrow detail = "#batchDetails.notification.error#">
+            </cfif>
+
+            <cfif structKeyExists(session, 'stLoggedInUser') AND session.stLoggedInUser.role EQ 'Teacher'>
+                <cfset batchDetails.request = getBatchRequests(arguments.batchId)/>
+                <cfset batchDetails.enrolledStudent =databaseServiceObj.getEnrolledStudent(batchId=arguments.batchId)/>
+            </cfif>
+            <cfif structKeyExists(batchDetails, "request") AND structKeyExists(batchDetails.request, "error")>
+                <cfthrow detail = "#batchDetails.request.error#">
+            </cfif>
+            <cfset batchDetails.feedback = databaseServiceObj.retrieveBatchFeedback(arguments.batchId)/> 
+        <cfcatch type="any">
+            <cflog  text="#cfcatch# #cfcatch.detail#">
+            <cfset batchDetails.error = "Some error occurred.Please try after sometime"/>
+        </cfcatch>
+        </cftry>
         <cfreturn batchDetails/>
         
     </cffunction>
@@ -509,14 +550,14 @@ Functionality: This file contains the functions which help to give required serv
         <cfreturn notificationInfo/>
     </cffunction>
 
-    <!---function to get the batch feedback --->
+    <!---function to get the batch notification --->
     <cffunction  name="getBatchNotifications" access="remote" output="false" returntype="struct" returnformat="json">
         <!---argument--->
         <cfargument  name="batchId" type="numeric" required="true">
 
         <!---declaring a structure for returning the value of batch overview--->
-        <cfset var batchFeedback = databaseServiceObj.getBatchNotifications(arguments.batchId)/>
-        <cfreturn batchFeedback/>
+        <cfset var batchNotification= databaseServiceObj.getBatchNotifications(arguments.batchId)/>
+        <cfreturn batchNotification/>
     </cffunction>
 
     <!---function to all the notification of the user--->
@@ -561,7 +602,7 @@ Functionality: This file contains the functions which help to give required serv
             <cfset var batches = databaseServiceObj.getNearByBatch(pincode='')/>
         <cfelse>
             <!---calling function for retrieving the near by batches--->
-            <cfset var userAddress = databaseServiceObj.getMyAddress(session.stLoggedInUser.UserId)/>
+            <cfset var userAddress = databaseServiceObj.getMyAddress(userId = session.stLoggedInUser.UserId)/>
             <cfif structKeyExists(userAddress, "Address")>
                 <cfset var batches = databaseServiceObj.getNearByBatch(pincode=left(userAddress.Address.PINCODE[1],3))/>
             <cfelse>

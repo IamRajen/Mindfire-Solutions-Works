@@ -23,6 +23,8 @@ Functionality: It is a cfm file containing the batches which are been enrolled b
             </div>
         <cfelse>
             <cfoutput query="batchInfo.batches">
+                <cfinclude  template="../Include/batchOverview.cfm">
+                <!---
                 <a href="batchesDetails.cfm?id=#batchId#" class="row m-3 p-3 shadow rounded">
                     <div class="col-md-12 border-bottom pb-2">
                         <h3 class=" text-dark d-inline">#batchName#<span class="text-info h6 ml-2">#batchType#</span></h3>
@@ -48,7 +50,7 @@ Functionality: It is a cfm file containing the batches which are been enrolled b
                         <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Fee: </span>#fee#</p>
                     </div> 
                     
-                </a>
+                </a>--->
             </cfoutput>
         </cfif>
     </div>

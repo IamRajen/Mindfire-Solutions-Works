@@ -7,35 +7,39 @@ Functionality: A teacher page containing the detail information about the teache
 --->
 
 <cfset databaseServiceObj = createObject("component","FindOnlineTutor.Components.databaseService")/>
-<cfset teacherOverview = databaseServiceObj.getTeacher(userId=url.Id)/>
-<cfset teacherBatch = databaseServiceObj.collectTeacherBatch(teacherId=url.Id)/>
-<cfset teacherBatchFeedback = databaseServiceObj.retrieveTeacherFeedback(teacherId=url.id)/>
-
-<cfdump  var="#teacherBatchFeedback#"/>
-<!--- <cfdump var =  "#teacherOverview#"/> --->
-<cfdump var = "#teacherBatch#">
+<cfset userOverview = databaseServiceObj.getTeacher(userId=url.user)/>
+<cfset userAddress = databaseServiceObj.getMyAddress(url.user)/>
+<cfset userBatch = databaseServiceObj.collectTeacherBatch(teacherId=url.user)/>
 
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css">
 <div class="container">
-
-    <cfoutput query="teacherOverview.user">
-        <cfinclude  template="Include/userOverview.cfm">
-    </cfoutput>
-
     <div class="p-5">
-        <cfinclude  template="Include/address.cfm">
+        <h3 class="text-secondary">Overview:</h3>
+        <cfoutput query="userOverview.user">
+            <cfinclude  template="Include/userOverview.cfm">
+        </cfoutput>
+    </div>
+    <div class="p-5">
+        <h3 class="text-secondary">Address:</h3>
+        <div class="container border shadow rounded p-4">
+            <cfset currentRow = 1/>
+            <cfoutput query="userAddress.address">
+                <small class="text-primary">
+                    <cfif currentRow == 1>
+                        Current Address : 
+                    <cfelse>
+                        Alternative Address : 
+                    </cfif>
+                </small>
+                <cfinclude  template="Include/address.cfm">
+            </cfoutput>
+        </div>
     </div>
 
-    <div class="container horizontal-scrollable"> 
-                <div class="row text-center"> 
-                    <div class="col-xs-4">1</div> 
-                    <div class="col-xs-4">2</div> 
-                    <div class="col-xs-4">3</div> 
-                    <div class="col-xs-4">4</div> 
-                    <div class="col-xs-4">5</div> 
-                    <div class="col-xs-4">6</div> 
-                    <div class="col-xs-4">7</div> 
-                </div> 
-            </div> 
-
+    <div class="p-5">
+        <h3 class="text-secondary">Batches:</h3>
+        <cfoutput query="userBatch.batches">
+            <cfinclude  template="Include/batchOverview.cfm">
+        </cfoutput>
+    </div>
 </cf_header>
