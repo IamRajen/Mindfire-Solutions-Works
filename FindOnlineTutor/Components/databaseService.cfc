@@ -520,19 +520,36 @@ Functionality: This file has services/functions related to the data in the datab
     </cffunction>
 
     <!---function to collect batches of teacher--->
-    <cffunction  name="collectTeacherBatch" output="false" access="public" returntype="struct">
+    <cffunction  name="getUserBatch" output="false" access="public" returntype="struct">
         <!---arguments--->
-        <cfargument  name="teacherId" type="numeric" required="true">
+        <cfargument  name="teacherId" type="numeric" required="false">
+        <cfargument  name="studentId" type="numeric" required="false">
         <!---declaring a structure for storing the query data and error if occured--->
         <cfset var batchInfo={}/>
         <!---Declaring a variable for storing result data--->
         <cfset var batches = ''/>
         <cftry>
             <cfquery name="batches">
-                SELECT * 
-                FROM [dbo].[batch]
-                WHERE batchOwnerId = <cfqueryparam value=#arguments.teacherId# cfsqltype='cf_sql_bigint'>
-                ORDER BY batchId DESC
+                SELECT  * 
+                FROM 
+                    <cfif structKeyExists(arguments, "teacherId")>
+                        [dbo].[batch]
+                    <cfelseif structKeyExists(arguments, "studentId")>
+                        [dbo].[BatchEnrolledStudent]
+                JOIN    [dbo].[Batch] ON [dbo].[Batch].[batchId] = [dbo].[BatchEnrolledStudent].[batchId]
+                    </cfif>
+                WHERE 
+                    <cfif structKeyExists(arguments, "teacherId")>
+                        batchOwnerId = <cfqueryparam value=#arguments.teacherId# cfsqltype='cf_sql_bigint'>
+                    <cfelseif structKeyExists(arguments, "studentId")>
+                        studentId = <cfqueryparam value=#arguments.studentId# cfsqltype='cf_sql_bigint'>
+                    </cfif>
+                ORDER BY 
+                    <cfif structKeyExists(arguments, "teacherId")>
+                        batchId DESC
+                    <cfelseif structKeyExists(arguments, "studentId")>
+                        [dbo].[BatchEnrolledStudent].[enrolledDateTime] DESC
+                    </cfif> 
             </cfquery>
         <cfcatch type="any">
             <cflog text="collecting batch error: #cfcatch#">
@@ -546,34 +563,6 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn batchInfo/>
     </cffunction>
 
-
-    <!---function to collect batches of teacher--->
-    <cffunction  name="collectStudentBatch" output="false" access="public" returntype="struct">
-        <!---arguments--->
-        <cfargument  name="studentId" type="numeric" required="true">
-        <!---declaring a structure for storing the query data and error if occured--->
-        <cfset var batchInfo={}/>
-        <!---Declaring a variable for storing result data--->
-        <cfset var batches = ''/>
-        <cftry>
-            <cfquery name="batches">
-                SELECT  * 
-                FROM    [dbo].[BatchEnrolledStudent]
-                JOIN    [dbo].[Batch] ON [dbo].[Batch].[batchId] = [dbo].[BatchEnrolledStudent].[batchId]
-                WHERE   studentId = <cfqueryparam value=#arguments.studentId# cfsqltype='cf_sql_bigint'>
-                ORDER BY [dbo].[BatchEnrolledStudent].[enrolledDateTime] DESC
-            </cfquery>
-        <cfcatch type="any">
-            <cflog text="databaseService collectStudentBatch(): #cfcatch#">
-            <cfset batchInfo.error = "Some error occurred. Please try after sometimes"/>
-        </cfcatch>
-        </cftry>
-
-        <cfif NOT structKeyExists(batchInfo, "error")>
-            <cfset batchInfo.batches = batches/>
-        </cfif>
-        <cfreturn batchInfo/>
-    </cffunction>
 
     <!---function to insert batch timing--->
     <cffunction  name="insertBatchTime" output="false" access="public" returntype="struct">
@@ -768,6 +757,7 @@ Functionality: This file has services/functions related to the data in the datab
         </cfif>
         <cfreturn retrieveTeacherFeedbackInfo>
     </cffunction>
+
     <!---function to get all notification--->
     <cffunction  name="getMyNotification" access="public" output="false" returntype="struct">
         <!---argument--->
@@ -1307,21 +1297,23 @@ Functionality: This file has services/functions related to the data in the datab
         <!---query--->
         <cftry>
             <cfquery name="enrolledStudents">
-                SELECT  [dbo].[BatchEnrolledStudent].[batchEnrolledStudentId], [dbo].[BatchEnrolledStudent].[enrolledDateTime] , 
-                        [dbo].[User].[firstName]+' '+[dbo].[User].[lastName] AS "Student", [dbo].[BatchEnrolledStudent].[studentId]
+                SELECT  count([dbo].[BatchEnrolledStudent].[batchEnrolledStudentId]) , [dbo].[BatchEnrolledStudent].[studentId]
+                        <!---[dbo].[User].[firstName]+' '+[dbo].[User].[lastName] AS "Student"
                     <cfif structKeyExists(arguments, "teacherId")>
                         ,[dbo].[Batch].[batchId], [dbo].[Batch].[batchName]
-                    </cfif>
-                FROM    ([dbo].[BatchEnrolledStudent] 
-                JOIN    [dbo].[Batch] ON ([dbo].[BatchEnrolledStudent].[batchId] = [dbo].[Batch].[batchId])
-                JOIN    [dbo].[User] ON ([dbo].[BatchEnrolledStudent].[studentId] = [dbo].[User].[userId]))
+                    </cfif>--->
+                FROM        ([dbo].[BatchEnrolledStudent] 
+                JOIN        [dbo].[Batch] ON ([dbo].[BatchEnrolledStudent].[batchId] = [dbo].[Batch].[batchId])
+                JOIN        [dbo].[User] ON ([dbo].[BatchEnrolledStudent].[studentId] = [dbo].[User].[userId]))
 
                 WHERE    
                     <cfif structKeyExists(arguments, "batchId")>
-                        [dbo].[BatchEnrolledStudent].[batchId] = <cfqueryparam value="#arguments.batchId#" cfsqltype='cf_sql_bigint'>
+                            [dbo].[BatchEnrolledStudent].[batchId] = <cfqueryparam value="#arguments.batchId#" cfsqltype='cf_sql_bigint'>
                     <cfelseif structKeyExists(arguments, "teacherId")>
-                        [dbo].[Batch].[batchOwnerId] = <cfqueryparam value="#arguments.teacherId#" cfsqltype='cf_sql_bigint'>
-                    </cfif>   
+                            [dbo].[Batch].[batchOwnerId] = <cfqueryparam value="#arguments.teacherId#" cfsqltype='cf_sql_bigint'>
+                    </cfif> 
+                GROUP BY    [dbo].[BatchEnrolledStudent].[studentId]
+                ORDER BY    COUNT([dbo].[BatchEnrolledStudent].[studentId]) DESC
             </cfquery>
         <cfcatch type="any">
             <cflog  text="databaseService getEnrolledStudent(): #cfcatch# #cfcatch.detail#">
@@ -1365,7 +1357,7 @@ Functionality: This file has services/functions related to the data in the datab
     </cffunction>
 
     <!---function to get the teachers--->
-    <cffunction  name="getTeacher" access="public" output="false" returntype="struct">
+    <cffunction  name="getUser" access="public" output="false" returntype="struct">
         <!---arguments--->
         <cfargument  name="isTeacher" type="boolean" required="false">
         <cfargument  name="userId" type="numeric" required="false">

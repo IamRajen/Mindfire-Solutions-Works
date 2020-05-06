@@ -10,7 +10,7 @@
                 </cfif>
             </h4>
             <cfif NOT structKeyExists(url, "user")>
-                <a href="teacherDetails.cfm?user=<cfoutput>#userId#</cfoutput>" class="btn button-color px-3 float-right shadow rounded">Details</a>
+                <a href="userDetails.cfm?user=<cfoutput>#userId#</cfoutput>" class="btn button-color px-3 float-right shadow rounded">Details</a>
             </cfif>
         </div>
         <hr>
@@ -26,20 +26,7 @@
             <cfset facilities = facilities&" { Online }"/>
         </cfif>
         <small class="d-block text-info mb-2 ml-5"><cfoutput>#facilities#</cfoutput></small>
-        <cfset userAddress = databaseServiceObj.getMyAddress(userId)/>
-        <div class="mb-2 mt-3">
-            <small class="text-info my-2">Address :</small>
-            <cfif structKeyExists(userAddress, "error")>
-                <p class="d-inline ml-2 alert alert-danger"><cfoutput>#userAddress.error#</cfoutput></p>
-            <cfelse>
-                <p class="d-inline ml-2">
-                    <cfoutput>
-                        #userAddress.ADDRESS.address[1]#, #userAddress.ADDRESS.city[1]#, #userAddress.ADDRESS.state[1]#, #userAddress.ADDRESS.country[1]# -  #userAddress.ADDRESS.pincode[1]# 
-                    </cfoutput>
-                </p>
-            </cfif>
-            
-        </div class="mb-2">
+        
         <div class="mb-2">
             <small class="text-info my-2">Email Id:</small>
             <p class="d-inline ml-2"><cfoutput>#emailId#</cfoutput></p> 

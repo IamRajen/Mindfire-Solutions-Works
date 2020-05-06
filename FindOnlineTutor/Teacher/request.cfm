@@ -40,7 +40,7 @@ Functionality: It is a request page which contains all the requests of the parti
                             <th>#batchRequestId#.</th>
                             <td>#dateFormat(requestDateTime)#</td>
                             <td>#timeFormat(requestDateTime)#</td>
-                            <td><a class="text-dark" href="batchesDetails.cfm?id=#batchId#">#batchName#</a></td>
+                            <td><a class="text-dark" href="batchDetails.cfm?id=#batchId#">#batchName#</a></td>
                             <td><a class="text-dark" href="userDetails.cfm?id=#userId#">#student#</a></td>
                             <td>
                                 <cfif requestStatus EQ 'Pending'>

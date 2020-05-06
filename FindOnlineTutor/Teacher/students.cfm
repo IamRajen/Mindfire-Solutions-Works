@@ -9,9 +9,9 @@ Functionality: It is a page that contains all the students list of the logged in
 
     <cfset batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
     <cfset myStudents = batchServiceObj.getMyStudent()/>
-
+    <cfdump  var="#myStudents#">
     <div class="p-3 my-4 shadow bg-light rounded">
-        <!---displaying the batch students--->
+        <!---displaying the batch students
         <h3 class=" text-dark d-inline">Batch Students</h3>
         <hr>
         <div  class="overflow-auto" style="height: 409px;">
@@ -32,8 +32,8 @@ Functionality: It is a page that contains all the students list of the logged in
                             <tr>
                                 <td>#dateFormat(enrolledDateTime)#</td>
                                 <td>#timeFormat(enrolledDateTime)#</td>
-                                <td><a class="text-dark" href="batchesDetails.cfm?id=#batchId#">#batchName#</a></td>
-                                <td><a class="text-dark" href="../userDetails.cfm?id=#studentId#">#Student#</a></td>
+                                <td><a class="text-dark" href="batchDetails.cfm?batch=#batchId#">#batchName#</a></td>
+                                <td><a class="text-dark" href="../userDetails.cfm?user=#studentId#">#Student#</a></td>
                             </tr>
                     </cfoutput>
                     </tbody>
@@ -45,7 +45,7 @@ Functionality: It is a page that contains all the students list of the logged in
                     <p class="d-block text-danger m-2"><cfoutput>#batchInfo.request.error#</cfoutput></p>
                 </div>
             </cfif> 
-        </div>
+        </div>--->
     </div>
 
 </cf_header>

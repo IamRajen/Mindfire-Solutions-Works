@@ -7,15 +7,15 @@ Functionality: A teacher page containing the teacher overview and a link for tea
 --->
 
 <cfset databaseServiceObj = createObject("component","FindOnlineTutor.Components.databaseService")/>
-<cfset getTeacherInfo = databaseServiceObj.getTeacher(isTeacher=1)/>
+<cfset getUserInfo = databaseServiceObj.getUser(isTeacher=1)/>
 
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css">
 <div class="container">
-    <cfif structKeyExists(getTeacherInfo, "error")>
+    <cfif structKeyExists(getUserInfo, "error")>
         <!---display error msg--->
-    <cfelseif structKeyExists(getTeacherInfo, "user")>
+    <cfelseif structKeyExists(getUserInfo, "user")>
         <div class="row">
-            <cfoutput query="getTeacherInfo.user">
+            <cfoutput query="getUserInfo.user">
                 <cfinclude  template="Include/userOverview.cfm">
             </cfoutput>
         </div>
