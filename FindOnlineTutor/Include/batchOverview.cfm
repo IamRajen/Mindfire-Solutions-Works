@@ -7,7 +7,7 @@
         <h3 class=" text-dark d-inline"><cfoutput>#batchName#</cfoutput><span class="text-info h6 ml-2"><cfoutput>#batchType#</cfoutput></span></h3>
         
         <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher'>
-            <cfif structKeyExists(url, "batch")>
+            <cfif structKeyExists(url, "batch") AND session.stLoggedInUser.userId EQ batchOwnerId>
                 <button class="btn button-color d-inline float-right px-3 py-1" data-toggle="modal" data-target="#editBatchModal" onclick="loadBatchOverview()">Edit</button>
             <cfelse>
                 <a href="batchDetails.cfm?batch=<cfoutput>#batchId#</cfoutput>" class="btn button-color px-3 float-right shadow rounded">Details</a>

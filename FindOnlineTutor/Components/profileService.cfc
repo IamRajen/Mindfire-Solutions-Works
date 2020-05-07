@@ -45,4 +45,30 @@ Functionality: This file contains some functions helps in user profile.
         </cftry>
         <cfreturn getUserDetailsInfo/>
     </cffunction>
+
+    <!---function to get the userName--->
+    <cffunction  name="getName" output="false" access="remote" returnType="struct" returnFormat="json">
+        <!---arguments--->
+        <cfargument  name="userId" type="numeric" required="true">
+        <!---structure that contains function information--->
+        <cfset var getNameInfo = {}/>
+        <!---variable that contains the query information--->
+        <cfset var name = ''/>
+        <!---query--->
+        <cftry>
+            <cfquery name="name">
+                SELECT  [dbo].[User].[firstName]+' '+[dbo].[User].[lastName] AS 'name'
+                FROM    [dbo].[User]
+                WHERE   [dbo].[User].[userId] = <cfqueryparam value='#arguments.userId#' cfsqltype='cf_sql_bigint'>
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="profileService: databaseService()-> #cfcatch# #cfcatch.detail#">
+            <cfset getNameInfo.error = "Some error occurred.Please try After sometime"/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(getNameInfo, "error")>
+            <cfset getNameInfo.name = name/>
+        </cfif>
+        <cfreturn getNameInfo/>
+    </cffunction>
 </cfcomponent>

@@ -4,7 +4,7 @@
         <cfif structKeyExists(batchInfo.timing, "time")>
             <!---displaying the batch timing--->
             <h3 class=" text-dark d-inline">Timing</h3>
-            <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher'>
+            <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.userId EQ batchInfo.overview.batch.batchOwnerId>
                 <button class="btn button-color shadow d-inline float-right px-3 py-1" data-toggle="modal" data-target="#editBatchTimeModal" onclick="loadBatchTiming()">Edit</button>
             </cfif>
             <hr>

@@ -1297,11 +1297,13 @@ Functionality: This file has services/functions related to the data in the datab
         <!---query--->
         <cftry>
             <cfquery name="enrolledStudents">
-                SELECT  count([dbo].[BatchEnrolledStudent].[batchEnrolledStudentId]) , [dbo].[BatchEnrolledStudent].[studentId]
-                        <!---[dbo].[User].[firstName]+' '+[dbo].[User].[lastName] AS "Student"
-                    <cfif structKeyExists(arguments, "teacherId")>
-                        ,[dbo].[Batch].[batchId], [dbo].[Batch].[batchName]
-                    </cfif>--->
+                SELECT  
+                    <cfif structKeyExists(arguments, "batchId")>
+                            [dbo].[BatchEnrolledStudent].[batchEnrolledStudentId], [dbo].[User].[userId],
+                            [dbo].[User].[firstName]+' '+[dbo].[User].[lastName] AS 'student', [dbo].[BatchEnrolledStudent].[enrolledDateTime]
+                    <cfelseif structKeyExists(arguments, "teacherId")>
+                        count([dbo].[BatchEnrolledStudent].[batchEnrolledStudentId]) AS 'numberOfBatches' , [dbo].[BatchEnrolledStudent].[studentId]
+                    </cfif>
                 FROM        ([dbo].[BatchEnrolledStudent] 
                 JOIN        [dbo].[Batch] ON ([dbo].[BatchEnrolledStudent].[batchId] = [dbo].[Batch].[batchId])
                 JOIN        [dbo].[User] ON ([dbo].[BatchEnrolledStudent].[studentId] = [dbo].[User].[userId]))

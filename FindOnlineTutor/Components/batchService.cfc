@@ -436,9 +436,9 @@ Functionality: This file contains the functions which help to give required serv
         <cfset var batches={}/>
         <!---calling required function as user type--->
         <cfif session.stLoggedInUser.role EQ 'Teacher'>
-            <cfset batches=databaseServiceObj.collectTeacherBatch(session.stLoggedInUser.userID)/>
+            <cfset batches=databaseServiceObj.getUserBatch(teacherId=session.stLoggedInUser.userID)/>
         <cfelseif session.stLoggedInUser.role EQ 'Student'> 
-            <cfset batches=databaseServiceObj.collectStudentBatch(session.stLoggedInUser.userId)/>
+            <cfset batches=databaseServiceObj.getUserBatch(studentId=session.stLoggedInUser.userId)/>
         </cfif>
         <cfreturn batches/>
     </cffunction>
@@ -456,12 +456,17 @@ Functionality: This file contains the functions which help to give required serv
             <cfif structKeyExists(batchDetails.overview, "error")>
                 <cfthrow detail = "#batchDetails.overview.error#">
             </cfif>
+            <cfif batchDetails.overview.batch.recordCount EQ 0>
+                <cfthrow>
+            </cfif>
+
             <cfset batchDetails.timing = getBatchTimingById(arguments.batchId)/>
             <cfif structKeyExists(batchDetails.timing, "error")>
                 <cfthrow detail = "#batchDetails.timing.error#">
             </cfif>
+
             <!---getting the batch address--->
-            <cfif structKeyExists(session, 'stLoggedInUser') AND session.stLoggedInUser.role EQ 'Teacher'>
+            <cfif structKeyExists(session, 'stLoggedInUser') AND batchDetails.overview.batch.batchOwnerId EQ session.stLoggedInUser.userId>
                 <cfset batchDetails.address = databaseServiceObj.getMyAddress(userId = session.stLoggedInUser.UserId)/>
             <cfelse>
                 <cfif batchDetails.overview.batch.batchType EQ 'online'>
@@ -494,10 +499,18 @@ Functionality: This file contains the functions which help to give required serv
             </cfif>
             <cfset batchDetails.feedback = databaseServiceObj.retrieveBatchFeedback(arguments.batchId)/> 
         <cfcatch type="any">
-            <cflog  text="#cfcatch# #cfcatch.detail#">
-            <cfset batchDetails.error = "Some error occurred.Please try after sometime"/>
+            <cflog  text="getBatchDetailsByID()-> #cfcatch# #cfcatch.detail#">
+            <!---if no such batch is found it will diplay a error msg of no batch--->
+            <cfif structKeyExists(batchDetails, "overview") AND batchDetails.overview.batch.recordCount EQ 0>
+                <cfset structClear(batchDetails)/>
+            <!---else it will generate a error msg--->
+            <cfelse>
+                <cfset structClear(batchDetails)/>
+                <cfset batchDetails.error = "Some error occurred.Please try after sometime"/>
+            </cfif>
         </cfcatch>
         </cftry>
+        
         <cfreturn batchDetails/>
         
     </cffunction>

@@ -6,11 +6,6 @@ Created By: Rajendra Mishra.
 Functionality: A teacher page containing the detail information about the teacher
 --->
 
-<!---<cfset databaseServiceObj = createObject("component","FindOnlineTutor.Components.databaseService")/>
-<cfset userOverview = databaseServiceObj.getUser(userId=url.user)/>
-<cfset userAddress = databaseServiceObj.getMyAddress(url.user)/>
-<cfset userBatch = databaseServiceObj.getUserBatch(teacherId=url.user)/>
---->
 <cfset profileServiceObj = createObject("component","FindOnlineTutor.Components.profileService")/>
 <cfset userDetails = profileServiceObj.getUserDetails(userId = url.user)>
 

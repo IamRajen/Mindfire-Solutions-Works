@@ -9,12 +9,6 @@ Functionality: It is a batch page which contains all the related information for
 
 <cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
 
-<h1 class="d-inline text-info">Batches</h1>
-<button type="button" class="btn button-color shadow float-right" data-toggle="modal" data-target="#addNewBatch">
-    Add new Batch
-</button>
-<hr>
-
 <!---Display the batches---> 
     <cfset batchInfo = batchServiceObj.getMyBatch()/>
     
@@ -28,6 +22,11 @@ Functionality: It is a batch page which contains all the related information for
                 <p class="text-secondary text-center">You haven't created any batch. You can create it by clicking on "Add New Batch" button at top right side.</p>
             </div>
         <cfelse>
+            <h1 class="d-inline text-info">Batches</h1>
+            <button type="button" class="btn button-color shadow float-right" data-toggle="modal" data-target="#addNewBatch">
+                Add new Batch
+            </button>
+            <hr>
             <cfoutput query="batchInfo.batches">
                 <cfinclude  template="../Include/batchOverview.cfm">
             <!---
@@ -87,13 +86,13 @@ Functionality: It is a batch page which contains all the related information for
                         <div class="row m-3">
                             <label class="text-info" class="control-label"  for="batchType">Batch Type:<span class="text-danger">*</span></label>
                             <div class="col-md-12">
-                                <label><input type="radio" name="batchType" value="coaching" checked>Coaching Center</label>
+                                <label><input type="radio" name="batchType" value="coaching" checked> Coaching Center</label>
                             </div>
                             <div class="col-md-12">
-                                <label><input type="radio" name="batchType" value="home" >Student Home</label>
+                                <label><input type="radio" name="batchType" value="home" > Student Home</label>
                             </div>
                             <div class="col-md-12">
-                                <label><input type="radio" name="batchType" value="online" >Online</label>
+                                <label><input type="radio" name="batchType" value="online" > Online</label>
                             </div>  
                         </div>
 

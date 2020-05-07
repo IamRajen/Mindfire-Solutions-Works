@@ -7,7 +7,7 @@
     <cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
     <!---getting the information required for this page--->
     <cfset batchInfo = batchServiceObj.getBatchDetailsById(url.batch)/>
-    <cfdump  var="#batchInfo#">
+    
     <div class="container">
         <!---if batch information is retrieved succesfully then this if block gets executed--->
         <h1 class="d-inline text-info"><cfoutput>#batchInfo.overview.batch.batchName#</cfoutput><span id="batchType" class="text-danger h6 ml-2"><cfoutput>#batchInfo.overview.batch.batchType#</cfoutput></span></h1>

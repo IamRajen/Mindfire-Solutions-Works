@@ -51,6 +51,9 @@ Functionality: It is a header file which is included probably in Teacher section
 						<li class="nav-item mx-2">
 							<a class="nav-link text-dark" href="../index.cfm">Home</a>
 						</li>
+						<li class="nav-item mx-2">
+							<a class="nav-link text-dark" href="../teachers.cfm">Teachers</a>
+						</li>
 						<cfif structKeyExists(session, "stLoggedInUser") >
 							<li class="nav-item mx-2">
 								<a class="nav-link text-dark" href="batches.cfm">Your Batch</a>

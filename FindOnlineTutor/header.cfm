@@ -52,13 +52,13 @@ Functionality: It is a header file which is included probably in every pages.
 						<li class="nav-item mx-2">
 							<a class="nav-link text-dark" href="index.cfm">Home</a>
 						</li>
+						<li class="nav-item mx-2">
+							<a class="nav-link text-dark" href="teachers.cfm">Teachers</a>
+						</li>
 						<!---if the user is not a teacher but student or visitor--->
 						<cfif NOT structKeyExists(session, "stLoggedInUser") OR session.stLoggedInUser.role EQ 'Student'>
 							<li class="nav-item mx-2">
 								<a class="nav-link text-dark" href="searchResult.cfm">find Batch</a>
-							</li>
-							<li class="nav-item mx-2">
-								<a class="nav-link text-dark" href="teachers.cfm">Teachers</a>
 							</li>
 						</cfif>
 						
