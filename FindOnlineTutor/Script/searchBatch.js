@@ -275,6 +275,7 @@ function enrollStudent(button)
 {
     var index = $(button).parent().next().attr('href').indexOf("=");
     var batchId = $(button).parent().next().attr('href').slice(index+1);
+    console.log(batchId);
     //sending request to batch via ajax call..
     $.ajax({
         type:"POST",

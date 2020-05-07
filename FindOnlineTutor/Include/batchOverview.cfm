@@ -5,16 +5,36 @@
 
     <div class="col-md-12 border-bottom pb-2 mb-2">
         <h3 class=" text-dark d-inline"><cfoutput>#batchName#</cfoutput><span class="text-info h6 ml-2"><cfoutput>#batchType#</cfoutput></span></h3>
-        
-        <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher'>
-            <cfif structKeyExists(url, "batch") AND session.stLoggedInUser.userId EQ batchOwnerId>
-                <button class="btn button-color d-inline float-right px-3 py-1" data-toggle="modal" data-target="#editBatchModal" onclick="loadBatchOverview()">Edit</button>
-            <cfelse>
-                <a href="batchDetails.cfm?batch=<cfoutput>#batchId#</cfoutput>" class="btn button-color px-3 float-right shadow rounded">Details</a>
+        <div id="requestStatus" class="d-inline">
+
+            <!---if logged in user is a teacher--->
+            <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher'>
+                <!---if logged in user batch will displayed it will have a edit button on it--->
+                <cfif structKeyExists(url, "batch") AND session.stLoggedInUser.userId EQ batchOwnerId>
+                    <button class="btn button-color d-inline float-right px-3 py-1" data-toggle="modal" data-target="#editBatchModal" onclick="loadBatchOverview()">Edit</button>
+                </cfif>
+
+            <!---if user not logged in  or visitor--->
+            <cfelseif NOT structKeyExists(session, "stLoggedInUser")>
+                <button class="btn button-color px-3 float-right shadow rounded disabled">Enroll</a>
+                
+            <!---if user is a student or any user details having having is been displayed--->
+            <cfelseif structKeyExists(url, "user") OR 
+                    (structKeyExists(session, "stLoggedInUser") AND (session.stLoggedInUser.role EQ 'Student') AND (structKeyExists(url, "batch")) )>
+                <cfif structKeyExists(requestIds, "#batchId#") AND requestIds["#batchId#"] EQ 'Pending'>
+                    <button class="btn button-color float-right d-inline rounded text-light shadow mx-1 disabled">Pending...</button> 
+                <cfelseif structKeyExists(requestIds, "#batchId#") AND requestIds["#batchId#"] EQ 'Approved'>
+                    <small class="alert alert-success mt-2 text-success d-inline float-right p-1 px-2">Enrolled</small> 
+                <cfelse>
+                    <button class="btn button-color float-right d-inline rounded text-light shadow mx-1" onclick="enrollStudent(this)">Enroll</button> 
+                </cfif>
             </cfif>
-        <cfelseif structKeyExists(url, "user") OR (structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student' AND NOT structKeyExists(url, "batch"))>
-            <a href="batchDetails.cfm?batch=<cfoutput>#batchId#</cfoutput>" class="btn button-color px-3 float-right shadow rounded">Details</a>
+        </div>
+        <a href="batchDetails.cfm?batch=<cfoutput>#batchId#</cfoutput>" class="btn button-color px-3 float-right shadow rounded mx-2"
+        <cfif structKeyExists(url, "batch")>
+            hidden
         </cfif>
+        >Details</a>
     </div>
     
     <div class="col-md-12">

@@ -8,29 +8,7 @@ Functionality: It is a header file which is included probably in student section
 <cfif thistag.executionMode EQ 'start'>
 	<!DOCTYPE html>
 	<html lang="en" >
-		<head>
-			<title>FindOnlineTutor</title>
-			
-			<meta charset="utf-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1">
-			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-			<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-			
-			<cfif  structKeyExists(attributes, "scriptPath")>
-				<script src="<cfoutput>#attributes.scriptPath#</cfoutput>"></script>
-			</cfif>
-
-			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-			<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
-			<link href="https://fonts.googleapis.com/css?family=Lora|Sen&display=swap" rel="stylesheet">
-			<link rel="stylesheet" type="text/css" href="<cfoutput>#attributes.stylePath#</cfoutput>">
-
-			
-       		
-
-		</head>
+		<cfinclude  template="../Include/head.cfm">
 
 		<body>
 			<cfif structKeyExists(URL,'logout')>
@@ -52,10 +30,10 @@ Functionality: It is a header file which is included probably in student section
 							<a class="nav-link text-dark" href="../index.cfm">Home</a>
 						</li>
 						<li class="nav-item mx-2">
-							<a class="nav-link text-dark" href="../searchResult.cfm">find Batch</a>
+							<a class="nav-link text-dark" href="../teachers.cfm">Teachers</a>
 						</li>
 						<li class="nav-item mx-2">
-							<a class="nav-link text-dark" href="../teachers.cfm">Teachers</a>
+							<a class="nav-link text-dark" href="../searchResult.cfm">find Batch</a>
 						</li>
 						<cfif structKeyExists(session, "stLoggedInUser") >
 							<li class="nav-item mx-2">

@@ -20,7 +20,7 @@
                             <tr>
                                 <td>#dateFormat(enrolledDateTime)#</td>
                                 <td>#timeFormat(enrolledDateTime)#</td>
-                                <td><a class="text-dark" href="../userDetails.cfm?id=#studentId#">#Student#</a></td>
+                                <td><a class="text-dark" href="userDetails.cfm?user=#userId#">#student#</a></td>
                             </tr>
                     </cfoutput>
                     </tbody>

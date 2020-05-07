@@ -467,7 +467,11 @@ Functionality: This file contains the functions which help to give required serv
 
             <!---getting the batch address--->
             <cfif structKeyExists(session, 'stLoggedInUser') AND batchDetails.overview.batch.batchOwnerId EQ session.stLoggedInUser.userId>
-                <cfset batchDetails.address = databaseServiceObj.getMyAddress(userId = session.stLoggedInUser.UserId)/>
+                <cfif batchDetails.overview.batch.batchType EQ 'online'>
+                    <cfset batchDetails.address = batchDetails.overview.batch.addressLink/>
+                <cfelse>
+                    <cfset batchDetails.address = databaseServiceObj.getMyAddress(userId = session.stLoggedInUser.UserId)/>
+                </cfif>
             <cfelse>
                 <cfif batchDetails.overview.batch.batchType EQ 'online'>
                     <cfset batchDetails.address = batchDetails.overview.batch.addressLink/>
@@ -490,13 +494,18 @@ Functionality: This file contains the functions which help to give required serv
                 <cfthrow detail = "#batchDetails.notification.error#">
             </cfif>
 
-            <cfif structKeyExists(session, 'stLoggedInUser') AND session.stLoggedInUser.role EQ 'Teacher'>
+            <!---getting batch request--->
+            <cfif structKeyExists(session, 'stLoggedInUser') AND session.stLoggedInUser.role EQ 'Teacher' >
                 <cfset batchDetails.request = getBatchRequests(arguments.batchId)/>
                 <cfset batchDetails.enrolledStudent =databaseServiceObj.getEnrolledStudent(batchId=arguments.batchId)/>
             </cfif>
-            <cfif structKeyExists(batchDetails, "request") AND structKeyExists(batchDetails.request, "error")>
+            <cfif (structKeyExists(batchDetails, "request") AND structKeyExists(batchDetails.request, "error"))>
                 <cfthrow detail = "#batchDetails.request.error#">
             </cfif>
+            <cfif (structKeyExists(batchDetails, "enrolledStudent") AND structKeyExists(batchDetails.enrolledStudent, "error"))>    
+                <cfthrow detail = "#batchDetails.enrolledStudent.error#">
+            </cfif>
+
             <cfset batchDetails.feedback = databaseServiceObj.retrieveBatchFeedback(arguments.batchId)/> 
         <cfcatch type="any">
             <cflog  text="getBatchDetailsByID()-> #cfcatch# #cfcatch.detail#">
@@ -638,7 +647,6 @@ Functionality: This file contains the functions which help to give required serv
             <cflog  text="#cfcatch.detail#">
             <cfset requestStatus['error'] = "failed to make a request. Please try after sometime"/>
         <cfelseif isRequested.requests.recordCount GT 0>
-            <cflog  text="error">
             <cfset requestStatus['warning'] = "Already you have requested for this batch. check your request status in your request option"/>
         <cfelseif isRequested.requests.recordCount EQ 0>
             <cfset requestStatus = databaseServiceObj.insertRequest(arguments.batchId, session.stLoggedInUser.userId, "Pending")/>
@@ -683,7 +691,12 @@ Functionality: This file contains the functions which help to give required serv
         <cfif structKeyExists(requestDetailInfo, "error")>
             <cfset updateInfo.error = requestDetailInfo.error/>
         <cfelseif structKeyExists(requestDetailInfo, "requestDetails") AND requestDetailInfo.requestDetails.batchOwnerId EQ session.stLoggedInUser.userID>
-            <cfset updateInfo = databaseServiceObj.updateBatchRequest(arguments.batchRequestId, arguments.requestStatus)/>
+            <cfif arguments.requestStatus EQ 'Rejected'>
+                <cfset updateInfo = databaseServiceObj.deleteBatchRequest(arguments.batchRequestId)/>
+            <cfelse>
+                <cfset updateInfo = databaseServiceObj.updateBatchRequest(arguments.batchRequestId, arguments.requestStatus)/>
+            </cfif>
+            
         </cfif>
         <cfreturn updateInfo/>
     </cffunction>
@@ -714,7 +727,7 @@ Functionality: This file contains the functions which help to give required serv
         <cfset var isEnrolled = false/>
         <cfset var enrolledStudentId = ''/>
         <!---if the user is enrolled to batch--->
-        <cfset checkEnrollment = databaseServiceObj.collectStudentBatch(session.stLoggedInUser.userId)/>
+        <cfset checkEnrollment = databaseServiceObj.getUserBatch(studentId=session.stLoggedInUser.userId)/>
         <!---if error occurred--->
         <cfif structKeyExists(checkEnrollment, "error")>
             <cfset feedbackSubmitInfo.error = "Some error occurred.Please, try after sometime"/>

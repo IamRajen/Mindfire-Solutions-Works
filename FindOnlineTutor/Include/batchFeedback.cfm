@@ -10,7 +10,7 @@
                 #feedback#
             </cfoutput>    
         </p>
-        <a href="userDetails.cfm?user="+<cfoutput>#userId#</cfoutput> id="studentName" class="d-block text-primary mt-3">
+        <a href="userDetails.cfm?user=<cfoutput>#userId#</cfoutput>" id="studentName" class="d-block text-primary mt-3">
             <cfoutput>
                 #student#
             </cfoutput>

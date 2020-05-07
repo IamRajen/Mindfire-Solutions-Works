@@ -24,7 +24,7 @@
                                 <th>#batchRequestId#.</th>
                                 <td>#dateFormat(requestDateTime)#</td>
                                 <td>#timeFormat(requestDateTime)#</td>
-                                <td><a class="text-dark" href="userDetails.cfm?id=#userId#">#student#</a></td>
+                                <td><a class="text-dark" href="userDetails.cfm?user=#userId#">#student#</a></td>
                                 <td>
                                     <cfif requestStatus EQ 'Pending'>
                                         <p class="alert alert-warning p-1 text-center">

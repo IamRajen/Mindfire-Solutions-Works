@@ -8,13 +8,9 @@ Functionality: This file show the search result of teachers for batches.
 <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher'>
     <cflocation  url="/assignments_mindfire/FindOnlineTutor">
 </cfif>
-<cfset isStudent = false/>
-<cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student'>
-    <cfset isStudent = true/>
-</cfif>
+<cfset isStudent = false>
 <!---creating objects of batch service component--->
 <cfset batchServiceObj  = createObject("component","FindOnlineTutor.Components.batchService")/>
-<cfset databaseServiceObj = createObject("component","FindOnlineTutor.Components.databaseService")/>
 
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" profilePath="profile.cfm" scriptPath="Script/searchBatch.js">
 
@@ -22,14 +18,12 @@ Functionality: This file show the search result of teachers for batches.
 
     <!---display the users near by batches--->
     <cfset myNearBatches = batchServiceObj.getNearByBatch(country='' , state='')/>
-    <cfif isStudent>
-        <!---getting the all request made by the user--->
-        <cfset myRequest = batchServiceObj.getMyRequests()/>
-    </cfif>
     
-    <cfif structKeyExists(myNearBatches, "batch") AND 
-            ( (isStudent AND structKeyExists(myRequest, "Requests")) OR (NOT isStudent))>
-        <cfif isStudent>
+    <cfif structKeyExists(myNearBatches, "batch") >
+        <!---if user is a student then we will provide the additional information about enrollment--->
+        <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student'>
+            <cfset isStudent = true/>
+            <cfset myRequest = batchServiceObj.getMyRequests()/>
             <!---if successfully batches are retrieved then those will be displayed here--->
             <cfset requestIds = {}>
             <!---looping through the requests and storing it into the structure for further use--->
@@ -37,6 +31,7 @@ Functionality: This file show the search result of teachers for batches.
                 <cfset requestIds['#batchId#'] = '#requestStatus#'>
             </cfloop>
         </cfif>
+
         <!---filter options will be displayed--->
         <div id="filterDiv" class="row p-3 mt-4">
             <div class="col-md-3">

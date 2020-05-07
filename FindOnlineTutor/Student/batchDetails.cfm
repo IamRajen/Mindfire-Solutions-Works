@@ -3,12 +3,20 @@
     <cfif NOT structKeyExists(url, "batch")>
         <cflocation  url="/assignments_mindfire/FindOnlineTutor">
     </cfif>
+    
     <!---creating object for getting the batch data--->
     <cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
     <!---getting the information required for this page--->
     <cfset batchInfo = batchServiceObj.getBatchDetailsById(url.batch)/>
     
     <div class="container">
+        <cfset myRequest = batchServiceObj.getMyRequests()/>
+        <!---if successfully batches are retrieved then those will be displayed here--->
+        <cfset requestIds = {}>
+        <!---looping through the requests and storing it into the structure for further use--->
+        <cfloop query="myRequest.Requests">
+            <cfset requestIds['#batchId#'] = '#requestStatus#'>
+        </cfloop>
         <!---if batch information is retrieved succesfully then this if block gets executed--->
         <h1 class="d-inline text-info"><cfoutput>#batchInfo.overview.batch.batchName#</cfoutput><span id="batchType" class="text-danger h6 ml-2"><cfoutput>#batchInfo.overview.batch.batchType#</cfoutput></span></h1>
         <hr>

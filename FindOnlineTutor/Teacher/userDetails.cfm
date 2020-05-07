@@ -11,7 +11,7 @@ Functionality: A teacher page containing the detail information about the teache
 
 <cfset userDetails = profileServiceObj.getUserDetails(userId = url.user)>
 
-<cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" scriptPath="Script/searchBatch.js">
+<cf_header homeLink="../index.cfm" logoPath="../Images/logo.png" stylePath="../Styles/style.css">
 
 <div class="container">
     <cfif structKeyExists(userDetails, "error")>
@@ -34,7 +34,7 @@ Functionality: A teacher page containing the detail information about the teache
         <div class="p-5">
             <h3 class="text-secondary">Overview:</h3>
             <cfoutput query="userDetails.overview.user">
-                <cfinclude  template="Include/userOverview.cfm">
+                <cfinclude  template="../Include/userOverview.cfm">
             </cfoutput>
         </div>
 
@@ -50,19 +50,17 @@ Functionality: A teacher page containing the detail information about the teache
                             Alternative Address : 
                         </cfif>
                     </small>
-                    <cfinclude  template="Include/address.cfm">
+                    <cfinclude  template="../Include/address.cfm">
                 </cfoutput>
             </div>
         </div>
 
-        <cfif (structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher') OR userDetails.overview.user.isTeacher>
-            <div class="p-5">
-                <h3 class="text-secondary">Batches:</h3>
-                <cfoutput query="userDetails.batch.batches">
-                    <cfinclude  template="Include/batchOverview.cfm">
-                </cfoutput>
-            </div>
-        </cfif>
+        <div class="p-5">
+            <h3 class="text-secondary">Batches:</h3>
+            <cfoutput query="userDetails.batch.batches">
+                <cfinclude  template="../Include/batchOverview.cfm">
+            </cfoutput>
+        </div>
     </cfif>
 </div>
 </cf_header>

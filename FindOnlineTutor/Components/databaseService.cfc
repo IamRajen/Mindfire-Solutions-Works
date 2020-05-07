@@ -540,8 +540,12 @@ Functionality: This file has services/functions related to the data in the datab
                     </cfif>
                 WHERE 
                     <cfif structKeyExists(arguments, "teacherId")>
-                        batchOwnerId = <cfqueryparam value=#arguments.teacherId# cfsqltype='cf_sql_bigint'>
+                        [dbo].[Batch].[batchOwnerId] = <cfqueryparam value=#arguments.teacherId# cfsqltype='cf_sql_bigint'>
                     <cfelseif structKeyExists(arguments, "studentId")>
+                        <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher'>
+                            <cflog  text="error">
+                            [dbo].[Batch].[batchOwnerId] = <cfqueryparam value="#session.stLoggedInUser.userId#" cfsqltype='cf_sql_bigint'> AND
+                        </cfif>
                         studentId = <cfqueryparam value=#arguments.studentId# cfsqltype='cf_sql_bigint'>
                     </cfif>
                 ORDER BY 
@@ -1258,6 +1262,25 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn updateInfo>
     </cffunction>
 
+    <cffunction  name="deleteBatchRequest" access="public" output="false" returntype="struct">
+        <cfargument  name="batchRequestId" type="numeric" required="true">
+        <cfset var deleteBatchRequestInfo = {}>
+        <cftry>
+            <cfquery>
+                DELETE FROM [dbo].[BatchRequest]
+                WHERE       batchRequestId = <cfqueryparam value="#arguments.batchRequestId#" cfsqltype='cf_sql_bigint'>
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: deleteBatchRequest()-> #cfcatch# #cfcatch.detail#">
+            <cfset deleteBatchRequestInfo.error = "some error occurred.Please try after sometimes"/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(deleteBatchRequestInfo, "error")>
+            <cfset deleteBatchRequestInfo.update = true/>
+        </cfif>
+        <cfreturn deleteBatchRequestInfo>
+    </cffunction>
+
     <!---get the request details by it's request id--->
     <cffunction  name="getRequestDetails" access="public" output="false" returntype="struct">
         <!---arguments--->
@@ -1311,11 +1334,13 @@ Functionality: This file has services/functions related to the data in the datab
                 WHERE    
                     <cfif structKeyExists(arguments, "batchId")>
                             [dbo].[BatchEnrolledStudent].[batchId] = <cfqueryparam value="#arguments.batchId#" cfsqltype='cf_sql_bigint'>
+                ORDER BY    [dbo].[BatchEnrolledStudent].[enrolledDateTime]
                     <cfelseif structKeyExists(arguments, "teacherId")>
                             [dbo].[Batch].[batchOwnerId] = <cfqueryparam value="#arguments.teacherId#" cfsqltype='cf_sql_bigint'>
-                    </cfif> 
                 GROUP BY    [dbo].[BatchEnrolledStudent].[studentId]
                 ORDER BY    COUNT([dbo].[BatchEnrolledStudent].[studentId]) DESC
+                    </cfif>
+                
             </cfquery>
         <cfcatch type="any">
             <cflog  text="databaseService getEnrolledStudent(): #cfcatch# #cfcatch.detail#">
