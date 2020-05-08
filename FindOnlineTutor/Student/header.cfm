@@ -5,6 +5,17 @@ Created In: 26th Apr 2020
 Created By: Rajendra Mishra.
 Functionality: It is a header file which is included probably in student section pages.
 --->
+
+<cfset batchServiceObject = createObject("component","FindOnlineTutor.Components.batchService")/>
+<cfset myNotification = batchServiceObject.getMyNotification()/>
+<cfset newNotification = 0/>
+<cfif NOT structKeyExists(myNotification, "error")>
+	<cfloop query="myNotification.Notifications">
+		<cfif NOT #notificationStatus#>
+			<cfset newNotification = newNotification+1/>
+		</cfif>
+	</cfloop>
+</cfif>
 <cfif thistag.executionMode EQ 'start'>
 	<!DOCTYPE html>
 	<html lang="en" >
@@ -27,29 +38,29 @@ Functionality: It is a header file which is included probably in student section
 					<div class="collapse navbar-collapse " id="navbarSupportedContent">
 					<ul class="navbar-nav ml-auto">
 						<li class="nav-item mx-2">
-							<a class="nav-link text-dark" href="../index.cfm">Home</a>
+							<a class="nav-link" href="../index.cfm">Home</a>
 						</li>
 						<li class="nav-item mx-2">
-							<a class="nav-link text-dark" href="../teachers.cfm">Teachers</a>
+							<a class="nav-link" href="../teachers.cfm">Teachers</a>
 						</li>
 						<li class="nav-item mx-2">
-							<a class="nav-link text-dark" href="../searchResult.cfm">find Batch</a>
+							<a class="nav-link" href="../searchResult.cfm">find Batch</a>
 						</li>
-						<cfif structKeyExists(session, "stLoggedInUser") >
-							<li class="nav-item mx-2">
-								<a class="nav-link text-dark" href="batches.cfm">Your Batch</a>
-							</li>
-                            
-							<li class="nav-item mx-2">
-								<a class="nav-link text-dark" href="notification.cfm">Notification</a>
-							</li>
-							<li class="nav-item mx-2">
-								<a class="nav-link text-dark" href="../profile.cfm">Profile</a>
-							</li>
-							<li class="nav-item mx-2">
-								<a class="btn button-color shadow text-white" href="/assignments_mindfire/FindOnlineTutor/index.cfm?logout">Logout</a>
-							</li>
-						</cfif>
+						<li class="nav-item mx-2">
+							<a class="nav-link" href="batches.cfm">Your Batch</a>
+						</li>
+						<li class="nav-item mx-2">
+							<cfif newNotification GT 0>
+								<span class="notification-count float-right"><cfoutput>#newNotification#</cfoutput></span>
+							</cfif>
+							<a class="nav-link d-inline-block pr-0" href="notification.cfm">Notification</a>
+						</li>
+						<li class="nav-item mx-2">
+							<a class="nav-link" href="../profile.cfm">Profile</a>
+						</li>
+						<li class="nav-item mx-2">
+							<a class="btn button-color shadow text-white" href="/assignments_mindfire/FindOnlineTutor/index.cfm?logout">Logout</a>
+						</li>
 					
 					</ul>
 					</div>

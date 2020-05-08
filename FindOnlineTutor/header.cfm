@@ -5,6 +5,31 @@ Created In: 28th Mar 2020
 Created By: Rajendra Mishra.
 Functionality: It is a header file which is included probably in every pages.
 --->
+<cfset batchServiceObject = createObject("component","FindOnlineTutor.Components.batchService")/>
+<!---if user is a Teacher--->
+<cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher'>
+	<cfset myRequests = batchServiceObject.getMyRequests()/>
+	<cfset pendingRequest = 0/>
+	<cfif NOT structKeyExists(myRequests, "error")>
+		<cfloop query="myRequests.requests">
+			<cfif #requestStatus# EQ 'Pending'>
+				<cfset pendingRequest = pendingRequest+1/>
+			</cfif>
+		</cfloop>
+	</cfif>
+<!---if user is a student--->
+<cfelseif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student'>
+	<cfset myNotification = batchServiceObject.getMyNotification()/>
+	<cfset newNotification = 0/>
+	<cfif NOT structKeyExists(myNotification, "error")>
+		<cfloop query="myNotification.Notifications">
+			<cfif NOT #notificationStatus#>
+				<cfset newNotification = newNotification+1/>
+			</cfif>
+		</cfloop>
+	</cfif>
+</cfif>
+
 <cfif thistag.executionMode EQ 'start'>
 	<!DOCTYPE html>
 	<html lang="en" >
@@ -29,31 +54,34 @@ Functionality: It is a header file which is included probably in every pages.
 					<div class="collapse navbar-collapse " id="navbarSupportedContent">
 					<ul class="navbar-nav ml-auto">
 						<li class="nav-item mx-2">
-							<a class="nav-link text-dark" href="index.cfm">Home</a>
+							<a class="nav-link" href="index.cfm">Home</a>
 						</li>
 						<li class="nav-item mx-2">
-							<a class="nav-link text-dark" href="teachers.cfm">Teachers</a>
+							<a class="nav-link" href="teachers.cfm">Teachers</a>
 						</li>
 						<!---if the user is not a teacher but student or visitor--->
 						<cfif NOT structKeyExists(session, "stLoggedInUser") OR session.stLoggedInUser.role EQ 'Student'>
 							<li class="nav-item mx-2">
-								<a class="nav-link text-dark" href="searchResult.cfm">find Batch</a>
+								<a class="nav-link" href="searchResult.cfm">find Batch</a>
 							</li>
 						</cfif>
 						
 						<!---if user is logged in--->
 						<cfif structKeyExists(session, "stLoggedInUser") >
 							<li class="nav-item mx-2">
-								<a class="nav-link text-dark" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/batches.cfm">Your Batch</a>
+								<a class="nav-link" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/batches.cfm">Your Batch</a>
 							</li>
 							
 							<!---teacher's facilities start here--->
 							<cfif session.stLoggedInUser.role EQ 'Teacher'>
 								<li class="nav-item mx-2">
-									<a class="nav-link text-dark" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/request.cfm">Requests<span class="text-warning">*</span></a>
+									<cfif pendingRequest GT 0>
+										<span class="notification-count float-right"><cfoutput>#pendingRequest#</cfoutput></span>
+									</cfif>
+									<a class="nav-link d-inline-block pr-0" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/request.cfm">Requests</a>
 								</li>
 								<li class="nav-item mx-2">
-									<a class="nav-link text-dark" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/students.cfm">Students</a>
+									<a class="nav-link" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/students.cfm">Students</a>
 								</li>
 							</cfif>
 							<!---teacher's faclities end here--->
@@ -62,14 +90,17 @@ Functionality: It is a header file which is included probably in every pages.
 							<!---student's faclities starts here--->
 							<cfif session.stLoggedInUser.role EQ 'Student'>
 								<li class="nav-item mx-2">
-									<a class="nav-link text-dark" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/notification.cfm">Notification</a>
+									<cfif newNotification GT 0>
+										<span class="notification-count float-right"><cfoutput>#newNotification#</cfoutput></span>
+									</cfif>
+									<a class="nav-link d-inline-block pr-0" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/notification.cfm">Notification</a>
 								</li>
 								
 							</cfif>
 							<!---student's faclities ends here--->
 
 							<li class="nav-item mx-2">
-								<a class="nav-link text-dark" href="profile.cfm">Profile</a>
+								<a class="nav-link" href="profile.cfm">Profile</a>
 							</li>
 							<li class="nav-item mx-2">
 								<a class="btn button-color shadow text-white" href="/assignments_mindfire/FindOnlineTutor/index.cfm?logout">Logout</a>
@@ -77,7 +108,7 @@ Functionality: It is a header file which is included probably in every pages.
 						<!---if user is not logged in--->
 						<cfelse>
 							<li class="nav-item mx-2">
-								<a class="nav-link text-dark" href="login.cfm">LogIn</a>
+								<a class="nav-link" href="login.cfm">LogIn</a>
 							</li>
 							<li class="nav-item mx-2">
 								<a class="btn button-color shadow text-white" href="signup.cfm">Register</a>

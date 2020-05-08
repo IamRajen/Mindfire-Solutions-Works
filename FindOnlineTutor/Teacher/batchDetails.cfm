@@ -1,6 +1,6 @@
 <cf_header homeLink="../index.cfm" logoPath="../Images/logo.png" stylePath="../Styles/style.css" scriptPath="../Script/editBatchDetails.js">
 
-    <cfif NOT structKeyExists(url, "batch")>
+    <cfif NOT structKeyExists(url, "batch") OR url.batch EQ ''>
         <cflocation  url="/assignments_mindfire/FindOnlineTutor">
     </cfif>
     <!---creating object for getting the batch data--->

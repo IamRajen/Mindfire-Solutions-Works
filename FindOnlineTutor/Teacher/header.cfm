@@ -5,6 +5,15 @@ Created In: 15th Apr 2020
 Created By: Rajendra Mishra.
 Functionality: It is a header file which is included probably in Teacher section pages.
 --->
+<cfset myRequests = batchServiceObject.getMyRequests()/>
+<cfset pendingRequest = 0/>
+<cfif NOT structKeyExists(myRequests, "error")>
+	<cfloop query="myRequests.requests">
+		<cfif #requestStatus# EQ 'Pending'>
+			<cfset pendingRequest = pendingRequest+1/>
+		</cfif>
+	</cfloop>
+</cfif>
 <cfif thistag.executionMode EQ 'start'>
 	<!DOCTYPE html>
 	<html lang="en" >
@@ -27,23 +36,27 @@ Functionality: It is a header file which is included probably in Teacher section
 					<div class="collapse navbar-collapse " id="navbarSupportedContent">
 					<ul class="navbar-nav ml-auto">
 						<li class="nav-item mx-2">
-							<a class="nav-link text-dark" href="../index.cfm">Home</a>
+							<a class="nav-link" href="../index.cfm">Home</a>
 						</li>
 						<li class="nav-item mx-2">
-							<a class="nav-link text-dark" href="../teachers.cfm">Teachers</a>
+							<a class="nav-link" href="../teachers.cfm">Teachers</a>
 						</li>
 						<cfif structKeyExists(session, "stLoggedInUser") >
 							<li class="nav-item mx-2">
-								<a class="nav-link text-dark" href="batches.cfm">Your Batch</a>
+								<a class="nav-link" href="batches.cfm">Your Batch</a>
+							</li>
+
+							<li class="nav-item mx-2">
+								<cfif pendingRequest GT 0>
+									<span class="notification-count float-right"><cfoutput>#pendingRequest#</cfoutput></span>
+								</cfif>
+								<a class="nav-link d-inline-block pr-0" href="request.cfm">Requests<span class="text-warning">*</span></a>
 							</li>
 							<li class="nav-item mx-2">
-								<a class="nav-link text-dark" href="request.cfm">Requests<span class="text-warning">*</span></a>
+								<a class="nav-link" href="students.cfm">Students</a>
 							</li>
 							<li class="nav-item mx-2">
-								<a class="nav-link text-dark" href="students.cfm">Students</a>
-							</li>
-							<li class="nav-item mx-2">
-								<a class="nav-link text-dark" href="../profile.cfm">Profile</a>
+								<a class="nav-link" href="../profile.cfm">Profile</a>
 							</li>
 							<li class="nav-item mx-2">
 								<a class="btn button-color shadow text-white" href="/assignments_mindfire/FindOnlineTutor/index.cfm?logout">Logout</a>

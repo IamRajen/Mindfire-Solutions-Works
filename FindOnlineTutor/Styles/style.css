@@ -107,3 +107,14 @@ a:hover{
   -o-background-size: cover;
   background-size: cover;
 }
+.notification-count
+{
+  padding: 3px 7px 3px 7px;
+  background: rgba(0, 0, 0, 0.651);
+  color: #fff;
+  font-weight: bold;
+  border-radius: 10px;
+  top: 7px;
+  left: 23px;
+  font-size: 8px;
+}

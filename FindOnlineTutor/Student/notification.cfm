@@ -14,14 +14,22 @@ Functionality: It is a cfm file containing the all notification .
     <div class="container">
         <!---if warning key is present then --->
         <cfif structKeyExists(notificationInfo, "warning")>
-
+            <p class="m-5 py-5 text-center alert alret-warning">
+                <cfoutput>
+                    #notificationInfo.warning#
+                </cfoutput>
+            </p>
         </cfif>
         <!---if some error ocuured while retrieving the notifiaction--->
         <cfif structKeyExists(notificationInfo, "error")>
-
+            <p class="m-5 py-5 text-center alert alret-danger">
+                <cfoutput>
+                    #notificationInfo.error#
+                </cfoutput>
+            </p>
         </cfif>
     </div>
-
+    
     <div class="modal fade" id="showNotification">
         <div class="modal-dialog">
             <div class="modal-content">
