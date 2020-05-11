@@ -10,6 +10,7 @@ Functionality: This file contains the functions which help to give required serv
 
     <cfset patternvalidationObj = createObject("component","patternValidation")/>
     <cfset databaseServiceObj = createObject("component","databaseService")/>
+    <cfset myFunctionObj = createObject("component","myFunction")/>
 
     <!---function to create a new batch--->
     <cffunction  name="createBatch" access="remote" output="false" returntype="struct" returnformat="json">
@@ -599,6 +600,7 @@ Functionality: This file contains the functions which help to give required serv
     </cffunction>
 
 
+
     <!---function to delete notification from notification table using it's iD--->
     <cffunction  name="deleteNotification" access="remote" output="false" returntype="struct" returnformat="json">
         <!---arguments--->
@@ -757,4 +759,42 @@ Functionality: This file contains the functions which help to give required serv
         <cfset var retrieveBatchFeedbackInfo = databaseServiceObj.retrieveBatchFeedback(arguments.batchId)/>
         <cfreturn retrieveBatchFeedbackInfo>
     </cffunction>
+
+    <!---function to get the searched result of batch--->
+    <cffunction  name="getSearchBatches" output="true" access="remote" returntype="struct" returnformat="json">
+        <!---arguments--->
+        <cfargument  name="searchedQuery" type="string" required="true">
+        <!---get the list of words out of the searchQuery--->
+        <cfset var searchList = myFunctionObj.removeStopWords(arguments.searchedQuery)/>
+        <!---getting the batches from database--->
+        <cfset var batch = databaseServiceObj.getSearchResult(searchList)/>
+        <!---creating a structure for storing the batches as per rank--->
+        <cfset var batches = {}>
+        <!---if no error ocuurred it will loop the batch structure--->
+        <cfif NOT structKeyExists(batch, "error")>
+            <!---looping the batches retrived from the database object w.r.t words--->
+            <cfloop collection="#batch#" item="word">
+                <!---initializing a variable for current row--->
+                <cfset var row = 1/>
+                <!---looping the query result as per keys--->
+                <cfloop query="#batch[word]#">
+                    <!---if batch in already present then it will increase the rank of that batch--->
+                    <cfif structKeyExists(batches, '#batchId#')>
+                        <cfset batches['#batchId#'].rank = (batches['#batchId#'].rank)+1>
+                    <!---else it will insert the batch with batchId as a key--->
+                    <cfelseif NOT structKeyExists(batches, '#batchId#')>
+                        <cfset structInsert(batches, '#batchId#', {batch:queryGetRow(batch[word],row) , rank:1} )>
+                    </cfif>
+                    <cfset row = row+1/>
+                </cfloop>
+            </cfloop>
+            <cfif NOT structIsEmpty(batches)>
+                <cfset batches.rankedBatchId = structSort(batches, 'numeric', 'DESC', 'rank')/>
+            </cfif>
+        <cfelse>
+            <cfset batches.error = "some error occurred. Please, try after sometime"/>
+        </cfif>
+        <cfreturn batches>
+    </cffunction>
+
 </cfcomponent>

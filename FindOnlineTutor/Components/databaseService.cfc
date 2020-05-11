@@ -1417,4 +1417,30 @@ Functionality: This file has services/functions related to the data in the datab
         </cfif>
         <cfreturn getUserInfo/>
     </cffunction>
+
+    <!---function to get searched result--->
+    <cffunction  name="getSearchResult" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="searchQuery" type="array" required="true">
+        <!---structure for the function information--->
+        <cfset var getSearchResultInfo={}/>
+        <!---variable to store the query result--->
+        <cfset batch = ''/>
+        <cftry>
+            <cfloop from="1" to="#arrayLen( searchQuery )#" index="i">
+                <cfquery name="batch">
+                        SELECT  *
+                        FROM    [dbo].[Batch]
+                        WHERE   batchName LIKE '%#searchQuery[i]#%' OR batchDetails LIKE '%#searchQuery[i]#%'
+                        ORDER BY DIFFERENCE(batchName, '#searchQuery[i]#') desc;
+                </cfquery>
+            <cfset getSearchResultInfo['#searchQuery[i]#'] = batch/>
+            </cfloop>
+        <cfcatch type="any">
+            <cflog  text="#cfcatch# #cfcatch.detail#">
+        </cfcatch>
+        </cftry>
+        <cfreturn getSearchResultInfo>
+    </cffunction>
 </cfcomponent>
+
