@@ -10,24 +10,9 @@ Functionality: This is the homepage.
 
 <div class="container-fuild">
 
-	<div class='p-3 mx-2 bg-light'>
-		<cfinclude  template="Include/searchForm.cfm">
-	</div>
+	<cfinclude  template="Include/searchForm.cfm">
 
-	<cfset searchQuery = ''/>
-	<cfif structKeyExists(url, "query") AND url.query NEQ ''>
-		<cfset searchQuery = url.QUERY/>
-		<cfset searchedBatches = batchServiceObj.getSearchBatches(url.query)>
-	</cfif>
-
-	<cfif structIsEmpty(searchedBatches)>
-		<p class='w-100 p-5 mx-3 alert alert-info'>Sorry no batches found</p>
-	<cfelse>
-		<cfloop array="#searchedBatches.rankedBatchId#" index="batchId">
-			<cfdump var = '#searchedBatches[batchId]#'>
-		</cfloop>
-	</cfif>
-
+	<hr>
 	<cfif structKeyExists(session, "stloggedinUser")>
 		<cfif session.stloggedinUser.role EQ 'Teacher'>
 			<!---the teacher includes will be included--->

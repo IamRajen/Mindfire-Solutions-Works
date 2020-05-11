@@ -44,7 +44,7 @@ Functionality: It is a header file which is included probably in student section
 							<a class="nav-link" href="../teachers.cfm">Teachers</a>
 						</li>
 						<li class="nav-item mx-2">
-							<a class="nav-link" href="../searchResult.cfm">find Batch</a>
+							<a class="nav-link" href="../searchResult.cfm">Find Batch</a>
 						</li>
 						<li class="nav-item mx-2">
 							<a class="nav-link" href="batches.cfm">Your Batch</a>

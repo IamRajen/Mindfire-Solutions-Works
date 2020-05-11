@@ -89,6 +89,17 @@ canvas
 {
   border-radius: 25px;
 }
+
+.search-bar{
+  border-radius: 25px 0px 0px 25px;
+  padding-left: 30px;
+}
+.search-button
+{
+  border-radius: 0px 25px 25px 0px;
+  padding: 8px 10px;
+  background-color: beige;
+}
 a:hover{
   text-decoration: none;
 }
@@ -100,13 +111,7 @@ a:hover{
 {
   display: none;
 }
-.search-background {
-  background: url("../Images/searchBackground.jpg") no-repeat center center fixed; 
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
+
 .notification-count
 {
   padding: 3px 7px 3px 7px;

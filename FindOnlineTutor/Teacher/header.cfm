@@ -5,6 +5,8 @@ Created In: 15th Apr 2020
 Created By: Rajendra Mishra.
 Functionality: It is a header file which is included probably in Teacher section pages.
 --->
+
+<cfset batchServiceObject = createObject("component","FindOnlineTutor.Components.batchService")/>
 <cfset myRequests = batchServiceObject.getMyRequests()/>
 <cfset pendingRequest = 0/>
 <cfif NOT structKeyExists(myRequests, "error")>
