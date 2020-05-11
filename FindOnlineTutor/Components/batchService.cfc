@@ -22,6 +22,9 @@ Functionality: This file contains the functions which help to give required serv
         <cfargument  name="batchEndDate" type="string" required="true">
         <cfargument  name="batchCapacity" type="string" required="true">
         <cfargument  name="batchFee" type="string" required="true">
+        <cfargument  name="batchTag" type="any" required="true">
+
+        <cflog  text="#arguments.batchTag#">
 
         <!---creating a variable for returning the msg as per required--->
         <cfset var errorMsgs["validatedSuccessfully"] = true/>

@@ -52,7 +52,7 @@ Functionality: It is a header file which is included probably in Teacher section
 								<cfif pendingRequest GT 0>
 									<span class="notification-count float-right"><cfoutput>#pendingRequest#</cfoutput></span>
 								</cfif>
-								<a class="nav-link d-inline-block pr-0" href="request.cfm">Requests<span class="text-warning">*</span></a>
+								<a class="nav-link d-inline-block pr-0" href="request.cfm">Requests</a>
 							</li>
 							<li class="nav-item mx-2">
 								<a class="nav-link" href="students.cfm">Students</a>

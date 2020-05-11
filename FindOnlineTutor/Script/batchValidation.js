@@ -8,11 +8,12 @@ Functionality: This javascript file helps the batch page to validate and create 
 
 //Initiatization of credential
 var inputFields=new Map();
-
+var batchTag = Array();
 //pattern variable declared here
 var patternName=/^[A-Za-z ]+$/;
 var patternNumber=/^[0-9]+$/;
 var patternText=/^[ A-Za-z0-9_@./&+:-]*$/;
+var tagId = 1;
 
 $(document).ready(function()
 {
@@ -24,6 +25,7 @@ $(document).ready(function()
     inputFields.set("batchEndDate",{id:"batchEndDate", errorMsg:"Select a end date", value:""});
     inputFields.set("batchCapacity",{id:"batchCapacity", errorMsg:"Enter the batch capacity", value:""});
     inputFields.set("batchFee",{id:"batchFee", errorMsg:"Enter the batch fee", value:""});
+    inputFields.set("batchTag", {id:"batchTag", errorMsg:''})
 
     $("#newBatch").submit(function(e){
         e.preventDefault();
@@ -62,7 +64,8 @@ $(document).ready(function()
                         "batchStartDate": $("#batchStartDate").val(),
                         "batchEndDate": $("#batchEndDate").val(),
                         "batchCapacity": $("#batchCapacity").val(),
-                        "batchFee": $("#batchFee").val()
+                        "batchFee": $("#batchFee").val(),
+                        "batchTag": JSON.stringify(batchTag)
                     },
                 success: function(error) {
                     errorMsgs=JSON.parse(error);
@@ -246,4 +249,51 @@ function checkCapacityFee(element)
         return;
     }
     setSuccessBorder(object);
+}
+
+function addTag()
+{
+    var tag = $.trim($("#batchTag").val());
+    var object = inputFields.get("batchTag");
+    if(isEmpty(object))
+    {
+        setSuccessBorder(object)
+        return;
+    }
+    if(!isValidPattern(tag, patternName))
+    {
+        object.errorMsg = "Only alphabets allowed";
+        setErrorBorder(object);
+        return;
+    }
+    if(tag.length>20)
+    {
+        object.errorMsg = "Must be only of 20 characters long";
+        setErrorBorder(object);
+        return;
+    }
+    if(batchTag.includes(tag))
+    {
+        object.errorMsg="Value already exists";
+        setErrorBorder(object);
+        return;
+    }
+    setSuccessBorder(object);
+    batchTag.push(tag);
+    var displayTag ='<div class="alert alert-info p-1 m-1">'+
+                        '<small class="text-center">'+tag+'</small>'+
+                        '<button type="button" class="close ml-1" onclick="deleteTag(this)">&times;</button>'+
+                    '</div>'
+    $("#tagDiv").append(displayTag);
+    $("#batchTag").val('');
+}
+
+function deleteTag(button)
+{
+    var tagSmall = $(button).siblings('small')[0];
+    const index = batchTag.indexOf($(tagSmall).text());
+    if (index > -1) {
+        batchTag.splice(index, 1);
+    }
+    $(button).parent().remove();
 }

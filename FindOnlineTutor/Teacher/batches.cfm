@@ -15,7 +15,7 @@ Functionality: It is a batch page which contains all the related information for
     <div id="batchDiv" class="m-3">
         <cfif structKeyExists(batchInfo, "error")>
             <div class="alert alert-danger pt-3 pb-3 rounded-top">
-                <p class="text-danger text-center">#batchInfo.error#</p>
+                <p class="text-danger text-center"><cfoutput>#batchInfo.error#</cfoutput></p>
             </div>
         <cfelseif batchInfo.batches.recordCount EQ 0>
             <div class="alert alert-secondary pt-5 pb-5 rounded-top">
@@ -29,34 +29,7 @@ Functionality: It is a batch page which contains all the related information for
             <hr>
             <cfoutput query="batchInfo.batches">
                 <cfinclude  template="../Include/batchOverview.cfm">
-            <!---
-                <a href="batchesDetails.cfm?id=#batchId#" class="row m-3 p-3 shadow bg-white rounded">
-                    <div class="col-md-12 border-bottom pb-2">
-                        <h3 class=" text-dark d-inline">#batchName#<span class="text-info h6 ml-2">#batchType#</span></h3>
-                        <small class="bg-danger float-right d-inline rounded p-1 text-light mx-1">Request</small>
-                    </div>
-                    
-                    <div class="col-md-12">
-                        <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Description: </span>#batchDetails#</p>
-                    </div> 
-                    <div class="col-md-4">
-                        <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Start Date: </span>#startDate#</p>
-                    </div> 
-                    <div class="col-md-4">
-                        <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">End Date: </span>#endDate#</p>
-                    </div> 
-                    <div class="col-md-4">
-                        <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Batch Capacity: </span>#capacity#</p>
-                    </div> 
-                    <div class="col-md-4">
-                        <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Enrolled: </span>#enrolled#</p>
-                    </div> 
-                    <div class="col-md-4">
-                        <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Fee: </span>#fee#</p>
-                    </div> 
-                    
-                </a>--->
-            </cfoutput>
+           </cfoutput>
         </cfif>
     </div>
 
@@ -103,6 +76,21 @@ Functionality: It is a batch page which contains all the related information for
                                 <textarea class="form-control" rows="5" id="batchDetails" onblur="checkBatchDetails(this)"></textarea>
                                 <span class="text-danger small float-left"></span>
                             </div>
+                        </div>
+
+                        <!---batch tag names section--->
+                        <div class="row m-3">
+                            <small class='alert alert-info py-2 text-center text-info'>Tag names helps in improves the higher chances to be searched</small> 
+                            <label class="text-info w-100" for="batchDetail">Batch Tags:<span class="text-danger">*</span></label>
+                            <div class="col-md-8">
+                                <input type="text" id="batchTag" name="batchTag" placeholder="Tags" class="form-control d-block">
+                                <span class="text-danger small float-left"></span>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="button" class="btn btn-info px-4" value="Add" onClick="addTag()">
+                            </div>
+                        </div>
+                        <div id="tagDiv" class="row m-3">
                         </div>
                     
                         <!---Batch Start date End date--->
