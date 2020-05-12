@@ -8,6 +8,7 @@ Functionality: This javascript file helps to edit the batch information like tim
 
 //pattern variable declared here
 var patternName=/^[A-Za-z ]+$/;
+var patternTag = /^[A-Za-z0-9 ]+$/;
 var patternNumber=/^[0-9]+$/;
 var patternText=/^[ A-Za-z0-9_@./&+:-]*$/;
 var patternTime = /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/;
@@ -16,6 +17,7 @@ var patternLink = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9
 //all maps are declared here...!!
 var inputOverview = new Map();
 var inputTiming = new Map();
+var inputBatchTagObj = new Object();
 
 $(document).ready(function(){
     //initializing the batch overview fields..
@@ -27,6 +29,8 @@ $(document).ready(function(){
     inputOverview.set("editBatchCapacity",{id:"editBatchCapacity", errorMsg:""});
     inputOverview.set("editBatchFee",{id:"editBatchFee", errorMsg:""});
 
+    inputBatchTagObj = {id:"batchTag", errorMsg:""}
+    
     
     $("#editBatchOverview").submit(function(e)
     {
@@ -340,59 +344,7 @@ $(document).ready(function(){
             });
         }
         
-    });
-
-    $("#submitFeedback").click(function()
-    {
-        var batchId = $("#batchId").text();
-        var feedback = $("#feedback").val();
-        var rating = 4;
-        $.ajax({
-            type:"POST",
-            url:"Components/batchService.cfc?method=submitFeedback",
-            cache: false,
-            timeout: 2000,
-            error: function(){
-                swal({
-                    title: "Failed to add Feedback!!",
-                    text: "Some error occured. Please try after sometime",
-                    icon: "error",
-                    button: "Ok",
-                });
-            },
-            data:{
-                "batchId" : batchId,
-                "feedback" : feedback,
-                "rating" : rating
-            },
-            success: function(submitFeedbackInfo) 
-            {   
-                submitFeedbackInfo = JSON.parse(submitFeedbackInfo)
-                if(submitFeedbackInfo.hasOwnProperty('ERROR'))
-                {
-                    //show error msg
-                    swal({
-                        title: "Failed to Submit!!",
-                        text: submitFeedbackInfo.error,
-                        icon: "error",
-                        button: "Ok",
-                    });
-                }
-                else if(submitFeedbackInfo.hasOwnProperty('INSERTFEEDBACK') && submitFeedbackInfo.INSERTFEEDBACK)
-                {
-                    //refresh the feedback column
-                    swal({
-                        title: "Successfully Submitted!!",
-                        text: "successfully submitted your feedback",
-                        icon: "success",
-                        button: "Ok",
-                    });
-                    $("#feedback").val('');
-                    retrieveFeedback();
-                }
-            }
-        });
-    });
+    }); 
 
 });
 
@@ -1035,3 +987,116 @@ function retrieveFeedback()
     });
 }
 
+function addTag()
+{
+    var batchId = $("#batchId").text();
+    var tag = $.trim($('#batchTag').val());
+    if(tag == '')
+    {
+        setSuccessBorder(inputBatchTagObj)
+        return;
+    }
+    if(!isValidPattern(tag, patternTag))
+    {
+        inputBatchTagObj.errorMsg = "Only alphabets and number allowed";
+        setErrorBorder(inputBatchTagObj);
+        return;
+    }
+    if(tag.length>30)
+    {
+        inputBatchTagObj.errorMsg = "Must be only of 30 characters long";
+        setErrorBorder(inputBatchTagObj);
+        return;
+    }
+    $.ajax({
+        type:"POST",
+        url:"../Components/batchService.cfc?method=insertBatchTag",
+        cache: false,
+        timeout: 2000,
+        error: function(){
+            swal({
+                title: "Failed to add TAG!!",
+                text: "Some error occured. Please try after sometime",
+                icon: "error",
+                button: "Ok",
+            });
+        },
+        data:{
+            "batchId" : batchId,
+            "tag" : tag
+        },
+        success: function(insertTag) 
+        {   
+            insertTag = JSON.parse(insertTag);
+            if(insertTag.hasOwnProperty('WARNING'))
+            {
+                swal({
+                    title: insertTag.WARNING,
+                    icon: "warning",
+                    button: "Ok",
+                });
+            }
+            else if(insertTag.hasOwnProperty('ERROR'))
+            {
+                //show error msg
+                swal({
+                    title: "Failed to Add!!",
+                    text: insertTag.error,
+                    icon: "error",
+                    button: "Ok",
+                });
+            }
+            else
+            {
+                var divTag = '<div class="p-1 m-1 alert alert-info rounded d-inline-block tag">'+
+                                '<small id="'+insertTag.BATCHTAGID+'" class="text-info mx-1">'+$("#batchTag").val()+'</small>'+
+                                '<button type="button" class="close mx-1" onclick="deleteTag(this)">&times;</button>'+
+                            '</div>';
+                $("#batchTag").val('');
+                $("#batchTagDiv").append(divTag);
+
+            }
+        }
+    });
+}
+
+function deleteTag(button)
+{
+    var tagId = $(button).siblings('small').attr('id');
+    
+    $.ajax({
+        type:"POST",
+        url:"../Components/batchService.cfc?method=deleteBatchTag",
+        cache: false,
+        timeout: 2000,
+        error: function(){
+            swal({
+                title: "Failed to delete the Tag!!",
+                text: "Some error occured. Please try after sometime",
+                icon: "error",
+                button: "Ok",
+            });
+        },
+        data:{
+            "batchTagId" : tagId
+        },
+        success: function(deleteTag) 
+        {   
+            deleteTag = JSON.parse(deleteTag);
+            //refresh the feedback column
+            if(deleteTag.hasOwnProperty('DELETED'))
+            {
+                $(button).parent().remove();
+            }
+            else{
+                swal({
+                    title: "Failed to delete the Tag!!",
+                    text: "Some error occured. Please try after sometime",
+                    icon: "error",
+                    button: "Ok",
+                });
+            }
+            
+        }
+    });
+}

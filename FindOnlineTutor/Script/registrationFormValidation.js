@@ -94,6 +94,10 @@ $(document).ready(function()
             {
                 inputFields.get(i).value=stateMap.get($("#"+id).val());
             }
+            else if(alternativeAddress.includes(i) && !havingAlternativeAddress)
+            {   
+                continue;
+            }
             if(inputFields.get(i).errorMsg)
             {
                 setErrorBorder(inputFields.get(i))

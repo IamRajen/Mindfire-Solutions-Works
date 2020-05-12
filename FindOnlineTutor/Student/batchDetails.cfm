@@ -51,7 +51,6 @@
             </cfoutput>
         </div>
     </div>
-
     <div class="modal fade" id="showNotification">
         <div class="modal-dialog">
             <div class="modal-content">

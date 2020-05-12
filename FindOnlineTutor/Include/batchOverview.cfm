@@ -55,4 +55,14 @@
     <div class="col-md-4">
         <p class="d-block text-dark m-2"><span class="text-info h6 mr-2">Fee: </span><cfoutput>#fee#</cfoutput></p>
     </div> 
+
+    <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher' AND structKeyExists(batchInfo, "tag")>
+        <!---display tag --->
+        <div id="batchTagDiv" class="col-md-12 my-2">
+            <h6 class="d-inline mx-3">Tags:</h6>
+            <cfoutput query="batchInfo.Tag.TAGS">
+                <cfinclude  template="batchTag.cfm">
+            </cfoutput>
+        </div>
+    </cfif>
 </div>

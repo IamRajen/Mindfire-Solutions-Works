@@ -24,6 +24,19 @@
         <cfoutput query="batchInfo.overview.batch">
             <cfinclude  template="../Include/batchOverview.cfm">
         </cfoutput>
+
+        <div class="row m-3 p-3 shadow rounded  text-center">
+            <div class="col-md-3">
+                <h3 class="text-dark">Batch Tag</h3>
+            </div>
+            <div class="col-md-4">
+                <input type="text" placeholder="add tag..." id="batchTag" name="batchTag" class="form-control d-block">
+                <span class="text-danger d-block"></span>    
+            </div>
+            <div class="col-md-4">
+                <input type="button" class="btn btn-info px-4" value="Add" onClick="addTag()">
+            </div>
+        </div>
         <cfif session.stLoggedInUser.userId EQ batchInfo.overview.batch.batchOwnerId>
             <cfinclude  template="../Include/batchAddress.cfm">
         <cfelse>

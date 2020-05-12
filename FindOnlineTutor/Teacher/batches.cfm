@@ -32,7 +32,6 @@ Functionality: It is a batch page which contains all the related information for
            </cfoutput>
         </cfif>
     </div>
-
 <!--- The Modal --->
     <div class="modal fade" id="addNewBatch">
         <div class="modal-dialog">

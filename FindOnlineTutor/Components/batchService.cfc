@@ -22,10 +22,9 @@ Functionality: This file contains the functions which help to give required serv
         <cfargument  name="batchEndDate" type="string" required="true">
         <cfargument  name="batchCapacity" type="string" required="true">
         <cfargument  name="batchFee" type="string" required="true">
-        <cfargument  name="batchTag" type="any" required="true">
-
-        <cflog  text="#arguments.batchTag#">
-
+        <cfargument  name="batchTag" type="string" required="true">
+        <!---deserializing the batch tags--->
+        <cfset tags = deserializeJSON(arguments.batchTag)>
         <!---creating a variable for returning the msg as per required--->
         <cfset var errorMsgs["validatedSuccessfully"] = true/>
 
@@ -62,21 +61,72 @@ Functionality: This file contains the functions which help to give required serv
         </cfloop>
 
         <cfif errorMsgs["validatedSuccessfully"]>
-            <cfset var myAddress = databaseServiceObj.getMyAddress(userId = session.stLoggedInUser.UserId)/>
-            <cfset var newBatch = databaseServiceObj.insertBatch(
-                #session.stloggedinUser.userID#, name, type, details, startDate,endDate,LSParseNumber(capacity),
-                LSParseNumber(fee), 0,myAddress.address.userAddressId[1],"")/>
-            <cfif structKeyExists(newBatch, "error")>
-                <cfset errorMsgs["error"]=true/>
-            <cfelseif structKeyExists(newBatch, "newBatchId")>
+            <cftransaction> 
+                <cftry>
+                    <cfset var myAddress = databaseServiceObj.getMyAddress(userId = session.stLoggedInUser.UserId)/>
+                    <cfif structKeyExists(myAddress, "error")>
+                        <cfthrow detail = '#myAddress.error#'>
+                    </cfif>
+                    <!---inserting the batch and getting the id--->
+                    <cfset var newBatch = databaseServiceObj.insertBatch(
+                        #session.stloggedinUser.userID#, name, type, details, startDate,endDate,LSParseNumber(capacity),
+                        LSParseNumber(fee), 0,myAddress.address.userAddressId[1],"")/>
+                    <cfif structKeyExists(newBatch, "error")>
+                        <cfthrow detail = '#newBatch.error#'>
+                    </cfif>
+                    <!---looping over the tag array and inserting it into the tag table--->
+                    <cfloop array="#tags#" index="tag">
+                        <cfset newTag = databaseServiceObj.insertBatchTag(newBatch.newBatchId, tag)/>
+                        <cfif structKeyExists(newTag, "error")>
+                            <cfthrow detail="#newTag.error#">
+                        </cfif>
+                    </cfloop>
+                    <cftransaction action="commit" />
+                <cfcatch type="any">
+                    <cflog  text="batchService: createBatch()-> #cfcatch#  #cfcatch.detail#">
+                    <cfset errorMsgs["error"] = true/>
+                    <cftransaction action="rollback" />
+                </cfcatch>
+                </cftry>
+            </cftransaction>
+            <cfif NOT structKeyExists(errorMsgs, "error")>
                 <cfset errorMsgs["createdSuccessfully"]=true/>
             </cfif>
-
         </cfif>
-
         <cfreturn errorMsgs/>
         
 
+    </cffunction>
+
+    <!---function to add batchTags into batchTag table--->
+    <cffunction  name="insertBatchTag" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <cfargument  name="tag" type="string" required="true">
+        <!---structure to store the function info--->
+        <cfset var insertBatchTagInfo = {}/>
+
+        <cftry>
+            <!--- get all batch tag--->
+            <cfset var batchTagInfo = databaseServiceObj.getBatchTag(arguments.batchId)/>
+            <cfif structKeyExists(batchTagInfo, "error")>
+                <cfthrow detail = "#batchTagInfo.error#">
+            </cfif>
+            <cfloop query="batchTagInfo.tags">
+                <cfif tagName EQ arguments.tag>
+                    <cfset insertBatchTagInfo.warning = "Sorry this tag is already been taken"/>
+                    <cfbreak>
+                </cfif>
+            </cfloop>
+            <cfif NOT structKeyExists(insertBatchTagInfo, "warning")>
+                <cfset insertBatchTagInfo = databaseServiceObj.insertBatchTag(arguments.batchId, arguments.tag)/>
+            </cfif>
+        <cfcatch type="any">
+            <cflog  text="batchService: insertBatchTagInfo()-> #cfcatch#  #cfcatch.detail#">
+        </cfcatch>
+        </cftry>
+            
+        <cfreturn insertBatchTagInfo/>
     </cffunction>
 
     <!---function to add notification--->
@@ -133,6 +183,7 @@ Functionality: This file contains the functions which help to give required serv
                     <!---if every query get successfully executed then commit actoin get called--->
                     <cftransaction action="commit" />
                 <cfcatch type="any">
+                    <cftransaction action="rollback" />
                     <cflog  text="batchService: addNotification()-> #cfcatch# #cfcatch.detail#">
                     <cfset batchNotification.error = "some error occurred.Please try after sometimes"/>
                 </cfcatch>
@@ -469,6 +520,11 @@ Functionality: This file contains the functions which help to give required serv
                 <cfthrow detail = "#batchDetails.timing.error#">
             </cfif>
 
+            <!---getting the tags of batch--->
+            <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.userId EQ batchDetails.overview.batch.batchOwnerId>
+                <cfset batchDetails.tag = databaseServiceObj.getBatchTag(arguments.batchId)/>
+            </cfif>
+
             <!---getting the batch address--->
             <cfif structKeyExists(session, 'stLoggedInUser') AND batchDetails.overview.batch.batchOwnerId EQ session.stLoggedInUser.userId>
                 <cfif batchDetails.overview.batch.batchType EQ 'online'>
@@ -612,6 +668,15 @@ Functionality: This file contains the functions which help to give required serv
         <cfset var notificationInfo = databaseServiceObj.deleteNotification(arguments.batchNotificationId)/>
         <cfreturn notificationInfo/>
     </cffunction> 
+
+    <!---function to delete batch Tag--->
+    <cffunction  name="deleteBatchTag" access="remote" output="false" returntype="struct" returnformat="json">
+        <!---arguments--->
+        <cfargument  name="batchTagId" type="numeric" required="true">
+        <!---structure to store function information--->
+        <cfset var deleteBatchTagInfo = databaseServiceObj.deleteBatchTag(arguments.batchTagId)/>
+        <cfreturn deleteBatchTagInfo>
+    </cffunction>
 
     <!---function to get the nearby batches of user--->
     <cffunction  name="getNearByBatch" access="remote" output="false" returntype="struct" returnformat="json">

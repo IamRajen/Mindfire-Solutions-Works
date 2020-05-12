@@ -11,6 +11,7 @@ var inputFields=new Map();
 var batchTag = Array();
 //pattern variable declared here
 var patternName=/^[A-Za-z ]+$/;
+var patternTag = /^[A-Za-z0-9 ]+$/;
 var patternNumber=/^[0-9]+$/;
 var patternText=/^[ A-Za-z0-9_@./&+:-]*$/;
 var tagId = 1;
@@ -260,15 +261,15 @@ function addTag()
         setSuccessBorder(object)
         return;
     }
-    if(!isValidPattern(tag, patternName))
+    if(!isValidPattern(tag, patternTag))
     {
-        object.errorMsg = "Only alphabets allowed";
+        object.errorMsg = "Only alphabets and number allowed";
         setErrorBorder(object);
         return;
     }
-    if(tag.length>20)
+    if(tag.length>30)
     {
-        object.errorMsg = "Must be only of 20 characters long";
+        object.errorMsg = "Must be only of 30 characters long";
         setErrorBorder(object);
         return;
     }

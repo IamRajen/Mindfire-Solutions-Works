@@ -915,6 +915,29 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn deleteNotificationInfo/>
     </cffunction>
 
+    <!---function to delete batch Tag--->
+    <cffunction  name="deleteBatchTag" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchTagId" type="numeric" required="true">
+        <!---structure to store function information--->
+        <cfset var deleteBatchTagInfo = {}/>
+        <!---query--->
+        <cftry>
+            <cfquery>
+                DELETE FROM     [dbo].[BatchTag]
+                WHERE           batchTagId = <cfqueryparam value="#arguments.batchTagId#" cfsqltype='cf_sql_bigint'>
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: deleteBatchTag()-> #cfcatch#  #cfcatch.detail#">
+            <cfset deleteBatchTagInfo.error = "Some error occurred. Please try after sometime"/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(deleteBatchTagInfo, "error")>
+            <cfset deleteBatchTagInfo.deleted = true/>
+        </cfif>
+        <cfreturn deleteBatchTagInfo>
+    </cffunction>
+
     <!---function to get the batch info by it's ID--->
     <cffunction  name="getBatchByID" access="public" output="false" returntype="struct">
         <!---arguments--->
@@ -1430,8 +1453,9 @@ Functionality: This file has services/functions related to the data in the datab
             <cfloop from="1" to="#arrayLen( searchQuery )#" index="i">
                 <cfquery name="batch">
                         SELECT  *
-                        FROM    [dbo].[Batch]
-                        WHERE   batchName LIKE '%#searchQuery[i]#%' OR batchDetails LIKE '%#searchQuery[i]#%'
+                        FROM    [dbo].[BatchTag]
+                        JOIN    [dbo].[Batch] ON ([dbo].[Batch].[batchId] = [dbo].[BatchTag].[batchId])
+                        WHERE   tagName LIKE '%#searchQuery[i]#%'
                         ORDER BY DIFFERENCE(batchName, '#searchQuery[i]#') desc;
                 </cfquery>
             <cfset getSearchResultInfo['#searchQuery[i]#'] = batch/>
@@ -1442,5 +1466,60 @@ Functionality: This file has services/functions related to the data in the datab
         </cftry>
         <cfreturn getSearchResultInfo>
     </cffunction>
+
+    <!---function to insert tag--->
+    <cffunction  name="insertBatchTag" output="false" access="public" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <cfargument  name="tag" type="string" required="true">
+
+        <!---structure to store the function information--->
+        <cfset var insertBatchTagInfo = {}/>
+        <!---variable to store the tag is--->
+        <cfset var batchTag =''/>
+        <cftry>
+            <cfquery result="batchTag">
+                INSERT INTO     [dbo].[BatchTag]
+                                (batchId, tagName)
+                VALUES          (<cfqueryparam value="#arguments.batchId#" cfsqltype='cf_sql_bigint'>,
+                                <cfqueryparam value="#arguments.tag#" cfsqltype='cf_sql_varchar'>)
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: insertBatchTag()-> #cfcatch# #cfcatch.detail#">
+            <cfset insertBatchTagInfo.error = "some error occurred.Please try after sometime"/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(insertBatchTagInfo, "error")>
+            <cfset insertBatchTagInfo.batchTagId = batchTag.GENERATEDKEY/>
+        </cfif>
+        <cfreturn insertBatchTagInfo/>
+    </cffunction>
+
+    <!---function to get all the tags of a particular batch--->
+    <cffunction  name="getBatchTag" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <!---structure to store the function information--->
+        <cfset var getBatchTagInfo = {}/>
+        <!---variable to store the tags--->
+        <cfset var tags = ''/>
+        <!---query--->
+        <cftry>
+            <cfquery name="tags">
+                SELECT  *
+                FROM    [dbo].[BatchTag]
+                WHERE   batchId = <cfqueryparam value="#arguments.batchId#" cfsqltype='cf_sql_bigint'>
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: getBatchTag() #cfcatch# #cfcatch.detail#">
+            <cfset getBatchTagInfo.error = "some error occurred. Please try after sometimes"/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(getBatchTagInfo, "error")>
+            <cfset getBatchTagInfo.tags = tags/>
+        </cfif>
+        <cfreturn getBatchTagInfo>
+    </cffunction>
 </cfcomponent>
 
+ 
