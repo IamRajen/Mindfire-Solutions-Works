@@ -11,11 +11,13 @@ var stateMap=new Map();
 var myRequestIds = new Map();
 var isStudent = false;
 var batchFormat;
+var url; 
 
 $(document).ready(function(){
     loadCountryStateMap();
     batchFormat = $($("#batchesDiv").children()[0]).clone();
     isStudent = $("#filterDiv").children('p').text();
+    url = $(location).attr('href');
 
     $("input[name=filterOption]").change(function()
     {
@@ -52,6 +54,7 @@ $(document).ready(function(){
             makeAjaxCall(country=countryMap.get(parseInt($("#batchCountry").val())),state=null);
         }
     });
+
     $("#batchState").change(function(){
         if($("#batchState").val() && $("input[name=filterOption]:checked").val()=="batchesInState")
         {
@@ -130,6 +133,7 @@ function sendRequest(myRequestIds,country ,state)
             },
         success: function(returnData) {
             returnData=JSON.parse(returnData);
+            // console.log(returnData)
             if(returnData.hasOwnProperty("error"))
             {
                 //display some error mSG
@@ -152,16 +156,18 @@ function sendRequest(myRequestIds,country ,state)
                         if(!isOldBatchCleared)
                         {
                             var data = batchFormat;
-                            isOldBatchCleared=true
+                            isOldBatchCleared=true;
                         }
                         else 
                         {
                             var data = $($("#batchesDiv").children()[0]).clone();
+                            console.log(data.find("#batchType").text())
                         } 
                         //checking the request info of the batch made by the user
-                        $(data).find('a').attr("href", "batchDetails.cfm?batch="+batches[batch][0]);
+                        $(data).find('#batchId').text(batches[batch][0]);
                         $(data).find('#batchName').html(batches[batch][1]);
-                        $(data).find("#batchDetails").text(batches[batch][2]);
+                        $(data).find("#batchDescription").text(batches[batch][2]);
+                        $(data).find("#batchDetail").attr('href', 'batchDetails.cfm?batch='+batches[batch][0])
                         if(batches[batch][10] == 'online')
                         {
                             $(data).find("#batchAddress").text('Online');

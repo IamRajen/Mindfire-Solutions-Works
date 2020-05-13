@@ -9,6 +9,13 @@ Functionality: It is a cfm file containing the batches which are been enrolled b
     <!---creating component object and retrieving batches of user--->
     <cfset batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
     <cfset batchInfo = batchServiceObj.getMyBatch()/>
+    <cfset myRequest = batchServiceObj.getMyRequests()/>
+    <!---if successfully batches are retrieved then those will be displayed here--->
+    <cfset requestIds = {}>
+    <!---looping through the requests and storing it into the structure for further use--->
+    <cfloop query="myRequest.Requests">
+        <cfset requestIds['#batchId#'] = '#requestStatus#'>
+    </cfloop>
 
     <div class="container">
         <h1 class="my-5 text-sencondary">Your enrolled Batches will displayed here</h1>
@@ -29,4 +36,5 @@ Functionality: It is a cfm file containing the batches which are been enrolled b
             </cfif>
         </div>
     </div>
+
 </cf_header>

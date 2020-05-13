@@ -35,7 +35,7 @@
                             </small>
                         </div>
                         <div class="col-md-12">
-                            <p class="d-block text-secondary">#Left(notificationDetails,70)#...</p>
+                            <p class="d-block text-secondary">#notificationDetails#</p>
                         </div>
                     </div>
                     

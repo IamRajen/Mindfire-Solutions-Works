@@ -538,6 +538,7 @@ Functionality: This file has services/functions related to the data in the datab
                         [dbo].[BatchEnrolledStudent]
                 JOIN    [dbo].[Batch] ON [dbo].[Batch].[batchId] = [dbo].[BatchEnrolledStudent].[batchId]
                     </cfif>
+                JOIN    [dbo].[UserAddress] ON ([dbo].[UserAddress].[userAddressId] = [dbo].[Batch].[addressId])
                 WHERE 
                     <cfif structKeyExists(arguments, "teacherId")>
                         [dbo].[Batch].[batchOwnerId] = <cfqueryparam value=#arguments.teacherId# cfsqltype='cf_sql_bigint'>
@@ -1104,7 +1105,6 @@ Functionality: This file has services/functions related to the data in the datab
         <cfargument  name="pincode" type="string" required="false">
         <cfargument  name="country" type="string" required="false">
         <cfargument  name="state" type="string" required="false">
-        
         <!---creating a structure for storing the result and error msg if occurred--->
         <cfset var batches = {}/>
         <!---variable that will store the batch information--->
@@ -1452,11 +1452,12 @@ Functionality: This file has services/functions related to the data in the datab
         <cftry>
             <cfloop from="1" to="#arrayLen( searchQuery )#" index="i">
                 <cfquery name="batch">
-                        SELECT  *
+                        SELECT DISTINCT([dbo].[Batch].[batchId]),[batchName],[batchDetails], [address], [country], [state],
+                                [city], [pincode], [startDate],[endDate], [batchType], [fee], [capacity], [enrolled]
                         FROM    [dbo].[BatchTag]
                         JOIN    [dbo].[Batch] ON ([dbo].[Batch].[batchId] = [dbo].[BatchTag].[batchId])
+                        JOIN    [dbo].[UserAddress] ON ([dbo].[UserAddress].[userAddressId] = [dbo].[Batch].[addressId])
                         WHERE   tagName LIKE '%#searchQuery[i]#%'
-                        ORDER BY DIFFERENCE(batchName, '#searchQuery[i]#') desc;
                 </cfquery>
             <cfset getSearchResultInfo['#searchQuery[i]#'] = batch/>
             </cfloop>

@@ -8,7 +8,7 @@
     <cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
     <!---getting the information required for this page--->
     <cfset batchInfo = batchServiceObj.getBatchDetailsById(url.batch)/>
-    
+
     <div class="container">
         <cfset myRequest = batchServiceObj.getMyRequests()/>
         <!---if successfully batches are retrieved then those will be displayed here--->
@@ -51,6 +51,7 @@
             </cfoutput>
         </div>
     </div>
+    
     <div class="modal fade" id="showNotification">
         <div class="modal-dialog">
             <div class="modal-content">

@@ -125,7 +125,7 @@ Functionality: This file contains the functions which help to give required serv
             <cflog  text="batchService: insertBatchTagInfo()-> #cfcatch#  #cfcatch.detail#">
         </cfcatch>
         </cftry>
-            
+
         <cfreturn insertBatchTagInfo/>
     </cffunction>
 
@@ -851,13 +851,21 @@ Functionality: This file contains the functions which help to give required serv
                         <cfset batches['#batchId#'].rank = (batches['#batchId#'].rank)+1>
                     <!---else it will insert the batch with batchId as a key--->
                     <cfelseif NOT structKeyExists(batches, '#batchId#')>
-                        <cfset structInsert(batches, '#batchId#', {batch:queryGetRow(batch[word],row) , rank:1} )>
+                        <cfset structInsert(batches, '#batchId#',  { batch: queryGetRow(batch[word], row)  , rank:1} )>
                     </cfif>
                     <cfset row = row+1/>
                 </cfloop>
             </cfloop>
             <cfif NOT structIsEmpty(batches)>
-                <cfset batches.rankedBatchId = structSort(batches, 'numeric', 'DESC', 'rank')/>
+                <cfset var rankedBatchId = structSort(batches, 'numeric', 'DESC', 'rank')/>
+                <cfset var batchArray = arrayNew(1)/>
+                <cfloop array="#rankedBatchId#" index="batchId">
+                    <cfset arrayAppend(batchArray, batches[#batchId#].batch)/>
+                </cfloop>
+                <cfset structClear(batches)>
+                <cfset batches.batch = queryNew("address, batchDetails, batchId, batchName, batchType, capacity, city, country, endDate, enrolled, fee, pincode, startDate, state", 
+                                    "VarChar, VarChar, bigint, VarChar, VarChar, Integer, VarChar, VarChar, Date, Integer, Double, VarChar, date, VarChar",
+                                    batchArray)/>
             </cfif>
         <cfelse>
             <cfset batches.error = "some error occurred. Please, try after sometime"/>
