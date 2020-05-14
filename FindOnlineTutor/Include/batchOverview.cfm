@@ -77,11 +77,12 @@
         </div> 
     </cfif>
 
-    <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher' AND structKeyExists(batchInfo, "tag")>
+    <cfif structKeyExists(session, "stLoggedInUser") AND batchOwnerId EQ session.stLoggedInUser.userId>
+        <cfset tag = batchServiceObj.getBatchTag(batchId)/>
         <!---display tag --->
         <div id="batchTagDiv" class="col-md-12 my-2">
             <h6 class="d-inline mx-3">Tags:</h6>
-            <cfoutput query="batchInfo.Tag.TAGS">
+            <cfoutput query="tag.TAGS">
                 <cfinclude  template="batchTag.cfm">
             </cfoutput>
         </div>

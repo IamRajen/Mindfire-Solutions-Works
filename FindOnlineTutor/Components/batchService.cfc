@@ -567,6 +567,9 @@ Functionality: This file contains the functions which help to give required serv
             </cfif>
 
             <cfset batchDetails.feedback = databaseServiceObj.retrieveBatchFeedback(arguments.batchId)/> 
+            <cfif structKeyExists(batchDetails.feedback, "ERROR")>
+                <cfthrow detail = "#batchDetails.feedback.error#">
+            </cfif>
         <cfcatch type="any">
             <cflog  text="getBatchDetailsByID()-> #cfcatch# #cfcatch.detail#">
             <!---if no such batch is found it will diplay a error msg of no batch--->
@@ -829,7 +832,7 @@ Functionality: This file contains the functions which help to give required serv
     </cffunction>
 
     <!---function to get the searched result of batch--->
-    <cffunction  name="getSearchBatches" output="true" access="remote" returntype="struct" returnformat="json">
+    <cffunction  name="getSearchBatches" output="false" access="remote" returntype="struct" returnformat="json">
         <!---arguments--->
         <cfargument  name="searchedQuery" type="string" required="true">
         <!---get the list of words out of the searchQuery--->
@@ -863,14 +866,21 @@ Functionality: This file contains the functions which help to give required serv
                     <cfset arrayAppend(batchArray, batches[#batchId#].batch)/>
                 </cfloop>
                 <cfset structClear(batches)>
-                <cfset batches.batch = queryNew("address, batchDetails, batchId, batchName, batchType, capacity, city, country, endDate, enrolled, fee, pincode, startDate, state", 
-                                    "VarChar, VarChar, bigint, VarChar, VarChar, Integer, VarChar, VarChar, Date, Integer, Double, VarChar, date, VarChar",
+                <cfset batches.batch = queryNew("address, batchDetails, batchId, batchName, batchOwnerId, batchType, capacity, city, country, endDate, enrolled, fee, pincode, startDate, state", 
+                                                "VarChar, VarChar,  bigint, VarChar, bigint, VarChar, Integer, VarChar, VarChar, Date, Integer, Double, VarChar, date, VarChar",
                                     batchArray)/>
             </cfif>
         <cfelse>
             <cfset batches.error = "some error occurred. Please, try after sometime"/>
         </cfif>
         <cfreturn batches>
+    </cffunction>
+
+    <!---fucntion to get the batchTag--->
+    <cffunction  name="getBatchTag" output="false" access="remote" returntype="struct" returnformat="json">
+        <!---argument--->
+        <cfargument  name="batchId" type="numeric" required="true">
+        <cfreturn databaseServiceObj.getBatchTag(arguments.batchId)/>
     </cffunction>
 
 </cfcomponent>

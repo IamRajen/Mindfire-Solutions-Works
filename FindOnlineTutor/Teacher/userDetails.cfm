@@ -21,16 +21,6 @@ Functionality: A teacher page containing the detail information about the teache
             </cfoutput>
         </p>
     <cfelse>
-        <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student'>
-            <cfset myRequest = batchServiceObj.getMyRequests()/>
-            <!---if successfully batches are retrieved then those will be displayed here--->
-            <cfset requestIds = {}>
-            <!---looping through the requests and storing it into the structure for further use--->
-            <cfloop query="myRequest.Requests">
-                <cfset requestIds['#batchId#'] = '#requestStatus#'>
-            </cfloop>
-        </cfif>
-        
         <div class="p-5">
             <h3 class="text-secondary">Overview:</h3>
             <cfoutput query="userDetails.overview.user">

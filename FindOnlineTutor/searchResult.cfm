@@ -66,7 +66,6 @@ Functionality: This file show the search result of teachers for batches.
     <!---if any search is performed then if condition will get executed else it will give the nearBy batches--->
 	<cfif structKeyExists(url, "query") AND url.query NEQ ''>
 		<cfset batches = batchServiceObj.getSearchBatches(url.query)>
-        
     <cfelse>
         <!---display the users near by batches--->
         <cfset batches = batchServiceObj.getNearByBatch(country='' , state='')/>
@@ -83,7 +82,6 @@ Functionality: This file show the search result of teachers for batches.
         <!---if some error occurred while retrieving the data error msg will be displayed--->
         <p class="alert alert-danger py-3 text-danger text-center rounded">Some error occured while retrieving your batches. Please, try after sometime.</p>
     </cfif>
-    
 </div>
 
 </cf_header>

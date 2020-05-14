@@ -28,7 +28,6 @@ Functionality: This is the homepage.
 			
 		<cfelseif session.stloggedinUser.role EQ 'Student'>
 			<!---the student includes will be included--->
-
 			<div class="h-50 bg-light my-3">
 				<h4 class="float-right text-dark p-2">Welcome, <cfoutput>#session.stLoggedInUser.firstName#</cfoutput></h4>
 			</div>

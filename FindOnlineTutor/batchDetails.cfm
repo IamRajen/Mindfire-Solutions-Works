@@ -5,14 +5,14 @@ Created In: 4th Apr 2020
 Created By: Rajendra Mishra.
 Functionality: This page will be only displayed to students and visitors
 --->
-<cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css">
+<cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" >
 
     <!---if batch id is not present in the url then it will be shifted to homepage--->
     <cfif NOT structKeyExists(url, "batch") OR url.batch EQ ''>
         <cflocation  url="/assignments_mindfire/FindOnlineTutor">
     <!---else if any teachers try to go to this link then he/she will be shifted to their teachers section--->
-    <cfelseif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher'>
-        <cflocation  url="/assignments_mindfire/FindOnlineTutor/Teacher/batchDetails.cfm?batch=#url.batch#">
+    <cfelseif structKeyExists(session, "stLoggedInUser")>
+        <cflocation  url="/assignments_mindfire/FindOnlineTutor/#session.stLoggedInUser.role#/batchDetails.cfm?batch=#url.batch#">
     </cfif>
 
     <!---creating object for getting the batch data--->
@@ -61,25 +61,8 @@ Functionality: This page will be only displayed to students and visitors
             
             <!---timing,notification--->
             <div class="row m-3 mt-5">
-                <cfinclude  template="Include/batchTiming.cfm">
-                <cfif   structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student' AND 
-                        structKeyExists(requestIds, "#url.batch#") AND requestIds["#url.batch#"] EQ 'Approved'>
-
-                    <cfinclude  template="Include/batchNotification.cfm">
-                </cfif>     
+                <cfinclude  template="Include/batchTiming.cfm"> 
             </div>
-
-            <cfif   structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student' AND 
-                    structKeyExists(requestIds, "#url.batch#") AND requestIds["#url.batch#"] EQ 'Approved'>  
-                      
-                <!---feedback textarea for only enrolled student--->
-                <div class="container shadow p-3">
-                    <label class="control-label text-primary"  for="feedback">Feedback:</label>
-                    <textarea type="text" id="feedback" name="feedback" rows="5"  placeholder="Your feedback here...." class="form-control d-inline"></textarea>
-                    <span></span>
-                    <button id="submitFeedback" class="btn button-color shadow my-2">Submit</button>
-                </div>
-            </cfif>
 
              <!---batch feedback--->   
             <h4 class="text-secondary m-2">Batch Feedbacks:</h4>

@@ -52,7 +52,6 @@ $(document).ready(function()
             }
         });
     });
-    retrieveFeedback();
 });
 
 function retrieveFeedback()
@@ -76,10 +75,10 @@ function retrieveFeedback()
         success: function(feedbackInfo) 
         {   
             feedbackInfo = JSON.parse(feedbackInfo);
-            console.log(feedbackInfo)
             if(feedbackInfo.hasOwnProperty("ERROR"))
             {
-
+                $("#feedbackSection").empty();
+                $("#feedbackSection").append('<p class="py-3 m-3 alert alert-danger tezt-center w-100">'+feedbackInfo.ERROR+'</p>');
             }
             else if(feedbackInfo.FEEDBACK.DATA.length > 0)
             {
@@ -87,6 +86,10 @@ function retrieveFeedback()
                 for(let feedback in feedbacks)
                 {
                     var feedbackDiv = $($("#feedbackSection").children()[0]).clone();
+                    if(feedbackDiv.length == 0)
+                    {
+                        window.location.reload(true);
+                    }
                     if(feedback == 0)
                     {
                         $("#feedbackSection").empty();
@@ -94,7 +97,7 @@ function retrieveFeedback()
                     $(feedbackDiv).removeClass('hidden')
                     $(feedbackDiv).find("#feedbackId").text(feedbacks[feedback][0]);
                     $(feedbackDiv).find("#feedback").text(feedbacks[feedback][3]);
-                    $(feedbackDiv).find("#studentName").text(feedbacks[feedback][6]).attr('href',feedbacks[feedback][5]);
+                    $(feedbackDiv).find("#studentName").text(feedbacks[feedback][6]).attr('href',"../userDetails.cfm?user="+feedbacks[feedback][5]);
                     var feedbackDate = new Date(feedbacks[feedback][2]);
                     var date = ('0'+feedbackDate.getDate()).slice(-2);
                     var month = ('0'+feedbackDate.getMonth()).slice(-2);
@@ -103,9 +106,49 @@ function retrieveFeedback()
                     var minute = ('0'+feedbackDate.getMinutes()).slice(-2);
         
                     $(feedbackDiv).find("#feedbackDateTime").text(date+'-'+month+'-'+year+'  '+hour+':'+minute);
-                    $("#feedbackSection").append(feedbackDiv)
+                    $("#feedbackSection").append(feedbackDiv);
                 }
             }
         }
     });
+}
+
+function loadNotification(element)
+{
+    $('#viewBatchNotificationModal').modal();
+    
+    var notificationId = $(element).find('p')[0];
+    $.ajax({
+        type:"POST",
+        url:"../Components/batchService.cfc?method=getNotificationById",
+        cache: false,
+        timeout: 2000,
+        error: function(){
+            swal({
+                title: "Failed to retrieve the Notification details!!",
+                text: "Some error occured. Please try after sometime",
+                icon: "error",
+                button: "Ok",
+            });
+        },
+        data:{
+                "batchNotificationId" : $(notificationId).text()
+            },
+        success: function(error) 
+        {
+            var notificationInfo = JSON.parse(error);
+            if(notificationInfo.hasOwnProperty("error"))
+            {
+                //error msg will be displayed 
+            }
+            else
+            {
+                $("#viewNotificationId").text(notificationInfo.NOTIFICATION.DATA[0][0])
+                $("#viewNotificationTitle").text(notificationInfo.NOTIFICATION.DATA[0][3]);
+                $("#viewNotificationDateTime").text(notificationInfo.NOTIFICATION.DATA[0][2]);
+                $("#viewNotificationDetails").text(notificationInfo.NOTIFICATION.DATA[0][4]);
+            }
+        }
+    });
+
 }

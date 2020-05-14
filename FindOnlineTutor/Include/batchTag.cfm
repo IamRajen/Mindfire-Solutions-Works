@@ -2,5 +2,7 @@
     <small id="<cfoutput>#batchTagId#</cfoutput>" class="text-info mx-1">
         <cfoutput>#tagName#</cfoutput>
     </small>
-    <button type="button" class="close mx-1" onclick="deleteTag(this)">&times;</button>
+    <cfif structKeyExists(url, "batch")>
+        <button type="button" class="close mx-1" onclick="deleteTag(this)">&times;</button>
+    </cfif>
 </div>

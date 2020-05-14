@@ -1112,7 +1112,7 @@ Functionality: This file has services/functions related to the data in the datab
         <!---query starts from here--->
         <cftry>
             <cfquery name="batch">
-                SELECT DISTINCT [dbo].[Batch].[batchId], [batchName],[batchDetails], [address], [country], [state],
+                SELECT DISTINCT [dbo].[Batch].[batchId], [batchName],[batchDetails],[batchOwnerId] ,[address], [country], [state],
                                 [city], [pincode], [startDate],[endDate], [batchType], [fee], [capacity], [enrolled]
                 FROM ([dbo].[Batch] 
                 JOIN [dbo].[UserAddress] ON ([dbo].[Batch].[addressId] = [dbo].[UserAddress].[userAddressId]))
@@ -1452,12 +1452,15 @@ Functionality: This file has services/functions related to the data in the datab
         <cftry>
             <cfloop from="1" to="#arrayLen( searchQuery )#" index="i">
                 <cfquery name="batch">
-                        SELECT DISTINCT([dbo].[Batch].[batchId]),[batchName],[batchDetails], [address], [country], [state],
+                        SELECT DISTINCT([dbo].[Batch].[batchId]),[batchName],[batchDetails], [batchOwnerId] ,[address], [country], [state],
                                 [city], [pincode], [startDate],[endDate], [batchType], [fee], [capacity], [enrolled]
                         FROM    [dbo].[BatchTag]
                         JOIN    [dbo].[Batch] ON ([dbo].[Batch].[batchId] = [dbo].[BatchTag].[batchId])
                         JOIN    [dbo].[UserAddress] ON ([dbo].[UserAddress].[userAddressId] = [dbo].[Batch].[addressId])
-                        WHERE   tagName LIKE '%#searchQuery[i]#%'
+                        WHERE   tagName LIKE '%#searchQuery[i]#%' 
+                        OR      [dbo].[Batch].[batchName] LIKE '%#searchQuery[i]#%'
+                        OR      [dbo].[Batch].[batchDetails] LIKE '%#searchQuery[i]#%'
+
                 </cfquery>
             <cfset getSearchResultInfo['#searchQuery[i]#'] = batch/>
             </cfloop>
