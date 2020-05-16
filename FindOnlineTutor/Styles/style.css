@@ -115,11 +115,10 @@ a:hover{
 .notification-count
 {
   padding: 3px 7px 3px 7px;
-  background: rgba(0, 0, 0, 0.651);
-  color: #fff;
-  font-weight: bold;
+  background: rgba(255, 115, 0, 0.445);
+  color: #000;
   border-radius: 10px;
   top: 7px;
   left: 23px;
-  font-size: 8px;
+  font-size: 10px;
 }

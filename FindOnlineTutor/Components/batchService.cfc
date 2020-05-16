@@ -920,7 +920,7 @@ Functionality: This file contains the functions which help to give required serv
             <!---get the current address of user from the address database--->
             <cfset var myAddress = databaseServiceObj.getMyAddress(session.stLoggedInUser.userId)/>
             <cfif NOT structKeyExists(myAddress, "error")>
-                <cfset pincode = left(myAddress.address.pincode[1], 3)/>
+                <cfset pincode = left(myAddress.address.pincode[0], 3)/>
             </cfif>
         </cfif>
         <cfset funcInfo = databaseServiceObj.getTrendingWord(pincode)/>

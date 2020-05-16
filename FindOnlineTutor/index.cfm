@@ -16,29 +16,30 @@ Functionality: This is the homepage.
 			<cf_card title="Teacher" description="Number of teacher's we have" data="#ourDetails.teacher.user#" link="">
 			<cf_card title="Student" description="Number of student's we have" data="#ourDetails.student.user#" link="">
 			<cf_card title="Batch" description="Number of batches we have" data="#ourDetails.batch.batch#" link="">
-		</div>
 		
-		<cfif structKeyExists(session, "stloggedinUser")>
-			<cfif session.stloggedinUser.role EQ 'Teacher'>
-				<!---the teacher includes will be included--->
-				<div class="h-50 bg-light my-3">
-					<h4 class="float-right text-dark p-2">Welcome, <cfoutput>#session.stLoggedInUser.firstName#</cfoutput></h4>
-				</div>
-				<cf_card title="Batches" description="Number of batches you created" data="4" link="Teacher/batches.cfm">
-				
-				<cf_card title="Students" description="Number of students you have" data="20" link="Teacher/students.cfm">
-				
-			<cfelseif session.stloggedinUser.role EQ 'Student'>
-				<!---the student includes will be included--->
-				<div class="h-50 bg-light my-3">
-					<h4 class="float-right text-dark p-2">Welcome, <cfoutput>#session.stLoggedInUser.firstName#</cfoutput></h4>
-				</div>
-				<cf_card title="Batches" description="Number of batches you created" data="4" link="Teacher/batches.cfm">
-				
-				<cf_card title="Students" description="Number of students you have" data="20" link="Teacher/students.cfm">
-			</cfif>
+		
+			<cfif structKeyExists(session, "stloggedinUser")>
+				<cfif session.stloggedinUser.role EQ 'Teacher'>
+					<!---the teacher includes will be included--->
+					<div class="h-50 bg-light my-3">
+						<h4 class="float-right text-dark p-2">Welcome, <cfoutput>#session.stLoggedInUser.firstName#</cfoutput></h4>
+					</div>
+					<cf_card title="Batches" description="Number of batches you created" data="4" link="Teacher/batches.cfm">
+					
+					<cf_card title="Students" description="Number of students you have" data="20" link="Teacher/students.cfm">
+					
+				<cfelseif session.stloggedinUser.role EQ 'Student'>
+					<!---the student includes will be included--->
+					<div class="h-50 bg-light my-3">
+						<h4 class="float-right text-dark p-2">Welcome, <cfoutput>#session.stLoggedInUser.firstName#</cfoutput></h4>
+					</div>
+					<cf_card title="Batches" description="Number of batches you created" data="4" link="Teacher/batches.cfm">
+					
+					<cf_card title="Students" description="Number of students you have" data="20" link="Teacher/students.cfm">
+				</cfif>
 
-		</cfif>
+			</cfif>
+		</div>
 
 	</div>
 </cf_header>	
