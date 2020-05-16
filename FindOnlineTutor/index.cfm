@@ -6,40 +6,42 @@ Created By: Rajendra Mishra.
 Functionality: This is the homepage.
 --->
 <cfset batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
+
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" profilePath="profile.cfm">
+	<div class="container-fuild">
 
-<div class="container-fuild">
-
-	<cfif NOT structKeyExists(session, "stLoggedInUser") OR (structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role NEQ 'Teacher')>
 		<cfinclude  template="Include/searchForm.cfm">
-		<hr>
-	</cfif>
+		<cfset ourDetails = batchServiceObj.getOurDetails()/>
+<!--- 		<cfdump  var="#ourDetails#"> --->
+		<div class="w-100 text-center">
+			<cf_card title="Teacher" description="Number of teacher's we have" data="#ourDetails.teacher.user#" link="Teacher/batches.cfm">
+			<cf_card title="Student" description="Number of student's we have" data="#ourDetails.student.user#" link="Teacher/batches.cfm">
+			<cf_card title="Batch" description="Number of batches we have" data="#ourDetails.batch.batch#" link="Teacher/batches.cfm">
+		</div>
+		
+		<cfif structKeyExists(session, "stloggedinUser")>
+			<cfif session.stloggedinUser.role EQ 'Teacher'>
+				<!---the teacher includes will be included--->
+				<div class="h-50 bg-light my-3">
+					<h4 class="float-right text-dark p-2">Welcome, <cfoutput>#session.stLoggedInUser.firstName#</cfoutput></h4>
+				</div>
+				<cf_card title="Batches" description="Number of batches you created" data="4" link="Teacher/batches.cfm">
+				
+				<cf_card title="Students" description="Number of students you have" data="20" link="Teacher/students.cfm">
+				
+			<cfelseif session.stloggedinUser.role EQ 'Student'>
+				<!---the student includes will be included--->
+				<div class="h-50 bg-light my-3">
+					<h4 class="float-right text-dark p-2">Welcome, <cfoutput>#session.stLoggedInUser.firstName#</cfoutput></h4>
+				</div>
+				<cf_card title="Batches" description="Number of batches you created" data="4" link="Teacher/batches.cfm">
+				
+				<cf_card title="Students" description="Number of students you have" data="20" link="Teacher/students.cfm">
+			</cfif>
 
-	
-	<cfif structKeyExists(session, "stloggedinUser")>
-		<cfif session.stloggedinUser.role EQ 'Teacher'>
-			<!---the teacher includes will be included--->
-			<div class="h-50 bg-light my-3">
-				<h4 class="float-right text-dark p-2">Welcome, <cfoutput>#session.stLoggedInUser.firstName#</cfoutput></h4>
-			</div>
-			<cf_card title="Batches" description="Number of batches you created" data="4" link="Teacher/batches.cfm">
-			
-			<cf_card title="Students" description="Number of students you have" data="20" link="Teacher/students.cfm">
-			
-		<cfelseif session.stloggedinUser.role EQ 'Student'>
-			<!---the student includes will be included--->
-			<div class="h-50 bg-light my-3">
-				<h4 class="float-right text-dark p-2">Welcome, <cfoutput>#session.stLoggedInUser.firstName#</cfoutput></h4>
-			</div>
-			<cf_card title="Batches" description="Number of batches you created" data="4" link="Teacher/batches.cfm">
-			
-			<cf_card title="Students" description="Number of students you have" data="20" link="Teacher/students.cfm">
 		</cfif>
 
-	</cfif>
-
-</div>
-
+	</div>
 </cf_header>	
 
 

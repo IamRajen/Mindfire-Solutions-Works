@@ -70,6 +70,7 @@ Functionality: This file show the search result of teachers for batches.
         <!---display the users near by batches--->
         <cfset batches = batchServiceObj.getNearByBatch(country='' , state='')/>
     </cfif>
+    
     <cfif structIsEmpty(batches) OR (structKeyExists(batches, 'batch') AND batches.batch.recordCount EQ 0)>
         <p class="alert alert-info py-3 text-center rounded">Sorry, We don't have any batches.</p>
     <cfelseif structKeyExists(batches, "batch") >

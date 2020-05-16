@@ -1453,7 +1453,8 @@ Functionality: This file has services/functions related to the data in the datab
             <cfloop from="1" to="#arrayLen( searchQuery )#" index="i">
                 <cfquery name="batch">
                         SELECT DISTINCT([dbo].[Batch].[batchId]),[batchName],[batchDetails], [batchOwnerId] ,[address], [country], [state],
-                                [city], [pincode], [startDate],[endDate], [batchType], [fee], [capacity], [enrolled]
+                                [city], [pincode], [startDate],[endDate], [batchType], [fee], [capacity], [enrolled],
+                                [dbo].[BatchTag].[tagName]
                         FROM    [dbo].[BatchTag]
                         JOIN    [dbo].[Batch] ON ([dbo].[Batch].[batchId] = [dbo].[BatchTag].[batchId])
                         JOIN    [dbo].[UserAddress] ON ([dbo].[UserAddress].[userAddressId] = [dbo].[Batch].[addressId])
@@ -1523,6 +1524,108 @@ Functionality: This file has services/functions related to the data in the datab
             <cfset getBatchTagInfo.tags = tags/>
         </cfif>
         <cfreturn getBatchTagInfo>
+    </cffunction>
+
+    <!---function to store the searched result--->
+    <cffunction  name="insertSearchedTag" access="public" output="false" returntype="struct">
+        <!---argument--->
+        <cfargument  name="tag" type="string" required="true">
+        <cfargument  name="pincode" type="string" required="false" default="">
+        <!---struct to store function info--->
+        <cfset var funcInfo = {}/>
+        <cfset var searchedTagId = ''/>
+        <!---query--->
+        <cftry>
+            <cfquery result='searchedTagId'>
+                INSERT INTO     [dbo].[SearchedTag]
+                (timestamp, tag, pincode)
+                VALUES          (   <cfqueryparam value="#now()#" cfsqltype='cf_sql_timestamp'>, 
+                                    <cfqueryparam value="#arguments.tag#" cfsqltype='cf_sql_varchar'>,
+                                    <cfqueryparam value="#arguments.pincode#" cfsqltype='cf_sql_varchar'> 
+                                )
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: insertSearchedTag()-> #cfcatch# #cfcatch.detail#">
+            <cfset funcInfo.error = "Some error occured. Please try after sometime"/>
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(funcInfo, "error")>
+            <cfset funcInfo.searchedTagId = searchedTagId.generatedKey/>
+        </cfif>
+        <cfreturn funcInfo>
+    </cffunction>
+
+    <!---function to get the most searched words--->
+    <cffunction  name="getTrendingWord" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="pincode" type="string" required="false">
+        <!---structure to store the function info--->
+        <cfset var funcInfo = {}/>
+        <!---variable to store the query result--->
+        <cfset var trendingWords = ''/>
+        <!---query--->
+        <cftry>
+            <cfquery name='trendingWords'>
+                SELECT  tag , COUNT(timestamp)
+                FROM    [dbo].[SearchedTag]
+                WHERE   [dbo].[SearchedTag].[timestamp] < <cfqueryparam value='#now()#' cfsqltype='cf_sql_timestamp'> 
+                AND     [dbo].[SearchedTag].[timestamp] > <cfqueryparam value='#DateAdd("d",-7,now())#' cfsqltype='cf_sql_timestamp'>
+                AND     [dbo].[SearchedTag].[pincode] LIKE <cfqueryparam value='#arguments.pincode#%' cfsqltype='cf_sql_varchar'>  
+                GROUP BY tag 
+                ORDER BY COUNT(timestamp) DESC
+            </cfquery>
+        <cfcatch type="any">
+            <cflog text="databaseService: getMostSearchedWord()-> #cfcatch# #cfcatch.detail# #now()# AND #DateAdd('d',-7,now())#">
+            <cfset funcInfo.error = "Some error occured. While fetching the trending words">
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(funcInfo, "error")>
+            <cfset funcInfo.trendingWords = trendingWords/>
+        </cfif>
+        <cfreturn funcInfo/>
+    </cffunction>
+
+    <!---function to get the batch details--->
+    <cffunction  name="getUserCount" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="isTeacher" type='numeric' required="false">
+        <!---function information structure--->
+        <cfset var funcInfo = {}/>
+        <!---query--->
+        <cftry>
+            <cfquery name='user'>
+                SELECT  COUNT(userId) as value
+                FROM    [dbo].[User]
+                WHERE   isTeacher = <cfqueryparam value='#arguments.isTeacher#' cfsqltype='cf_sql_bit'>
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: getTeacher()-> #cfcatch# #cfcatch.detail#">
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(funcInfo, "error")>
+            <cfset funcInfo.user = user.value/>
+        </cfif>
+        <cfreturn funcInfo>
+    </cffunction>
+
+     <!---function to get the batch details--->
+    <cffunction  name="getBatchCount" access="public" output="false" returntype="struct">
+        <!---function information structure--->
+        <cfset var funcInfo = {}/>
+        <!---query--->
+        <cftry>
+            <cfquery name='batch'>
+                SELECT  COUNT(batchId) as value
+                FROM    [dbo].[Batch]
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: getTeacher()-> #cfcatch# #cfcatch.detail#">
+        </cfcatch>
+        </cftry>
+        <cfif NOT structKeyExists(funcInfo, "error")>
+            <cfset funcInfo.batch = batch.value/>
+        </cfif>
+        <cfreturn funcInfo>
     </cffunction>
 </cfcomponent>
 

@@ -866,12 +866,38 @@ Functionality: This file contains the functions which help to give required serv
                     <cfset arrayAppend(batchArray, batches[#batchId#].batch)/>
                 </cfloop>
                 <cfset structClear(batches)>
-                <cfset batches.batch = queryNew("address, batchDetails, batchId, batchName, batchOwnerId, batchType, capacity, city, country, endDate, enrolled, fee, pincode, startDate, state", 
-                                                "VarChar, VarChar,  bigint, VarChar, bigint, VarChar, Integer, VarChar, VarChar, Date, Integer, Double, VarChar, date, VarChar",
-                                    batchArray)/>
+                <cfset batches.batch = queryNew("address, batchDetails, batchId, batchName, batchOwnerId, batchType, capacity, 
+                                                city, country, endDate, enrolled, fee, pincode, startDate, state, tagName", 
+                                                "VarChar, VarChar,  bigint, VarChar, bigint, VarChar, Integer, VarChar, VarChar, Date, Integer, 
+                                                Double, VarChar, date, VarChar, varchar",
+                                                batchArray)/>
+                
             </cfif>
         <cfelse>
             <cfset batches.error = "some error occurred. Please, try after sometime"/>
+        </cfif>
+        <!---storing the searched tags in the table--->
+        <cfif structKeyExists(batches, "batch") AND batches.batch.recordCount GT 0>
+            <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student'>
+                <cfset var myAddress= databaseServiceObj.getMyAddress(session.stLoggedInUser.userId)>
+                <cfif NOT structKeyExists(myAddress, "error")>
+                    <cfset pincode = myAddress.address.pincode[1]>
+                </cfif>
+            <cfelse>
+                <cfset pincode=''>
+            </cfif>
+            <cfloop array="#searchList#" index="tag">
+                <cfloop query="batches.batch">
+                    <cfif tagName EQ tag>
+                        <!---inserting the searched tag--->
+                        <cfset insertSearchedTag = databaseServiceObj.insertSearchedTag(tag=word, pincode=pincode)/>
+                    </cfif>
+                    <cfif findNoCase(tag, batchName)>
+                        <!---inserting the searched tag--->
+                        <cfset insertSearchedTag = databaseServiceObj.insertSearchedTag(tag=word, pincode=pincode)/>
+                    </cfif>
+                </cfloop>
+            </cfloop>
         </cfif>
         <cfreturn batches>
     </cffunction>
@@ -883,4 +909,47 @@ Functionality: This file contains the functions which help to give required serv
         <cfreturn databaseServiceObj.getBatchTag(arguments.batchId)/>
     </cffunction>
 
+    <!---function to get the most searched words--->
+    <cffunction  name="getTrendingWord" output="false" access="remote" returntype="struct" returnformat="json">
+        <!---structure for function info--->
+        <cfset var funcInfo = {}/>
+        <!---variable to store the pincode--->
+        <cfset var pincode = ''/>
+        <!---checking for the user type--->
+        <cfif structKeyExists(session, "stLoggedInUser")>
+            <!---get the current address of user from the address database--->
+            <cfset var myAddress = databaseServiceObj.getMyAddress(session.stLoggedInUser.userId)/>
+            <cfif NOT structKeyExists(myAddress, "error")>
+                <cfset pincode = left(myAddress.address.pincode[1], 3)/>
+            </cfif>
+        </cfif>
+        <cfset funcInfo = databaseServiceObj.getTrendingWord(pincode)/>
+        <cfreturn funcInfo>
+    </cffunction>
+
+    <!---function to get the information about the our website--->
+    <cffunction  name="getOurDetails" output="false" access="remote" returntype="struct" returnformat="json">
+        <!---structure for function info--->
+        <cfset var funcInfo = {}/>
+        <cftry>
+            <cfset funcInfo.teacher = databaseServiceObj.getUserCount(1)/>
+            <cfif structKeyExists(funcInfo.teacher, "error")>
+                <cfthrow detail="#funcInfo.teacher.error#">
+            </cfif>
+            <cfset var funcInfo.student = databaseServiceObj.getUserCount(0)/>
+            <cfif  structKeyExists(funcInfo.student, "error")>
+                <cfthrow detail="#funcInfo.student.error#">
+            </cfif>
+            <cfset var funcInfo.batch = databaseServiceObj.getBatchCount()/>
+            <cfif  structKeyExists(funcInfo.batch, "error")>
+                <cfthrow detail="#funcInfo.batch.error#">
+            </cfif>
+        <cfcatch type="any">
+            <cflog  text="batchService: getOurDetails()-> #cfcatch# #cfcatch.detail#">
+            <cfset structClear(funcInfo)/>
+            <cfset funcInfo.error = "some error occurred.Please try after sometime"/>
+        </cfcatch>
+        </cftry>
+        <cfreturn funcInfo>
+    </cffunction>
 </cfcomponent>
