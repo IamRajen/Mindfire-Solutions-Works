@@ -67,9 +67,7 @@ Functionality: It is a header file which is included probably in student section
 				</div>
 			</nav>
 <cfelse>	
-			<div class="footer-copyright text-center text-light p-3"> © 2020 Copyright:
-                <a class="text-light" href="https://192.168.43.32/assignments_mindfire/FindOnlineTutor/index.cfm"> FindOnlineTutor.com</a>
-            </div>			
+			<cfinclude  template="../Include/footer.cfm">				
 		</body>
 	</html>
 </cfif>

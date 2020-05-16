@@ -74,9 +74,7 @@ Functionality: It is a header file which is included probably in Teacher section
 			
 	<cfelse>
 			</div>	
-			<div class="bg-secondary footer-copyright text-center text-light p-3"> © 2020 Copyright:
-                <a class="text-light" href="https://192.168.43.32/assignments_mindfire/FindOnlineTutor/index.cfm"> FindOnlineTutor.com</a>
-            </div>			
+			<cfinclude  template="../Include/footer.cfm">		
 		</body>
 	</html>
 </cfif>
