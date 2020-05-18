@@ -46,7 +46,6 @@ $(document).ready(function()
         success: function(notificationInfo) 
         {
             notificationInfo = JSON.parse(notificationInfo);
-            console.log(notificationInfo)
             if(notificationInfo.hasOwnProperty("ERROR"))
             {
                 $(".container").empty();
@@ -127,8 +126,6 @@ function getNotification(button)
                 $("#notificationDetail").text(notification.NOTIFICATION.DATA[0][4])
 
                 $('#showNotification').modal('show');
-
-
             }
         }
     });

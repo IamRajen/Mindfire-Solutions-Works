@@ -42,7 +42,7 @@ Functionality: It is a header file which is included probably in every pages.
 				<cflocation  url="/assignments_mindfire/FindOnlineTutor/index.cfm">
 			</cfif>
 			<!---navbar start from here--->
-			<nav class="navbar navbar-expand-lg navbar-light p-3 mb-5">
+			<nav class="navbar navbar-expand-lg navbar-light p-3 navFix">
 				<div class="container-fluid">
 					<div class="navbar-header">
 						<img  src="<cfoutput>#attributes.logoPath#</cfoutput>" class="img-fluid mr-2" alt="logo"/>
@@ -119,8 +119,9 @@ Functionality: It is a header file which is included probably in every pages.
 					</div>
 				</div>
 			</nav>
-			
+			<div class="mt-5 pt-5 min-height">
 	<cfelse>	
+			</div>
 			<cfinclude  template="Include/footer.cfm">	
 		</body>
 	</html>

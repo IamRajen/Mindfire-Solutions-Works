@@ -122,3 +122,19 @@ a:hover{
   left: 23px;
   font-size: 10px;
 }
+.hr
+{
+  height: 1px;
+}
+.navFix{
+  display: inline-block;
+  width: 100%;
+  position: fixed;
+  z-index: 1050;
+  top: 0;
+  background-color: #fff;
+}
+.min-height
+{
+  min-height: 500px;
+}

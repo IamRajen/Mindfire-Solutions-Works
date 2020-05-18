@@ -7,12 +7,8 @@ Functionality: It is a cfm file containing the all notification .
 --->
 <cf_header homeLink="../index.cfm" logoPath="../Images/logo.png" stylePath="../Styles/style.css" scriptPath="../Script/notification.js">
 
-    <!---creating the batchService object--->
-    <cfset batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
-    <cfset notificationInfo = batchServiceObj.getMyNotification()/>
-
     <div class="container">
-        <!---if warning key is present then --->
+        <!---if warning key is present then 
         <cfif structKeyExists(notificationInfo, "warning")>
             <p class="m-5 py-5 text-center alert alret-warning">
                 <cfoutput>
@@ -27,7 +23,7 @@ Functionality: It is a cfm file containing the all notification .
                     #notificationInfo.error#
                 </cfoutput>
             </p>
-        </cfif>
+        </cfif>--->
     </div>
     
     <div class="modal fade" id="showNotification">

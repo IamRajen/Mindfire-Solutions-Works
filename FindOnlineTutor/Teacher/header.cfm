@@ -26,7 +26,7 @@ Functionality: It is a header file which is included probably in Teacher section
 				<cfset createObject("component",'FindOnlineTutor.Components.authenticationService').doLogout() />
 				<cflocation  url="/assignments_mindfire/FindOnlineTutor/index.cfm">
 			</cfif>
-			<nav class="navbar navbar-expand-lg navbar-light p-3 mb-5">
+			<nav class="navbar navbar-expand-lg navbar-light p-3 navFix">
 				<div class="container-fluid">
 					<div class="navbar-header">
 						<img  src="<cfoutput>#attributes.logoPath#</cfoutput>" class="img-fluid mr-2" alt="logo">
@@ -69,7 +69,7 @@ Functionality: It is a header file which is included probably in Teacher section
 					</div>
 				</div>
 			</nav>
-			<div class="container">
+			<div class="container mt-5 pt-5 min-height">
             
 			
 	<cfelse>

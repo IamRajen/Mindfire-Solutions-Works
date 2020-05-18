@@ -4,7 +4,8 @@
     <p id="batchId" class="hidden"><cfoutput>#batchId#</cfoutput></p>
 
     <div class="col-md-12 border-bottom pb-2 mb-2">
-        <h3 id="batchName" class=" text-dark d-inline"><cfoutput>#batchName#</cfoutput><span id="batchType" class="text-info h6 ml-2"><cfoutput>#batchType#</cfoutput></span></h3>
+        <h3 id="batchName" class=" text-dark d-inline"><cfoutput>#batchName#</cfoutput></h3>
+        <span id="batchType" class="text-info h6 ml-2"><cfoutput>#batchType#</cfoutput></span>
         
         <div id="requestStatus" class="d-inline">
             

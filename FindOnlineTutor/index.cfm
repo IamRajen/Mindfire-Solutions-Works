@@ -21,21 +21,8 @@ Functionality: This is the homepage.
 			<cfif structKeyExists(session, "stloggedinUser")>
 				<cfif session.stloggedinUser.role EQ 'Teacher'>
 					<!---the teacher includes will be included--->
-					<div class="h-50 bg-light my-3">
-						<h4 class="float-right text-dark p-2">Welcome, <cfoutput>#session.stLoggedInUser.firstName#</cfoutput></h4>
-					</div>
-					<cf_card title="Batches" description="Number of batches you created" data="4" link="Teacher/batches.cfm">
-					
-					<cf_card title="Students" description="Number of students you have" data="20" link="Teacher/students.cfm">
-					
 				<cfelseif session.stloggedinUser.role EQ 'Student'>
 					<!---the student includes will be included--->
-					<div class="h-50 bg-light my-3">
-						<h4 class="float-right text-dark p-2">Welcome, <cfoutput>#session.stLoggedInUser.firstName#</cfoutput></h4>
-					</div>
-					<cf_card title="Batches" description="Number of batches you created" data="4" link="Teacher/batches.cfm">
-					
-					<cf_card title="Students" description="Number of students you have" data="20" link="Teacher/students.cfm">
 				</cfif>
 
 			</cfif>

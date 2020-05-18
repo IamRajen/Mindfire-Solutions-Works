@@ -16,7 +16,7 @@ Functionality: This file show the search result of teachers for batches.
 
 <cfinclude  template="Include/searchForm.cfm">
 
-<div class="container">
+<div class="container mt-3">
 
     <!---if user is a student then we will provide the additional information about enrollment--->
     <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student'>
@@ -31,37 +31,39 @@ Functionality: This file show the search result of teachers for batches.
         
     </cfif>
 
-    <!---filter options will be displayed--->
-    <div id="filterDiv" class="row p-3 mt-4">
-        <div class="col-md-3">
-            <label class="text-primary" >Filter Options :</label>
+    <cfif NOT structKeyExists(url, "query")>
+        <!---filter options will be displayed--->
+        <div id="filterDiv" class="row p-3 mt-4">
+            <div class="col-md-3">
+                <label class="text-primary" >Filter Options :</label>
+            </div>
+            <div class="col-md-3">
+                <input class="form-check-input" type="radio" name="filterOption" id="nearBy" value="batchesNearMe" <cfif NOT structKeyExists(url, "query")>checked</cfif>>
+                <label class="form-check-label" for="nearBy">
+                    Batches Near You
+                </label>
+            </div>
+            <div class="col-md-3">
+                <input class="form-check-input" type="radio" name="filterOption" id="country" value="batchesInCountry">
+                <label class="form-check-label" for="country">
+                    Filter by Country
+                </label>
+                <select id="batchCountry" name="currentCountry" class="form-control w-75 hidden">
+                    <option value="">-select country-</option>
+                </select>
+            </div>
+            <div id="batchStateDiv" class="col-md-3 hidden">
+                <input class="form-check-input" type="radio" name="filterOption" id="state" value="batchesInState">
+                <label class="form-check-label" for="state">
+                    Filter By State
+                </label>
+                <select id="batchState" name="currentState" class="form-control w-75 hidden">
+                    <option value="">-select state-</option>
+                </select>
+            </div>
+            <p class="hidden"><cfoutput>#isStudent#</cfoutput></p>
         </div>
-        <div class="col-md-3">
-            <input class="form-check-input" type="radio" name="filterOption" id="nearBy" value="batchesNearMe" <cfif NOT structKeyExists(url, "query")>checked</cfif>>
-            <label class="form-check-label" for="nearBy">
-                Batches Near You
-            </label>
-        </div>
-        <div class="col-md-3">
-            <input class="form-check-input" type="radio" name="filterOption" id="country" value="batchesInCountry">
-            <label class="form-check-label" for="country">
-                Filter by Country
-            </label>
-            <select id="batchCountry" name="currentCountry" class="form-control w-75 hidden">
-                <option value="">-select country-</option>
-            </select>
-        </div>
-        <div id="batchStateDiv" class="col-md-3 hidden">
-            <input class="form-check-input" type="radio" name="filterOption" id="state" value="batchesInState">
-            <label class="form-check-label" for="state">
-                Filter By State
-            </label>
-            <select id="batchState" name="currentState" class="form-control w-75 hidden">
-                <option value="">-select state-</option>
-            </select>
-        </div>
-        <p class="hidden"><cfoutput>#isStudent#</cfoutput></p>
-    </div>
+    </cfif>
 
     <!---if any search is performed then if condition will get executed else it will give the nearBy batches--->
 	<cfif structKeyExists(url, "query") AND url.query NEQ ''>

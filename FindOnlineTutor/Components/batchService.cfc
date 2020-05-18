@@ -952,4 +952,23 @@ Functionality: This file contains the functions which help to give required serv
         </cftry>
         <cfreturn funcInfo>
     </cffunction>
+
+    <!---function to get the user info --->
+    <cffunction  name="getUserInfo" output="false" access="remote" returntype="struct" returnformat="json">
+        <!---struct for function information--->
+        <cfset var funcInfo = {}/>
+        <cfif session.stLoggedInUser.role EQ 'Teacher'>
+            <!---getting the number of batches--->
+            <cfset funcInfo.batchCount = databaseServiceObj.getBatchCount(teacherId=session.stLoggedInUser.userId)/>
+            <cfset funcInfo.studentCount = databaseServiceObj.getEnrolledStudent(teacherId = session.stLoggedInUser.userId)/>
+            <cfif structKeyExists(funcInfo.batchCount, "error") OR structKeyExists(funcInfo.studentCount, "error")>
+                <cfthrow detail="Some error occurred.Please try after sometime">
+            </cfif>
+        <cfelseif session.stLoggedInUser.role EQ 'Student'>
+            <cfset funcInfo.batchCount = databaseServiceObj.getBatchCount(studentId = session.stLoggedInUser.userId)/>
+            <cfif structKeyExists(funcInfo.batchCount, "error") OR structKeyExists(funcInfo.studentCount, "error")>
+                <cfthrow detail="Some error occurred.Please try after sometime">
+            </cfif>
+        </cfif>
+    </cffunction>
 </cfcomponent>

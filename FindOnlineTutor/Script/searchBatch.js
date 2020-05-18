@@ -133,7 +133,6 @@ function sendRequest(myRequestIds,country ,state)
             },
         success: function(returnData) {
             returnData=JSON.parse(returnData);
-            // console.log(returnData)
             if(returnData.hasOwnProperty("error"))
             {
                 //display some error mSG
@@ -161,28 +160,27 @@ function sendRequest(myRequestIds,country ,state)
                         else 
                         {
                             var data = $($("#batchesDiv").children()[0]).clone();
-                            console.log(data.find("#batchType").text())
                         } 
                         //checking the request info of the batch made by the user
                         $(data).find('#batchId').text(batches[batch][0]);
                         $(data).find('#batchName').html(batches[batch][1]);
                         $(data).find("#batchDescription").text(batches[batch][2]);
                         $(data).find("#batchDetail").attr('href', 'batchDetails.cfm?batch='+batches[batch][0])
-                        if(batches[batch][10] == 'online')
+                        if(batches[batch][11] == 'online')
                         {
                             $(data).find("#batchAddress").text('Online');
                         }
                         else{
-                        $(data).find("#batchAddress").text(batches[batch][3]+", "+batches[batch][4]+", "+batches[batch][5]+", "+batches[batch][6]+", "+batches[batch][7]);
+                        $(data).find("#batchAddress").text(batches[batch][4]+", "+batches[batch][7]+", "+batches[batch][6]+", "+batches[batch][5]+", "+batches[batch][3]);
                         }
-                        var startDate = new Date(batches[batch][8]);
-                        var endDate = new Date(batches[batch][9]);
+                        var startDate = new Date(batches[batch][9]);
+                        var endDate = new Date(batches[batch][10]);
                         $(data).find("#batchStartDate").text(startDate.getFullYear()+"-"+("0"+startDate.getMonth()).slice(-2)+"-"+("0"+startDate.getDate()).slice(-2));
                         $(data).find("#batchEndDate").text(endDate.getFullYear()+"-"+("0"+endDate.getMonth()).slice(-2)+"-"+("0"+endDate.getDate()).slice(-2));
-                        $(data).find("#batchType").text(batches[batch][10]);
-                        $(data).find("#batchFee").text(batches[batch][11]);
-                        $(data).find("#batchCapacity").text(batches[batch][12]);
-                        $(data).find("#batchEnrolled").text(batches[batch][13]);
+                        $(data).find("#batchType").text(batches[batch][11]);
+                        $(data).find("#batchFee").text(batches[batch][12]);
+                        $(data).find("#batchCapacity").text(batches[batch][13]);
+                        $(data).find("#batchEnrolled").text(batches[batch][14]);
                         $(data).find("#requestStatus").empty();
                         if(isStudent == "false")
                         {
@@ -220,7 +218,6 @@ function sendRequest(myRequestIds,country ,state)
                                         '<p class="text-md-center text-center">Sorry, we do not have any batches.</p>'+
                                     '</div>'
                     $(noDataMsg).appendTo("#batchesDiv");
-                    console.log(state)
                     if(state == null)
                     {
                         $("#batchStateDiv").hide();
@@ -281,7 +278,6 @@ function enrollStudent(button)
 {
     var index = $(button).parent().next().attr('href').indexOf("=");
     var batchId = $(button).parent().next().attr('href').slice(index+1);
-    console.log(batchId);
     //sending request to batch via ajax call..
     $.ajax({
         type:"POST",
@@ -301,7 +297,6 @@ function enrollStudent(button)
             },
         success: function(returnData) {
             returnData=JSON.parse(returnData);
-            console.log(returnData)
             if(returnData.hasOwnProperty("error"))
             {
                 swal({
