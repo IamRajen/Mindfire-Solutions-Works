@@ -5,29 +5,31 @@ Created In: 28th Mar 2020
 Created By: Rajendra Mishra.
 Functionality: This is the homepage.
 --->
-<cfset batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
-
+<cfset local.batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
+<cfset local.profileServiceObj = createObject("component","FindOnlineTutor.Components.profileService")/>
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" profilePath="profile.cfm">
 	<div class="container-fuild">
-
+		<!---including the search bar with trending words--->
 		<cfinclude  template="Include/searchForm.cfm">
-		<cfset ourDetails = batchServiceObj.getOurDetails()/>
+		
 		<div class="w-100 text-center my-3">
-			<cf_card title="Teacher" description="Number of teacher's we have" data="#ourDetails.teacher.user#" link="">
-			<cf_card title="Student" description="Number of student's we have" data="#ourDetails.student.user#" link="">
-			<cf_card title="Batch" description="Number of batches we have" data="#ourDetails.batch.batch#" link="">
-		
-		
-			<cfif structKeyExists(session, "stloggedinUser")>
-				<cfif session.stloggedinUser.role EQ 'Teacher'>
-					<!---the teacher includes will be included--->
-				<cfelseif session.stloggedinUser.role EQ 'Student'>
-					<!---the student includes will be included--->
-				</cfif>
 
-			</cfif>
+			<cfif structKeyExists(session, "stloggedinUser") AND session.stloggedinUser.role EQ 'Teacher'>
+				
+				<cfset local.teacherInfo = local.profileServiceObj.getTeacherInfo()>
+					
+				<cf_card title="Batch" description="Number of batches you created" data="#local.teacherInfo.batchCount.batch#" link="">
+				<cf_card title="Student" description="Number of students you have" data="#local.teacherInfo.studentCount.enrolledStudents.recordCount#" link="">
+				<cf_card title="Request" description="Number of request you got till now" data="#local.teacherInfo.requestCount.requests.recordCount#" link="">
+			
+			
+			<cfelse>
+				<cfset local.ourDetails = local.batchServiceObj.getOurDetails()/>
+				<cf_card title="Teacher" description="Number of teacher's we have" data="#local.ourDetails.teacher.user#" link="">
+				<cf_card title="Student" description="Number of student's we have" data="#local.ourDetails.student.user#" link="">
+				<cf_card title="Batch" description="Number of batches we have" data="#local.ourDetails.batch.batch#" link="">
+			</cfif>	
 		</div>
-
 	</div>
 </cf_header>	
 

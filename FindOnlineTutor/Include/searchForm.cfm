@@ -11,7 +11,7 @@
         aria-label="Search" value="<cfoutput>#searchQuery#</cfoutput>"><input src="Images/searchLogo.png" class="btn border-secondary border-left-0 my-2 search-button" type="image">
     </div> 
     <div class='px-5 w-100 text-center my-1'>
-        <cfset trendingWords = batchServiceObj.getTrendingWord()/>
+        <cfset trendingWords = local.batchServiceObj.getTrendingWord()/>
         <small class='text-dark text-center d-inline p-2'><i><b>Trending: </b></i></small>
         <cfif NOT structKeyExists(trendingWords, "error")>
             <cfoutput query="trendingWords.trendingWords">

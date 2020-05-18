@@ -10,7 +10,7 @@ Functionality: This file show the search result of teachers for batches.
 </cfif>
 <cfset isStudent = false>
 <!---creating objects of batch service component--->
-<cfset batchServiceObj  = createObject("component","FindOnlineTutor.Components.batchService")/>
+<cfset local.batchServiceObj  = createObject("component","FindOnlineTutor.Components.batchService")/>
 
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" profilePath="profile.cfm" scriptPath="Script/searchBatch.js">
 
@@ -21,7 +21,7 @@ Functionality: This file show the search result of teachers for batches.
     <!---if user is a student then we will provide the additional information about enrollment--->
     <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student'>
         <cfset isStudent = true/>
-        <cfset myRequest = batchServiceObj.getMyRequests()/>
+        <cfset myRequest = local.batchServiceObj.getMyRequests()/>
         <!---if successfully batches are retrieved then those will be displayed here--->
         <cfset requestIds = {}>
         <!---looping through the requests and storing it into the structure for further use--->
@@ -67,10 +67,10 @@ Functionality: This file show the search result of teachers for batches.
 
     <!---if any search is performed then if condition will get executed else it will give the nearBy batches--->
 	<cfif structKeyExists(url, "query") AND url.query NEQ ''>
-		<cfset batches = batchServiceObj.getSearchBatches(url.query)>
+		<cfset batches = local.batchServiceObj.getSearchBatches(url.query)>
     <cfelse>
         <!---display the users near by batches--->
-        <cfset batches = batchServiceObj.getNearByBatch(country='' , state='')/>
+        <cfset batches = local.batchServiceObj.getNearByBatch(country='' , state='')/>
     </cfif>
     
     <cfif structIsEmpty(batches) OR (structKeyExists(batches, 'batch') AND batches.batch.recordCount EQ 0)>

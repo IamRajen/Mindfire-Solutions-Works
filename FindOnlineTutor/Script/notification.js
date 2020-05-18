@@ -51,7 +51,7 @@ $(document).ready(function()
                 $(".container").empty();
                 //display error msg
                 $(errorMsg).appendTo($('.container'));
-            }
+            } 
             else if(notificationInfo.hasOwnProperty("NOTIFICATIONS"))
             {
                 var notifications = notificationInfo.NOTIFICATIONS.DATA;
@@ -60,7 +60,7 @@ $(document).ready(function()
                 // console.log(tbody);
                 for(let notification in notifications)
                 {
-                    var tr = $('<tr>');
+                    var tr = $('<tr></tr>');
                     if(notifications[notification][5] == true)
                     {
                         tr.addClass('font-weight-light');
@@ -80,7 +80,6 @@ $(document).ready(function()
                     $(tr).appendTo($(tbody));
                 }
             }
-            
         }
     });
 });

@@ -1608,15 +1608,29 @@ Functionality: This file has services/functions related to the data in the datab
         <cfreturn funcInfo>
     </cffunction>
 
-     <!---function to get the batch details--->
+    <!---function to get the batch details--->
     <cffunction  name="getBatchCount" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="teacherId" type="numeric" required="false">
+        <cfargument  name="studentId" type="numeric" required="false">
         <!---function information structure--->
         <cfset var funcInfo = {}/>
         <!---query--->
         <cftry>
             <cfquery name='batch'>
                 SELECT  COUNT(batchId) as value
-                FROM    [dbo].[Batch]
+                FROM    
+                        <cfif structKeyExists(arguments, "studentId")>
+                            [dbo].[BatchEnrolledStudent]
+                        <cfelse>
+                            [dbo].[Batch]
+                        </cfif>
+                   
+                        <cfif structKeyExists(arguments, "teacherId")>
+                WHERE       [dbo].[Batch].[batchOwnerId] = <cfqueryparam value="#arguments.teacherId#" cfsqltype='cf_sql_bigint'>
+                        <cfelseif structKeyExists(arguments, "studentId")>
+                WHERE       [dbo].[BatchEnrolledStudent].[studentId] = <cfqueryparam value="#arguments.studentId#" cfsqltype='cf_sql_bigint'>
+                        </cfif>
             </cfquery>
         <cfcatch type="any">
             <cflog  text="databaseService: getTeacher()-> #cfcatch# #cfcatch.detail#">
@@ -1627,6 +1641,26 @@ Functionality: This file has services/functions related to the data in the datab
         </cfif>
         <cfreturn funcInfo>
     </cffunction>
+
+    <!---function to get the number of requests a teacher get till now
+    <cffunction  name="getRequestCount" access="public" output="false" returntype="struct">
+        <!---arguments--->
+        <cfargument  name="teacherId" type="numeric" required="true">
+        <!---function info structure--->
+        <cfset var funcInfo = {}/>
+        <!---variable for query result--->
+        <cfset var requests = ''/>
+        <!---query--->
+        <cftry>
+            <cfquery name="requests">
+                SELECT  COUNT()
+
+            </cfquery>
+        <cfcatch type="any">
+            <cflog  text="databaseService: getRequestCount()-> #cfcatch# #cfcatch.detail#">
+        </cfcatch>
+        </cftry>
+    </cffunction>--->
 </cfcomponent>
 
  

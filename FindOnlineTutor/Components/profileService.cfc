@@ -71,4 +71,26 @@ Functionality: This file contains some functions helps in user profile.
         </cfif>
         <cfreturn getNameInfo/>
     </cffunction>
+
+    <!---function to get the user info --->
+    <cffunction  name="getTeacherInfo" output="false" access="remote" returntype="struct">
+        <!---struct for function information--->
+        <cfset var funcInfo = {}/>
+        <cfif session.stLoggedInUser.role EQ 'Teacher'>
+            <!---getting the number of batches--->
+            <cfset funcInfo.batchCount = databaseServiceObj.getBatchCount(teacherId=session.stLoggedInUser.userId)/>
+            <cfset funcInfo.studentCount = databaseServiceObj.getEnrolledStudent(teacherId = session.stLoggedInUser.userId)/>
+            <cfset funcInfo.requestCount = databaseServiceObj.getMyRequests(teacherId=session.stLoggedInUser.userId)/>
+            
+            <cfif structKeyExists(funcInfo.batchCount, "error") OR structKeyExists(funcInfo.studentCount, "error")>
+                <cfthrow detail="Some error occurred.Please try after sometime">
+            </cfif>
+        <cfelseif session.stLoggedInUser.role EQ 'Student'>
+            <cfset funcInfo.batchCount = databaseServiceObj.getBatchCount(studentId = session.stLoggedInUser.userId)/>
+            <cfif structKeyExists(funcInfo.batchCount, "error") OR structKeyExists(funcInfo.studentCount, "error")>
+                <cfthrow detail="Some error occurred.Please try after sometime">
+            </cfif>
+        </cfif>
+        <cfreturn funcInfo>
+    </cffunction>
 </cfcomponent>

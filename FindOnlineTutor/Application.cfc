@@ -33,6 +33,22 @@ Functionality: This page get first executed whenever a request comes to the webs
 		<cfreturn true />
 	</cffunction>
 
+	<cffunction name="onError" returntype="void">
+		<cfargument name="exception" type="string" required=true/>
+		<cfargument name="eventname" type="string" required=true/>
+		<!--- Using a try block to catch errors. --->
+		<cfsavecontent variable="errortext">
+		<cfoutput>
+			Message :#arguments.exception.message#
+			details :#arguments.exception.detail#
+		</cfoutput>
+		</cfsavecontent>
+		<!--- Log all errors. --->
+		<cflog type="error" text=#errortext# />
+		<cflocation url="customException.cfm">
+
+	</cffunction>
+
 	<cffunction name="onMissingTemplate" returntype="boolean">
 		<cfargument name="targetPage" type="string" required=true/>
 		<!--- Using a try block to catch errors. --->
