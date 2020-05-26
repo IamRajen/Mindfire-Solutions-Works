@@ -315,7 +315,7 @@ $(document).ready(function(){
                             }
                         }
                     }
-                    else if(errorMsgs.hasOwnProperty("insertion"))
+                    else if(errorMsgs.hasOwnProperty("key"))
                     {
                         //if inserted successfully
                         swal({
@@ -495,7 +495,7 @@ function loadNotification(element)
     var notificationId = $(element).find('p')[0];
     $.ajax({
         type:"POST",
-        url:"../Components/batchService.cfc?method=getNotificationById",
+        url:"../Components/batchService.cfc?method=getMyNotification",
         cache: false,
         timeout: 2000,
         error: function(){
@@ -507,7 +507,7 @@ function loadNotification(element)
             });
         },
         data:{
-                "batchNotificationId" : $(notificationId).text()
+                "notificationId" : $(notificationId).text()
             },
         success: function(error) 
         {

@@ -18,7 +18,7 @@
 
             <!---if user not logged in  or visitor--->
             <cfelseif NOT structKeyExists(session, "stLoggedInUser")>
-                <button class="btn button-color px-3 float-right shadow rounded disabled">Enroll</a>
+                <button type="submit" class="btn button-color px-3 float-right shadow rounded disabled">Enroll</a>
                 
             <!---if user is a student or any user details having having is been displayed--->
             <cfelseif structKeyExists(url, "user") OR 

@@ -119,43 +119,53 @@ function retrieveFeedback()
         }
     });
 }
+//function to send request to particular batch
+function enrollStudent(button)
+{
+    var index = $(button).parent().next().attr('href').indexOf("=");
+    var batchId = $(button).parent().next().attr('href').slice(index+1);
+    //sending request to batch via ajax call..
+    $.ajax({
+        type:"POST",
+        url:"../Components/batchService.cfc?method=makeRequest",
+        cache: false,
+        timeout: 2000,
+        error: function(){
+            swal({
+                title: "Error",
+                text: "Some server error occurred. Please try after sometimes while we fix it.",
+                icon: "error",
+                button: "Ok",
+            });
+        },
+        data:{
+            "batchId" : batchId
+        },
+        success: function(returnData) {
+            returnData=JSON.parse(returnData);
+            if(returnData.hasOwnProperty("error"))
+            {
+                swal({
+                    title: "Error",
+                    text: returnData.error,
+                    icon: "error",
+                    button: "Ok",
+                });
+            }
+            else if(returnData.hasOwnProperty("warning"))
+            {
+                swal({
+                    title: "Warning",
+                    text: returnData.warning,
+                    icon: "warning",
+                    button: "Ok",
+                });
+            }
+            else 
+            {
+                $(button).text("Pending...").addClass("disabled");
+            }
+        } 
+    });
+}
 
-// function loadNotification(element)
-// {
-//     $('#viewBatchNotificationModal').modal();
-    
-//     var notificationId = $(element).find('p')[0];
-//     $.ajax({
-//         type:"POST",
-//         url:"../Components/batchService.cfc?method=getNotificationById",
-//         cache: false,
-//         timeout: 2000,
-//         error: function(){
-//             swal({
-//                 title: "Error",
-//                 text: "Some server error occurred. Please try after sometimes while we fix it.",
-//                 icon: "error",
-//                 button: "Ok",
-//             });
-//         },
-//         data:{
-//                 "batchNotificationId" : $(notificationId).text()
-//             },
-//         success: function(error) 
-//         {
-//             var notificationInfo = JSON.parse(error);
-//             if(notificationInfo.hasOwnProperty("error"))
-//             {
-//                 //error msg will be displayed 
-//             }
-//             else
-//             {
-//                 $("#viewNotificationId").text(notificationInfo.NOTIFICATION.DATA[0][0])
-//                 $("#viewNotificationTitle").text(notificationInfo.NOTIFICATION.DATA[0][3]);
-//                 $("#viewNotificationDateTime").text(notificationInfo.NOTIFICATION.DATA[0][2]);
-//                 $("#viewNotificationDetails").text(notificationInfo.NOTIFICATION.DATA[0][4]);
-//             }
-//         }
-//     });
-
-// }

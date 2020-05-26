@@ -293,7 +293,7 @@ function enrollStudent(button)
             });
         },
         data:{
-                "batchId" : batchId
+            "batchId" : batchId
         },
         success: function(returnData) {
             returnData=JSON.parse(returnData);

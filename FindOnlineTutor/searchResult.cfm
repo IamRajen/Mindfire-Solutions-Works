@@ -11,11 +11,11 @@ Functionality: This file show the search result of teachers for batches.
 <cfset isStudent = false>
 <!---creating objects of batch service component--->
 <cfset local.batchServiceObj  = createObject("component","FindOnlineTutor.Components.batchService")/>
+<!---enroll work--->
 
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" profilePath="profile.cfm" scriptPath="Script/searchBatch.js">
 
 <cfinclude  template="Include/searchForm.cfm">
-
 <div class="container mt-3">
 
     <!---if user is a student then we will provide the additional information about enrollment--->

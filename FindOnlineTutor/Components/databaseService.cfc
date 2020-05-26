@@ -931,7 +931,7 @@ Functionality: This file has services/functions related to the data in the datab
         <cfset var newRequest = ''/>
         <!---query for inserting the request--->
         <cftry>
-            <cfquery name="newRequest">
+            <cfquery result="newRequest">
                 INSERT INTO [dbo].[BatchRequest]
                 (batchId, studentId, requestStatus, requestDateTime)
                 VALUES( 

@@ -172,7 +172,7 @@ Functionality: This file contains the functions which help to give required serv
                     
                     <!---if every query get successfully executed then commit actoin get called--->
                     <cftransaction action="commit" />
-                    <cfset local.errorMsgs["key"]=local.insertedNotificationStatus.generatedKey/>
+                    <cfset local.errorMsgs["key"]= local.batchNotification.generatedKey/>
                 <cfcatch type="any">
                     <cftransaction action="rollback" />
                     <cflog  text="batchService: addNotification()-> #cfcatch# #cfcatch.detail#">
@@ -573,6 +573,8 @@ Functionality: This file contains the functions which help to give required serv
         <cftry>
             <cfif structKeyExists(arguments, "notificationStatusId") AND structKeyExists(arguments, "notificationId")>
                 <cfset local.notificationInfo.notification = databaseServiceObj.markNotificationAsRead(arguments.notificationStatusId, arguments.notificationId)/>
+            <cfelseif structKeyExists(arguments, "notificationId")>
+                <cfset local.notificationInfo.notification = databaseServiceObj.getNotificationByID(arguments.notificationId)/>
             <cfelseif NOT structKeyExists(session, "stLoggedInUser")>
                 <cfset local.notificationInfo.warning = "Sorry you are not logged in"/>
             <cfelseif session.stLoggedInUser.role EQ 'Student'>
@@ -638,18 +640,24 @@ Functionality: This file contains the functions which help to give required serv
         <cfargument  name="batchId" type="numeric" required="true">
         <!---creating a variable for returning purpose for status of the request--->
         <cfset local.requestStatus = {}/>
-        <cftry>
-            <!---checking if the user is already requested for the batch--->
-            <cfset local.isRequested = databaseServiceObj.getMyRequests(studentId=session.stLoggedInUser.userId, batchId=arguments.batchId)/>
-            <cfif local.isRequested.recordCount GT 0>
-                <cfset requestStatus['warning'] = "Already you have requested for this batch. check your request status in your request option"/>
-            <cfelseif local.isRequested.recordCount EQ 0>
-                <cfset local.requestStatus.newRequest = databaseServiceObj.insertRequest(arguments.batchId, session.stLoggedInUser.userId, "Pending")/>
-            </cfif>
-        <cfcatch type="any">
-            <cfset local.requestStatus['error'] = "Some error occurred.Please try after sometimes"/>
-        </cfcatch>
-        </cftry>
+        <cftransaction>
+            <cftry>
+                <!---checking if the user is already requested for the batch--->
+                <cfset local.isRequested = databaseServiceObj.getMyRequests(studentId=session.stLoggedInUser.userId, batchId=arguments.batchId)/>
+                <cfif local.isRequested.recordCount GT 0>
+                    <cfset requestStatus['warning'] = "Already you have requested for this batch. check your request status in your request option"/>
+                <cfelseif local.isRequested.recordCount EQ 0>
+                    <cfset newRequest = databaseServiceObj.insertRequest(arguments.batchId, session.stLoggedInUser.userId, "Pending")/>
+                    <cfset local.requestStatus['key'] = newRequest.generatedKey/>
+                </cfif>
+                <cftransaction action="commit">
+            <cfcatch type="any">
+                <cflog  text="#cfcatch# #cfcatch.detail#">
+                <cfset local.requestStatus['error'] = "Some error occurred.Please try after sometimes"/>
+                <cftransaction action="rollback">
+            </cfcatch>
+            </cftry>
+        </cftransaction>
         
         <cfreturn local.requestStatus/>
     </cffunction>
