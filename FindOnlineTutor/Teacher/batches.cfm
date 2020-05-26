@@ -13,11 +13,7 @@ Functionality: It is a batch page which contains all the related information for
     <cfset batchInfo = batchServiceObj.getMyBatch()/>
     
     <div id="batchDiv" class="m-3">
-        <cfif structKeyExists(batchInfo, "error")>
-            <div class="alert alert-danger pt-3 pb-3 rounded-top">
-                <p class="text-danger text-center"><cfoutput>#batchInfo.error#</cfoutput></p>
-            </div>
-        <cfelseif batchInfo.batches.recordCount EQ 0>
+        <cfif batchInfo.batch.recordCount EQ 0>
             <div class="alert alert-secondary pt-5 pb-5 rounded-top">
                 <p class="text-secondary text-center">You haven't created any batch. You can create it by clicking on "Add New Batch" button at top right side.</p>
             </div>
@@ -27,7 +23,7 @@ Functionality: It is a batch page which contains all the related information for
                 Add new Batch
             </button>
             <hr>
-            <cfoutput query="batchInfo.batches">
+            <cfoutput query="batchInfo.batch">
                 <cfinclude  template="../Include/batchOverview.cfm">
            </cfoutput>
         </cfif>
@@ -49,30 +45,30 @@ Functionality: It is a batch page which contains all the related information for
                         <div class="row m-3">
                             <label class="text-info" class="control-label"  for="batchName">Batch Name:<span class="text-danger">*</span></label>
                             <div class="col-md-12">
-                                <input type="text" id="batchName" name="batchName" placeholder="Batch Name" class="form-control d-block" onblur="checkBatchName(this)">
+                                <input type="text" id="inputBatchName" name="batchName" placeholder="Batch Name" class="form-control d-block" onblur="checkBatchName(this)">
                                 <span class="text-danger small float-left"></span>
                             </div>
                         </div>
                         
                         <!---Batch type field--->
                         <div class="row m-3">
-                            <label class="text-info" class="control-label"  for="batchType">Batch Type:<span class="text-danger">*</span></label>
+                            <label class="text-info" class="control-label"  for="inputBatchType">Batch Type:<span class="text-danger">*</span></label>
                             <div class="col-md-12">
-                                <label><input type="radio" name="batchType" value="coaching" checked> Coaching Center</label>
+                                <label><input type="radio" name="inputBatchType" value="coaching" checked> Coaching Center</label>
                             </div>
                             <div class="col-md-12">
-                                <label><input type="radio" name="batchType" value="home" > Student Home</label>
+                                <label><input type="radio" name="inputBatchType" value="home" > Student Home</label>
                             </div>
                             <div class="col-md-12">
-                                <label><input type="radio" name="batchType" value="online" > Online</label>
+                                <label><input type="radio" name="inputBatchType" value="online" > Online</label>
                             </div>  
                         </div>
 
                         <!---Batch detail--->
                         <div class="row m-3">
-                            <label class="text-info" for="batchDetail">Batch Details:<span class="text-danger">*</span></label>
+                            <label class="text-info" for="inputBatchDetail">Batch Details:<span class="text-danger">*</span></label>
                             <div class="col-md-12">
-                                <textarea class="form-control" rows="5" id="batchDetails" onblur="checkBatchDetails(this)"></textarea>
+                                <textarea class="form-control" rows="5" id="inputBatchDetails" onblur="checkBatchDetails(this)"></textarea>
                                 <span class="text-danger small float-left"></span>
                             </div>
                         </div>
@@ -80,9 +76,9 @@ Functionality: It is a batch page which contains all the related information for
                         <!---batch tag names section--->
                         <div class="row m-3">
                             <small class='alert alert-info py-2 text-center text-info'>Tag names helps in improves the higher chances to be searched</small> 
-                            <label class="text-info w-100" for="batchDetail">Batch Tags:<span class="text-danger">*</span></label>
+                            <label class="text-info w-100" for="inputBatchDetail">Batch Tags:<span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" id="batchTag" name="batchTag" placeholder="Tags" class="form-control d-block">
+                                <input type="text" id="inputBatchTag" name="inputBatchTag" placeholder="Tags" class="form-control d-block">
                                 <span class="text-danger small float-left"></span>
                             </div>
                             <div class="col-md-2">
@@ -95,26 +91,26 @@ Functionality: It is a batch page which contains all the related information for
                         <!---Batch Start date End date--->
                         <div class="row m-3 ">
                             <div class="col-md-6">
-                                <label class="text-info" class="control-label"  for="startDate">Start Date:<span class="text-danger">*</span></label>
-                                <input type="date" id="batchStartDate" name="startDate" class="form-control d-block" onblur="checkDate(this)">
+                                <label class="text-info" class="control-label"  for="inputBtartDate">Start Date:<span class="text-danger">*</span></label>
+                                <input type="date" id="inputBatchStartDate" name="inputBtartDate" class="form-control d-block" onblur="checkDate(this)">
                                 <span class="text-danger small float-left"></span>
                             </div>
                             <div class="col-md-6">
-                                <label class="text-info" class="control-label"  for="endDate">End Date:<span class="text-danger">*</span></label>
-                                <input type="date" id="batchEndDate" name="endDate" class="form-control d-block" onblur="checkDate(this)">
+                                <label class="text-info" class="control-label"  for="inputBndDate">End Date:<span class="text-danger">*</span></label>
+                                <input type="date" id="inputBatchEndDate" name="inputBndDate" class="form-control d-block" onblur="checkDate(this)">
                                 <span class="text-danger small float-left"></span>
                             </div>
                         </div>
                         <!---Batch Capacity fee--->
                         <div class="row m-3 ">
                             <div class="col-md-6">
-                                <label class="text-info" class="control-label"  for="batchCapacity">Batch capacity:<span class="text-danger">*</span></label>
-                                <input type="text" id="batchCapacity" name="batchCapacity" class="form-control d-block" onblur="checkCapacityFee(this)">
+                                <label class="text-info" class="control-label"  for="inputBatchCapacity">Batch capacity:<span class="text-danger">*</span></label>
+                                <input type="text" id="inputBatchCapacity" name="inputBatchCapacity" class="form-control d-block" onblur="checkCapacityFee(this)">
                                 <span class="text-danger small float-left"></span>
                             </div>
                             <div class="col-md-6">
-                                <label class="text-info" class="control-label"  for="batchFee">Batch fee(In Rupees):<span class="text-danger">*</span></label>
-                                <input type="text" id="batchFee" name="batchFee" class="form-control d-block" onblur="checkCapacityFee(this)">
+                                <label class="text-info" class="control-label"  for="inputBatchFee">Batch fee(In Rupees):<span class="text-danger">*</span></label>
+                                <input type="text" id="inputBatchFee" name="inputBatchFee" class="form-control d-block" onblur="checkCapacityFee(this)">
                                 <span class="text-danger small float-left"></span>
                             </div>
                         </div>

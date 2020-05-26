@@ -286,15 +286,15 @@ function enrollStudent(button)
         timeout: 2000,
         error: function(){
             swal({
-                title: "Failed to retrieve the Batches",
-                text: "Some error occured. Please try after sometime.",
+                title: "Error",
+                text: "Some server error occurred. Please try after sometimes while we fix it.",
                 icon: "error",
                 button: "Ok",
             });
         },
         data:{
                 "batchId" : batchId
-            },
+        },
         success: function(returnData) {
             returnData=JSON.parse(returnData);
             if(returnData.hasOwnProperty("error"))

@@ -6,6 +6,10 @@ $(document).ready(function()
         var batchId = $("#batchId").text();
         var feedback = $("#feedback").val();
         var rating = 4;
+        if($.trim(feedback) == '')
+        {   
+            return;
+        }
         $.ajax({
             type:"POST",
             url:"../Components/batchService.cfc?method=submitFeedback",
@@ -13,8 +17,8 @@ $(document).ready(function()
             timeout: 2000,
             error: function(){
                 swal({
-                    title: "Failed to retrieve the Notification details!!",
-                    text: "Some error occured. Please try after sometime",
+                    title: "Error",
+                    text: "Some server error occurred. Please try after sometimes while we fix it.",
                     icon: "error",
                     button: "Ok",
                 });
@@ -26,18 +30,21 @@ $(document).ready(function()
             },
             success: function(submitFeedbackInfo) 
             {   
-                submitFeedbackInfo = JSON.parse(submitFeedbackInfo)
-                if(submitFeedbackInfo.hasOwnProperty('ERROR'))
+                submitFeedbackInfo = JSON.parse(submitFeedbackInfo);
+                if(submitFeedbackInfo.hasOwnProperty("ERROR"))
                 {
-                    //show error msg
                     swal({
-                        title: "Failed to Submit!!",
-                        text: submitFeedbackInfo.error,
+                        title: "Error",
+                        text: submitFeedbackInfo.ERROR,
                         icon: "error",
                         button: "Ok",
                     });
                 }
-                else if(submitFeedbackInfo.hasOwnProperty('INSERTFEEDBACK') && submitFeedbackInfo.INSERTFEEDBACK)
+                else if(submitFeedbackInfo.validatedSuccessfully == false)
+                {
+                    $("#feedback").next().text(submitFeedbackInfo.feedback);
+                }
+                else if(submitFeedbackInfo.hasOwnProperty('key'))
                 {
                     //refresh the feedback column
                     swal({
@@ -63,8 +70,8 @@ function retrieveFeedback()
         timeout: 2000,
         error: function(){
             swal({
-                title: "Failed to retrieve the Feedbacks!!",
-                text: "Some error occured. Please try after sometime",
+                title: "Error",
+                text: "Some server error occurred. Please try after sometimes while we fix it.",
                 icon: "error",
                 button: "Ok",
             });
@@ -75,14 +82,14 @@ function retrieveFeedback()
         success: function(feedbackInfo) 
         {   
             feedbackInfo = JSON.parse(feedbackInfo);
-            if(feedbackInfo.hasOwnProperty("ERROR"))
+            if(feedbackInfo.hasOwnProperty("ERRORR"))
             {
                 $("#feedbackSection").empty();
                 $("#feedbackSection").append('<p class="py-3 m-3 alert alert-danger tezt-center w-100">'+feedbackInfo.ERROR+'</p>');
             }
-            else if(feedbackInfo.FEEDBACK.DATA.length > 0)
+            else if(feedbackInfo.FEEDBACKS.DATA.length > 0)
             {
-                var feedbacks = feedbackInfo.FEEDBACK.DATA;
+                var feedbacks = feedbackInfo.FEEDBACKS.DATA;
                 for(let feedback in feedbacks)
                 {
                     var feedbackDiv = $($("#feedbackSection").children()[0]).clone();
@@ -113,42 +120,42 @@ function retrieveFeedback()
     });
 }
 
-function loadNotification(element)
-{
-    $('#viewBatchNotificationModal').modal();
+// function loadNotification(element)
+// {
+//     $('#viewBatchNotificationModal').modal();
     
-    var notificationId = $(element).find('p')[0];
-    $.ajax({
-        type:"POST",
-        url:"../Components/batchService.cfc?method=getNotificationById",
-        cache: false,
-        timeout: 2000,
-        error: function(){
-            swal({
-                title: "Failed to retrieve the Notification details!!",
-                text: "Some error occured. Please try after sometime",
-                icon: "error",
-                button: "Ok",
-            });
-        },
-        data:{
-                "batchNotificationId" : $(notificationId).text()
-            },
-        success: function(error) 
-        {
-            var notificationInfo = JSON.parse(error);
-            if(notificationInfo.hasOwnProperty("error"))
-            {
-                //error msg will be displayed 
-            }
-            else
-            {
-                $("#viewNotificationId").text(notificationInfo.NOTIFICATION.DATA[0][0])
-                $("#viewNotificationTitle").text(notificationInfo.NOTIFICATION.DATA[0][3]);
-                $("#viewNotificationDateTime").text(notificationInfo.NOTIFICATION.DATA[0][2]);
-                $("#viewNotificationDetails").text(notificationInfo.NOTIFICATION.DATA[0][4]);
-            }
-        }
-    });
+//     var notificationId = $(element).find('p')[0];
+//     $.ajax({
+//         type:"POST",
+//         url:"../Components/batchService.cfc?method=getNotificationById",
+//         cache: false,
+//         timeout: 2000,
+//         error: function(){
+//             swal({
+//                 title: "Error",
+//                 text: "Some server error occurred. Please try after sometimes while we fix it.",
+//                 icon: "error",
+//                 button: "Ok",
+//             });
+//         },
+//         data:{
+//                 "batchNotificationId" : $(notificationId).text()
+//             },
+//         success: function(error) 
+//         {
+//             var notificationInfo = JSON.parse(error);
+//             if(notificationInfo.hasOwnProperty("error"))
+//             {
+//                 //error msg will be displayed 
+//             }
+//             else
+//             {
+//                 $("#viewNotificationId").text(notificationInfo.NOTIFICATION.DATA[0][0])
+//                 $("#viewNotificationTitle").text(notificationInfo.NOTIFICATION.DATA[0][3]);
+//                 $("#viewNotificationDateTime").text(notificationInfo.NOTIFICATION.DATA[0][2]);
+//                 $("#viewNotificationDetails").text(notificationInfo.NOTIFICATION.DATA[0][4]);
+//             }
+//         }
+//     });
 
-}
+// }

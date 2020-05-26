@@ -43,9 +43,6 @@ $(document).ready(function()
     inputFieldsPhoneNumber.set("primaryPhoneNumber",{id:"primaryPhoneNumber", errorMsg:"", value:""});
     inputFieldsPhoneNumber.set("alternativePhoneNumber",{id:"alternativePhoneNumber", errorMsg:"", value:""});
     
-    // inputFields.set("password",{id:"password", errorMsg:"", value:""});
-    // inputFields.set("confirmPassword",{id:"confirmPassword", errorMsg:"", value:""});
-    // inputFields.set("experience",{id:"experience", errorMsg:"", value:""});
 
     inputFieldsAddress.set("currentAddress",{id:"currentAddress", errorMsg:"", value:""});
     inputFieldsAddress.set("currentCountry",{id:"currentCountry", errorMsg:"", value:""});
@@ -65,32 +62,31 @@ $(document).ready(function()
     {
         $.ajax({
             type:"POST",
-            url:"Components/databaseService.cfc?method=getMyAddress",
-            data: "userId="+userId,
+            url:"Components/profileService.cfc?method=getMyAddress",
             cache:false,
             error: function(){
                 swal({
-                    title: "Failed to load!!",
-                    text: "Cannot load the address due to some internal error. Please, try to after sometimes!!",
+                    title: "Error",
+                    text: "Some server error occurred. Please try after sometimes while we fix it.",
                     icon: "error",
                     button: "Ok",
                 });
             },
-            success: function(message) {
-                message=JSON.parse(message);
-                console.log(message)
-                if(message.hasOwnProperty("ERROR"))
+            success: function(returnedValue) 
+            {
+                var address=JSON.parse(returnedValue);
+                if(address.hasOwnProperty('error'))
                 {
                     swal({
-                        title: "Failed to load!!",
-                        text: "Cannot load the address due to some internal error. Please, try to after sometimes!!",
+                        title: "Error",
+                        text: address.error,
                         icon: "error",
                         button: "Ok",
                     });
                 }
                 else 
                 {
-                    addressArray = message.ADDRESS.DATA;
+                    addressArray = address.ADDRESS.DATA;
                     // populate the country and state maps
                     loadCountryStateMap();
                     //populating the current address fields
@@ -140,82 +136,64 @@ $(document).ready(function()
             //ajax call made to validate and update the user profile...
             $.ajax({
                 type:"POST",
-                url:"Components/updateUserProfile.cfc?method=updateUserProfile",
+                url:"Components/profileService.cfc?method=updateUserProfile",
                 cache: false,
                 error: function(){
                     swal({
-                        title: "Registration Fails!!",
-                        text: "Some of the internal function fails to register. Please try after some time!!",
+                        title: "Error",
+                        text: "Some server error occurred. Please try after sometimes while we fix it.",
                         icon: "error",
                         button: "Ok",
                     });
-                
                 },
                 data:{
                         "firstName": $("#firstName").val(),
                         "lastName": $("#lastName").val(),
                         "emailAddress": $("#emailAddress").val(),
-                        // "primaryPhoneNumber": $("#primaryPhoneNumber").val(),
-                        // "alternativePhoneNumber":$("#alternativePhoneNumber").val(),
                         "dob":$("#dob").val(),
-                        // "password":$("#password").val(),
-                        // "confirmPassword":$("#confirmPassword").val(), 
-                        // "currentAddress":$("#currentAddress").val(),
-                        // "currentCountry":countryMap.get(parseInt($("#currentCountry").val())),
-                        // "currentState":stateMap.get($("#currentState").val()).name,
-                        // "currentCity":$("#currentCity").val(),
-                        // "currentPincode":$("#currentPincode").val(),
-                        // "havingAlternativeAddress": havingAlternativeAddress,
-                        // "alternativeAddress": havingAlternativeAddress == true ? $("#alternativeAddress").val() : '',
-                        // "alternativeCountry":havingAlternativeAddress == true ? countryMap.get(parseInt($("#alternativeCountry").val())) : '',
-                        // "alternativeState":havingAlternativeAddress == true ? stateMap.get($("#alternativeState").val()).name:'',
-                        // "alternativeCity":havingAlternativeAddress == true ? $("#alternativeCity").val():'',
-                        // "alternativePincode":havingAlternativeAddress == true ? $("#alternativePincode").val():'',
-                        "bio":$("#bio").val()=="" ? '': $("#bio").val()
-                    },
-                success: function(error) {
-                    var errorMsgs=JSON.parse(error);
-                    //if everything goes fine then user if registered by giving a success message
-                    if(errorMsgs["validatedSuccessfully"] == true)
+                        "bio":$("#bio").val()
+                },
+                success: function(returnValue) {
+                    var updateUserProfileInfo=JSON.parse(returnValue);
+                    // if everything goes fine then user if registered by giving a success message
+                    if(updateUserProfileInfo.hasOwnProperty("error"))
+                    {
+                        swal({
+                            title: "Error",
+                            text: updateUserProfileInfo.error,
+                            icon: "error",
+                            buttons: 'Ok',
+                        });
+                    }
+                    else if(updateUserProfileInfo.hasOwnProperty('updatedSuccessfully'))
                     { 
                         swal({
                             title: "Successfully Updated!!",
                             text: "Your profile has been successfully updated",
                             icon: "success",
                             buttons: false,
-                        })
+                        });
                         setTimeout(function(){ window.location.reload(true) },2000);
                     }
                     //else the error is been rectified and message been shown 
-                    else
+                    else if(!updateUserProfileInfo['validatedSuccessfully'])
                     {
-                        var showErrorModel=false;
-                        for (var key in errorMsgs) {
-                            if(key!="validatedSuccessfully" && !errorMsgs[key])
+                        delete(updateUserProfileInfo['validatedSuccessfully']);
+                        for (var key in updateUserProfileInfo) 
+                        {
+                            if(!updateUserProfileInfo[key])
                             {
-                                inputFieldsProfile.get(key).errorMsg=errorMsgs[key];
+                                inputFieldsProfile.get(key).errorMsg = updateUserProfileInfo[key];
                                 setErrorBorder(inputFieldsProfile.get(key));
                                 showErrorModel=true;
                             } 
                         }
-                        if(showErrorModel)
-                        {
-                            swal({
-                                title: "Registration Fails!!",
+                        swal({
+                                title: "Failed to updated!!",
                                 text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
                                 icon: "error",
                                 button: "Ok",
-                            });
-                        }
-                        else 
-                        {
-                            swal({
-                                title: "Registration Fails!!",
-                                text: "Registration fails due to some server problem. Please, try after some time!!",
-                                icon: "error",
-                                button: "Ok",
-                            });
-                        }
+                        });
                     }
                 }
             });
@@ -252,16 +230,15 @@ $(document).ready(function()
             //ajax call made to validate and update the user profile...
             $.ajax({
                 type:"POST",
-                url:"Components/updateUserProfile.cfc?method=updateUserPhoneNumber",
+                url:"Components/profileService.cfc?method=updateUserPhoneNumber",
                 cache: false,
                 error: function(){
                     swal({
-                        title: "Registration Fails!!",
-                        text: "Some of the internal function fails to register. Please try after some time!!",
+                        title: "Error",
+                        text: "Some server error occurred. Please try after sometimes while we fix it.",
                         icon: "error",
                         button: "Ok",
                     });
-                
                 },
                 data:{
                         "primaryPhoneNumber": $("#primaryPhoneNumber").val(),
@@ -270,18 +247,27 @@ $(document).ready(function()
                 success: function(error) {
                     var errorMsgs=JSON.parse(error);
                     //if everything goes fine then user if registered by giving a success message
-                    if(errorMsgs["validatedSuccessfully"] == true)
+                    if(errorMsgs.hasOwnProperty("error"))
+                    {
+                        swal({
+                            title: "Error",
+                            text: errorMsgs.error,
+                            icon: "success",
+                            buttons: false,
+                        });
+                    }
+                    else if(errorMsgs["updatedSuccessfully"])
                     { 
                         swal({
                             title: "Successfully Updated!!",
                             text: "Your Phone Number has been successfully updated",
                             icon: "success",
                             buttons: false,
-                        })
+                        });
                         setTimeout(function(){ window.location.reload(true) },2000);
                     }
                     //else the error is been rectified and message been shown 
-                    else
+                    else if(!errorMsgs['validatedSuccessfully'])
                     {
                         var showErrorModel=false;
                         for (var key in errorMsgs) {
@@ -355,16 +341,15 @@ $(document).ready(function()
             //ajax call made to validate and update the user profile...
             $.ajax({
                 type:"POST",
-                url:"Components/updateUserProfile.cfc?method=updateUserAddress",
+                url:"Components/profileService.cfc?method=updateUserAddress",
                 cache: false,
                 error: function(){
                     swal({
-                        title: "Registration Fails!!",
-                        text: "Some of the internal function fails to register. Please try after some time!!",
+                        title: "Error",
+                        text: "Some server error occurred. Please try after sometimes while we fix it.",
                         icon: "error",
                         button: "Ok",
                     });
-                
                 },
                 data:{
                         "currentAddress":$("#currentAddress").val(),
@@ -382,18 +367,27 @@ $(document).ready(function()
                 success: function(error) {
                     var errorMsgs=JSON.parse(error);
                     //if everything goes fine then user if registered by giving a success message
-                    if(errorMsgs["validatedSuccessfully"] == true)
+                    if(errorMsgs.hasOwnProperty("error"))
+                    {
+                        swal({
+                            title: "Error",
+                            text: errorMsgs.error,
+                            icon: "success",
+                            buttons: false,
+                        })
+                    }
+                    else if(errorMsgs["updatedSuccessfully"] == true)
                     { 
                         swal({
                             title: "Successfully Updated!!",
                             text: "Your profile has been successfully updated",
                             icon: "success",
                             buttons: false,
-                        })
+                        });
                         setTimeout(function(){ window.location.reload(true) },2000);
                     }
                     //else the error is been rectified and message been shown 
-                    else
+                    else if(!errorMsgs['validatedSuccessfully'])
                     {
                         var showErrorModel=false;
                         for (var key in errorMsgs) {
@@ -451,16 +445,15 @@ $(document).ready(function()
         // ajax call made to validate and update the user profile...
         $.ajax({
             type:"POST",
-            url:"Components/updateUserProfile.cfc?method=updateUserInterest",
+            url:"Components/profileService.cfc?method=updateUserInterest",
             cache: false,
             error: function(){
                 swal({
-                    title: "Registration Fails!!",
-                    text: "Some of the internal function fails to register. Please try after some time!!",
+                    title: "Error",
+                    text: "Some server error occurred. Please try after sometimes while we fix it.",
                     icon: "error",
                     button: "Ok",
                 });
-            
             },
             data:{
                     "otherLocation": otherLocation,
@@ -470,7 +463,16 @@ $(document).ready(function()
             success: function(error) {
                 var errorMsgs=JSON.parse(error);
                 //if everything goes fine then user if registered by giving a success message
-                if(errorMsgs["validatedSuccessfully"] == true)
+                if(errorMsgs.hasOwnProperty("error"))
+                {
+                    swal({
+                        title: "Error",
+                        text: errorMsgs.error,
+                        icon: "success",
+                        buttons: false,
+                    });
+                }
+                else if(errorMsgs["updatedSuccessfully"] == true)
                 { 
                     swal({
                         title: "Successfully Updated!!",
@@ -481,7 +483,7 @@ $(document).ready(function()
                     setTimeout(function(){ window.location.reload(true) },2000);
                 }
                 //else the error is been rectified and message been shown 
-                else
+                else if(!errorMsgs['validatedSuccessfully'])
                 {
                     swal({
                         title: "Failed to update!!",
@@ -657,16 +659,16 @@ function checkEmailId(element)
     }
     $.ajax({
         type:"POST",
-        url:"Components/updateUserProfile.cfc?method=validateEmail",
+        url:"Components/profileService.cfc?method=validateEmail",
         data: "emailId="+text,
         cache:false,
         success: function(error) {
             error=JSON.parse(error);
-            if(error.hasOwnProperty("ERROR"))
+            if(error.hasOwnProperty("error"))
             {
                 swal({
                     title: "failed to validate Email address!!",
-                    text: "Some of the server's function fails to validate. Please try after some time!!",
+                    text: error.error,
                     icon: "error",
                     button: "Ok",
                 })
@@ -711,16 +713,16 @@ function checkPhoneNumber(element)
     }
     $.ajax({
         type:"POST",
-        url:"Components/updateUserProfile.cfc?method=validatePhone",
+        url:"Components/profileService.cfc?method=validatePhone",
         data: "phoneNumber="+text,
         cache:false,
         success: function(error) {
             error=JSON.parse(error)
-            if(error.hasOwnProperty("ERROR"))
+            if(error.hasOwnProperty("error"))
             {
                 swal({
                     title: "failed to validate Phone Number!!",
-                    text: "Some of the server's function fails to validate. Please try after some time!!",
+                    text: error.error,
                     icon: "error",
                     button: "Ok",
                 })

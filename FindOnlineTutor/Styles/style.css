@@ -138,3 +138,14 @@ a:hover{
 {
   min-height: 500px;
 }
+.error-msg
+{
+  width: 75%;
+  margin: auto;
+  background-color: rgb(177, 0, 0);
+  color: whitesmoke;
+  padding: 4% 4%;
+  font-size: larger;
+  text-align: center;
+  margin-top: 10%;
+}

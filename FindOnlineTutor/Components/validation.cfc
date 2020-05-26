@@ -40,79 +40,84 @@ Functionality: This file has function that validated the registration form and i
         <cfargument  name="bio" type="string" required="false"/>
 
         <!--- creating a struct for error messages and calling the required functions--->
-        <cfset errorMsgs={}>
+        <cfset local.errorMsgs={}>
 
-        <cfset errorMsgs["validatedSuccessfully"]=true/>
-        <cflog  text="#errorMsgs["validatedSuccessfully"]#">
-        <cfset errorMsgs["firstName"]=validateName(arguments.firstName)/>
-        <cfset errorMsgs["lastName"]=validateName(arguments.lastName)/>
-        <cfset errorMsgs["emailAddress"]=validateEmail(arguments.emailAddress)/>
-        <cfset errorMsgs["primaryPhoneNumber"]=validatePhoneNumber(arguments.primaryPhoneNumber)/>
+        <cfset local.errorMsgs["validatedSuccessfully"]=true/>
+
+        <cfset local.errorMsgs["firstName"]=validateName(arguments.firstName)/>
+        <cfset local.errorMsgs["lastName"]=validateName(arguments.lastName)/>
+        <cfset local.errorMsgs["emailAddress"]=validateEmail(arguments.emailAddress)/>
+        <cfset local.errorMsgs["primaryPhoneNumber"]=validatePhoneNumber(arguments.primaryPhoneNumber)/>
 
         <cfif arguments.alternativePhoneNumber NEQ '' and arguments.alternativePhoneNumber NEQ arguments.primaryPhoneNumber>
-            <cfset errorMsgs["alternativePhoneNumber"]=validatePhoneNumber(arguments.alternativePhoneNumber)/>
+            <cfset local.errorMsgs["alternativePhoneNumber"]=validatePhoneNumber(arguments.alternativePhoneNumber)/>
         <cfelseif arguments.alternativePhoneNumber NEQ '' and arguments.alternativePhoneNumber EQ arguments.primaryPhoneNumber>
-            <cfset errorMsgs["alternativePhoneNumber"]="Alternative number should not be same.You can keep this blank."/>
+            <cfset local.errorMsgs["alternativePhoneNumber"]="Alternative number should not be same.You can keep this blank."/>
         </cfif>
 
-        <cfset errorMsgs["dob"]=validateDOB(arguments.dob)/>
-        <cfset errorMsgs["username"]=validateUsername(arguments.username)/>
-        <cfset errorMsgs["password"]=validatePassword(arguments.password)/>
+        <cfset local.errorMsgs["dob"]=validateDOB(arguments.dob)/>
+        <cfset local.errorMsgs["username"]=validateUsername(arguments.username)/>
+        <cfset local.errorMsgs["password"]=validatePassword(arguments.password)/>
 
         <cfif arguments.password NEQ arguments.confirmPassword>
-            <cfset errorMsgs["confirmPassword"]="password not matched!!"/>
+            <cfset local.errorMsgs["confirmPassword"]="password not matched!!"/>
         </cfif>
 
         <cfif arguments.isTeacher EQ 1>
-            <cfset errorMsgs["experience"]=validateExperience(arguments.experience)/>
+            <cfset local.errorMsgs["experience"]=validateExperience(arguments.experience)/>
         <cfelse>
             <cfset arguments.experience=0/>
         </cfif>
         
-        <cfset errorMsgs["currentAddress"]=validateText(arguments.currentAddress)/>
-        <cfset errorMsgs["currentCountry"]=validateText(arguments.currentCountry)/>
-        <cfset errorMsgs["currentState"]=validateText(arguments.currentState)/>
-        <cfset errorMsgs["currentCity"]=validateText(arguments.currentCity)/>
-        <cfset errorMsgs["currentPincode"]=validatePincode(arguments.currentPincode)/>
+        <cfset local.errorMsgs["currentAddress"]=validateText(arguments.currentAddress)/>
+        <cfset local.errorMsgs["currentCountry"]=validateText(arguments.currentCountry)/>
+        <cfset local.errorMsgs["currentState"]=validateText(arguments.currentState)/>
+        <cfset local.errorMsgs["currentCity"]=validateText(arguments.currentCity)/>
+        <cfset local.errorMsgs["currentPincode"]=validatePincode(arguments.currentPincode)/>
 
         <cfif arguments.havingAlternativeAddress>
-            <cfset errorMsgs["alternativeAddress"]=validateText(arguments.alternativeAddress)/>
-            <cfset errorMsgs["alternativeCountry"]=validateText(arguments.alternativeCountry)/>
-            <cfset errorMsgs["alternativeState"]=validateText(arguments.alternativeState)/>
-            <cfset errorMsgs["alternativeCity"]=validateText(arguments.alternativeCity)/>
-            <cfset errorMsgs["alternativePincode"]=validatePincode(arguments.alternativePincode)/>
+            <cfset local.errorMsgs["alternativeAddress"]=validateText(arguments.alternativeAddress)/>
+            <cfset local.errorMsgs["alternativeCountry"]=validateText(arguments.alternativeCountry)/>
+            <cfset local.errorMsgs["alternativeState"]=validateText(arguments.alternativeState)/>
+            <cfset local.errorMsgs["alternativeCity"]=validateText(arguments.alternativeCity)/>
+            <cfset local.errorMsgs["alternativePincode"]=validatePincode(arguments.alternativePincode)/>
         </cfif>
         
         <cfif arguments.bio NEQ ''>
-            <cfset errorMsgs["bio"]=validateText(arguments.bio)/>
+            <cfset local.errorMsgs["bio"]=validateText(arguments.bio)/>
         </cfif>
-        <cflog  text="#errorMsgs["validatedSuccessfully"]#">
+        
         <!---looping the errorMsgs struct for validation--->
-        <cfloop collection="#errorMsgs#" item="key">
-            <cfif key NEQ 'validatedSuccessfully' and structKeyExists(errorMsgs[key],"error")>
-                <cfset errorMsgs["validatedSuccessfully"]=false/>
-                <cfset errorMsgs["serverError"]=true/>
+        <cfloop collection="#local.errorMsgs#" item="key">
+            <cfif key NEQ 'validatedSuccessfully' and structKeyExists(local.errorMsgs[key],"error")>
+                <cfset local.errorMsgs["validatedSuccessfully"]=false/>
+                <cfset local.errorMsgs.error = "Some error occurred"/>
                 <cfbreak>
-            <cfelseif key NEQ 'validatedSuccessfully' and structKeyExists(errorMsgs[key],"msg")>
-                <cfset errorMsgs["validatedSuccessfully"]=false/>
+            <cfelseif key NEQ 'validatedSuccessfully' and structKeyExists(local.errorMsgs[key],"msg")>
+                <cfset local.errorMsgs["validatedSuccessfully"]=false/>
                 <cfbreak>
             </cfif>
         </cfloop>
-        
         <!---if successfully validated do Registration Work--->
-        <cfif errorMsgs["validatedSuccessfully"]==true>
-            <!---Do insertion operation--->
-            <cfset errorMsgs["validatedSuccessfully"] = databaseServiceObj.insertUser(
-            arguments.firstName, arguments.lastName, arguments.emailAddress, arguments.primaryPhoneNumber, 
-            arguments.alternativePhoneNumber, arguments.dob, arguments.username, arguments.password, arguments.isTeacher,
-            arguments.experience, arguments.currentAddress,arguments.currentCountry,arguments.currentState,arguments.currentCity,
-            arguments.currentPincode, arguments.havingAlternativeAddress, arguments.alternativeAddress,arguments.alternativeCountry,
-            arguments.alternativeState, arguments.alternativeCity,arguments.alternativePincode,arguments.bio
-            )/>
+        <cfif local.errorMsgs["validatedSuccessfully"]>
+            <cftry>
+                <!---Do insertion operation--->
+                <cfset local.insertedUser = databaseServiceObj.insertUser(
+                arguments.firstName, arguments.lastName, arguments.emailAddress, arguments.primaryPhoneNumber, 
+                arguments.alternativePhoneNumber, arguments.dob, arguments.username, arguments.password, arguments.isTeacher,
+                arguments.experience, arguments.currentAddress,arguments.currentCountry,arguments.currentState,arguments.currentCity,
+                arguments.currentPincode, arguments.havingAlternativeAddress, arguments.alternativeAddress,arguments.alternativeCountry,
+                arguments.alternativeState, arguments.alternativeCity,arguments.alternativePincode,arguments.bio)/>
 
-        </cfif>
+                <cfset local.errorMsgs["key"] = local.insertedUser.generatedKey/>
+            <cfcatch type="any">
+                <cfset local.errorMsgs['error'] = "Some error occurred. Please try after sometime"/>
+            </cfcatch>
+            </cftry>
             
-        <cfreturn errorMsgs/>
+        </cfif>
+        
+        <cfreturn local.errorMsgs/>
     </cffunction>
 
 
@@ -121,19 +126,19 @@ Functionality: This file has function that validated the registration form and i
         <!---defining argument--->
         <cfargument name="usrName" type="string" required="true">
         <!---declaring a variable for errormsg of type string--->
-        <cfset var errorMsg={}/>
-        <cfset var name=trim(arguments.usrName)/>
+        <cfset local.errorMsg={}/>
+        <cfset local.name=trim(arguments.usrName)/>
 
         <!---validation work--->
-        <cfif patternValidationObj.isEmpty(name)>
-            <cfset errorMsg.msg="Mandatory field!!"/>
-        <cfelseif NOT patternValidationObj.validName(name)>
-            <cfset errorMsg.msg="Invalid Name.Only Alphabets allowed without spaces."/>
-        <cfelseif len(name) GT 20>
-            <cfset errorMsg.msg="Should be less than 20 characters!!"/>
+        <cfif patternValidationObj.isEmpty(local.name)>
+            <cfset local.errorMsg.msg="Mandatory field!!"/>
+        <cfelseif NOT patternValidationObj.validName(local.name)>
+            <cfset local.errorMsg.msg="Invalid Name.Only Alphabets allowed without spaces."/>
+        <cfelseif len(local.name) GT 20>
+            <cfset local.errorMsg.msg="Should be less than 20 characters!!"/>
         </cfif>
 
-        <cfreturn errorMsg/> 
+        <cfreturn local.errorMsg/> 
     </cffunction>
 
     <!---function to validate email pattern--->
@@ -141,32 +146,26 @@ Functionality: This file has function that validated the registration form and i
         <!---defining argument--->
         <cfargument name="usrEmail" type="string" required="true">
         <!---declaring a structure for error msgs--->
-        <cfset var errorMsg={}/>
+        <cfset local.errorMsg={}/>
         <!---triming and initiazing a variable contains usrEmail--->
-        <cfset var email=trim(arguments.usrEmail) />
+        <cfset local.email=trim(arguments.usrEmail) />
         <!---email validation starts here--->
-        <cfif patternValidationObj.isEmpty(email)>
-            <cfset errorMsg.msg="Mandatory Field!!"/>
-        <cfelseif NOT patternValidationObj.validEmail(email)>
-            <cfset errorMsg.msg="Invalid Email Address."/>
+        <cfif patternValidationObj.isEmpty(local.email)>
+            <cfset local.errorMsg.msg="Mandatory Field!!"/>
+        <cfelseif NOT patternValidationObj.validEmail(local.email)>
+            <cfset local.errorMsg.msg="Invalid Email Address."/>
         <cfelse>    
             <cftry>
-                <cfset var isEmailAddressPresent = databaseServiceObj.isEmailPresent(email)/>
-                <cfif structKeyExists(isEmailAddressPresent, "error")>
-                    <cfset errorMsg.error="Some Error occurred while validating email address.Please, try after some time"/>
-                    <cfthrow detail = #isEmailAddressPresent.error#/>
-                <cfelseif structKeyExists(isEmailAddressPresent, "isPresent")>
-                    <cfif isEmailAddressPresent.isPresent EQ true>  
-                        <cfset errorMsg.msg="Email address already present"/>
-                        <cflog text="helo"/>
-                    </cfif>
+                <cfset local.user = databaseServiceObj.getUser(emailAddress = local.email)/>
+                <cfif local.user.recordCount GT 0>
+                    <cfset local.errorMsg.msg="Email address already present"/>
                 </cfif>
             <cfcatch type="any">
-                <cflog text = "Email validation error: #cfcatch# #cfcatch.detail#"/>
+                <cfset local.errorMsg['error'] = "Some error ocuurred.Please try after sometimes"/>
             </cfcatch>
             </cftry>   
         </cfif>
-        <cfreturn errorMsg/>
+        <cfreturn local.errorMsg/>
     </cffunction>
 
     <!---function to validate phone number pattern--->
@@ -174,33 +173,28 @@ Functionality: This file has function that validated the registration form and i
         <!---defining argument--->
         <cfargument name="usrPhoneNumber" type="string" required="true">
         <!---declaring a variable for usrPhoneNumber--->
-        <cfset var phoneNumber=trim(arguments.usrPhoneNumber)/>
+        <cfset local.phoneNumber=trim(arguments.usrPhoneNumber)/>
         <!---declaring a strcuture for returning error msg--->
-        <cfset var errorMsg={}/>
+        <cfset local.errorMsg={}/>
         <!---phone Number validation starts here--->
-        <cfif patternValidationObj.isEmpty(phoneNumber)>
-            <cfset errorMsg.msg="Mandatory Field!!"/>
-        <cfelseif NOT patternValidationObj.validNumber(phoneNumber)>
-            <cfset errorMsg.msg="Invalid Phone Number!!Only number Allowed"/>
-        <cfelseif len(phoneNumber) NEQ 10>
-            <cfset errorMsg.msg="Invalid Phone Number!! Length should be of 10"/> 
+        <cfif patternValidationObj.isEmpty(local.phoneNumber)>
+            <cfset local.errorMsg.msg="Mandatory Field!!"/>
+        <cfelseif NOT patternValidationObj.validNumber(local.phoneNumber)>
+            <cfset local.errorMsg.msg="Invalid Phone Number!!Only number Allowed"/>
+        <cfelseif len(local.phoneNumber) NEQ 10>
+            <cfset local.errorMsg.msg="Invalid Phone Number!! Length should be of 10"/> 
         <cfelse>
             <cftry>
-                <cfset var isPhoneNumberPresent = databaseServiceObj.isPhonePresent(phoneNumber)/>
-                <cfif structKeyExists(isPhoneNumberPresent, "error")>
-                    <cfset errorMsg.error="Some Error occurred while validating phone Number.Please, try after some time"/>
-                    <cfthrow detail = #isPhoneNumberPresent.error#/>
-                <cfelseif structKeyExists(isPhoneNumberPresent, "isPresent")>
-                    <cfif isPhoneNumberPresent.isPresent>  
-                        <cfset errorMsg.msg="Phone Number already present"/>
-                    </cfif>
-                </cfif>
+                <cfset local.user = databaseServiceObj.getUser(phoneNumber=local.phoneNumber)/>
+                <cfif local.user.recordCount GT 0>
+                    <cfset local.errorMsg.msg = 'Sorry this phone number has already been taken'/>
+                </cfif> 
             <cfcatch type="any">
-                <cflog text = "Phone Number validation error: #cfcatch#"/>
+                <cfset local.errorMsg['error']='Some error occurred.Please try after sometimes'/>
             </cfcatch>
             </cftry>   
         </cfif>
-        <cfreturn errorMsg/>
+        <cfreturn local.errorMsg/>
     </cffunction>
 
     <!---function to validate username pattern and unique--->
@@ -208,33 +202,28 @@ Functionality: This file has function that validated the registration form and i
         <!---defining argument--->
         <cfargument name="usrUsername" type="string" required="true">
         <!---declaring a variable for further uses--->
-        <cfset var username = trim(arguments.usrUsername)/>
+        <cfset local.username = trim(arguments.usrUsername)/>
         <!---declaring a structure for error msgs--->
-        <cfset var errorMsg={}/>
+        <cfset local.errorMsg={}/>
         <!---validation starts here--->
-        <cfif patternValidationObj.isEmpty(username)>
-            <cfset errorMsg.msg="Mandatory Field!!"/>
-        <cfelseif NOT patternValidationObj.validUsername(username)>
-            <cfset errorMsg.msg="Username should contain only alphabets, numbers, (_ @ .)"/>
-        <cfelseif len(username) GT 8>
-            <cfset errorMsg.msg="Username should of length 8 characters long"/>
+        <cfif patternValidationObj.isEmpty(local.username)>
+            <cfset local.errorMsg.msg="Mandatory Field!!"/>
+        <cfelseif NOT patternValidationObj.validUsername(local.username)>
+            <cfset local.errorMsg.msg="Username should contain only alphabets, numbers, (_ @ .)"/>
+        <cfelseif len(local.username) GT 8>
+            <cfset local.errorMsg.msg="Username should of length 8 characters long"/>
         <cfelse>
             <cftry>
-                <cfset var isUsernamePresent = databaseServiceObj.isUserPresent(username)/>
-                <cfif structKeyExists(isUsernamePresent, "error")>
-                    <cfset errorMsg.error="Some Error occurred while validating username.Please, try after some time"/>
-                    <cfthrow detail = #isUsernamePresent.error#/>
-                <cfelseif structKeyExists(isUsernamePresent, "isPresent")>
-                    <cfif isUsernamePresent.isPresent>  
-                        <cfset errorMsg.msg="Username already taken"/>
-                    </cfif>
+                <cfset local.isUsernamePresent = databaseServiceObj.isUserPresent(username)/>
+                <cfif local.isUsernamePresent>  
+                    <cfset local.errorMsg.msg="Username already taken"/>
                 </cfif>
             <cfcatch type="any">
-                <cflog text = "Username validation error: #cfcatch#"/>
+                <cfset local.errorMsg['error'] = "Some error occurred"/>
             </cfcatch>
             </cftry>   
         </cfif>
-        <cfreturn errorMsg/>
+        <cfreturn local.errorMsg/>
     </cffunction>
 
     <!---function to validate password pattern--->
@@ -242,19 +231,19 @@ Functionality: This file has function that validated the registration form and i
         <!---defining argumnents--->
         <cfargument  name="usrPassword" type="string" required="true">
         <!---declaring variable to store the usrPassword for further uses--->
-        <cfset var password=trim(arguments.usrPassword)/>
+        <cfset local.password=trim(arguments.usrPassword)/>
         <!---declaring variable for error msg--->
-        <cfset var errorMsg={}/>
+        <cfset local.errorMsg={}/>
         <!---validation starts here--->
-        <cfif patternValidationObj.isEmpty(password)>
-            <cfset errorMsg.msg="Please provide a password!!"/>
-        <cfelseif len(password) GT 15 and len(password) LT 8 >
-            <cfset errorMsg.msg="Password length must be within 8-15!!">
-        <cfelseif NOT patternValidationObj.validPassword(password)>
-            <cfset errorMsg.msg="Must contain at least 1 UPPERCASE 1 LOWERCASE 1 SPECIAL CHARACTER.">
+        <cfif patternValidationObj.isEmpty(local.password)>
+            <cfset local.errorMsg.msg="Please provide a password!!"/>
+        <cfelseif len(local.password) GT 15 and len(local.password) LT 8 >
+            <cfset local.errorMsg.msg="Password length must be within 8-15!!">
+        <cfelseif NOT patternValidationObj.validPassword(local.password)>
+            <cfset local.errorMsg.msg="Must contain at least 1 UPPERCASE 1 LOWERCASE 1 SPECIAL CHARACTER.">
         </cfif>
 
-        <cfreturn errorMsg />
+        <cfreturn local.errorMsg />
     </cffunction>
 
     <!---function to validate valid DOB--->
@@ -262,20 +251,20 @@ Functionality: This file has function that validated the registration form and i
         <!---defining argumnents--->
         <cfargument name="usrDOB" type="string" required="true">
         <!---declaring variable to store the usrDOB for further uses--->
-        <cfset var dob=arguments.usrDOB/>
+        <cfset local.dob=arguments.usrDOB/>
         <!---declaring variable for error msg--->
-        <cfset var errorMsg={}/>
+        <cfset local.errorMsg={}/>
         <!---validation starts here--->
-        <cfif NOT IsDate(dob)>
-            <cfset errorMsg.msg="Not a Valid date format!!">
+        <cfif NOT IsDate(local.dob)>
+            <cfset local.errorMsg.msg="Not a Valid date format!!">
         <cfelse>
-            <cfset dob=dateTimeFormat(dob, "MM/dd/yyyy") />
-            <cfif Year(dob) GT Year(now())-2 OR Year(dob) LT Year(now())-80 >
-                <cfset errorMsg.msg="Should be greater than 2 years and less than 80 years old"/>
+            <cfset local.dob=dateTimeFormat(local.dob, "MM/dd/yyyy") />
+            <cfif Year(local.dob) GT Year(now())-2 OR Year(local.dob) LT Year(now())-80 >
+                <cfset local.errorMsg.msg="Should be greater than 2 years and less than 80 years old"/>
             </cfif>
         </cfif>
 
-        <cfreturn errorMsg />
+        <cfreturn local.errorMsg />
     </cffunction>
 
     <!---function to validate any valid text--->
@@ -283,17 +272,17 @@ Functionality: This file has function that validated the registration form and i
         <!---defining argumnents--->
         <cfargument name="usrText" type="string" required="true">
         <!---declaring variable to store the text for further uses--->
-        <cfset var text=trim(arguments.usrText)/>
+        <cfset local.text=trim(arguments.usrText)/>
         <!---declaring variable for error msg--->
-        <cfset var errorMsg={}/>
+        <cfset local.errorMsg={}/>
         <!---validation starts here--->
-        <cfif patternValidationObj.isEmpty(text)>
-            <cfset errorMsg.msg = "Mandatory Field!!"/>
-        <cfelseif NOT patternvalidationObj.ValidText(text)>
-            <cfset errorMsg.msg="Should contain only alphabets, number and ',''/''&' "/>
+        <cfif patternValidationObj.isEmpty(local.text)>
+            <cfset local.errorMsg.msg = "Mandatory Field!!"/>
+        <cfelseif NOT patternvalidationObj.ValidText(local.text)>
+            <cfset local.errorMsg.msg="Should contain only alphabets, number and ',''/''&' "/>
         </cfif>
 
-        <cfreturn errorMsg/>
+        <cfreturn local.errorMsg/>
     </cffunction>
 
     <!---function to validate valid pincode--->
@@ -301,17 +290,17 @@ Functionality: This file has function that validated the registration form and i
         <!---defining argumnents--->
         <cfargument name="usrPincode" type="string" required="true">
         <!---declaring variable to store the usrPincode for further uses--->
-        <cfset var pincode = trim(arguments.usrPincode) />
+        <cfset local.pincode = trim(arguments.usrPincode) />
         <!---declaring variable for error msg--->
-        <cfset var errorMsg={}/>
+        <cfset local.errorMsg={}/>
         <!---validation starts here--->
-        <cfif patternValidationObj.isEmpty(pincode)>
-            <cfset errorMsg.msg="Mandatory Field"/>
-        <cfelseif (NOT patternValidationObj.validNumber(pincode)) and (len(pincode) NEQ 6)>
-            <cfset errorMsg.msg="Invalid Pincode.Must be Number of 6 digit and should contain only Number">
+        <cfif patternValidationObj.isEmpty(local.pincode)>
+            <cfset local.errorMsg.msg="Mandatory Field"/>
+        <cfelseif (NOT patternValidationObj.validNumber(local.pincode)) and (len(local.pincode) NEQ 6)>
+            <cfset local.errorMsg.msg="Invalid Pincode.Must be Number of 6 digit and should contain only Number">
         </cfif>
 
-        <cfreturn errorMsg />
+        <cfreturn local.errorMsg />
     </cffunction>
 
     <!---function to validate experience--->
@@ -319,17 +308,17 @@ Functionality: This file has function that validated the registration form and i
         <!---defining argumnents--->
         <cfargument name="usrExperience" type="string" required="true">
         <!---declaring variable to store the usrExperience for further uses--->
-        <cfset var experience = trim(arguments.usrExperience)/>
+        <cfset local.experience = trim(arguments.usrExperience)/>
         <!---declaring variable for error msg--->
-        <cfset var errorMsg ={}/>
+        <cfset local.errorMsg ={}/>
         <!---validation starts here--->
-        <cfif NOT patternValidationObj.validNumber(experience)>
-            <cfset errorMsg.msg="Invalid Experience. Only Integer allowed."/>
-        <cfelseif experience GT 99 and experience LT 0>
-            <cfset errorMsg.msg="Experience must be within 0 to 99"/>
+        <cfif NOT patternValidationObj.validNumber(local.experience)>
+            <cfset local.errorMsg.msg="Invalid Experience. Only Integer allowed."/>
+        <cfelseif experience GT 99 and local.experience LT 0>
+            <cfset local.errorMsg.msg="Experience must be within 0 to 99"/>
         </cfif>
 
-        <cfreturn errorMsg/>
+        <cfreturn local.errorMsg/>
     </cffunction>
 
  

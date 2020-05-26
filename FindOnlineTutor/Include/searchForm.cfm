@@ -13,8 +13,8 @@
     <div class='px-5 w-100 text-center my-1'>
         <cfset trendingWords = local.batchServiceObj.getTrendingWord()/>
         <small class='text-dark text-center d-inline p-2'><i><b>Trending: </b></i></small>
-        <cfif NOT structKeyExists(trendingWords, "error")>
-            <cfoutput query="trendingWords.trendingWords">
+        <cfif isQuery(trendingWords.words)>
+            <cfoutput query="trendingWords.words">
                 <cfset local.color = randRange(1, arrayLen(local.colorArray))/>
                 <a class="link mx-3 px-3 #local.colorArray[local.color]# section-div text-dark p-1" href="searchResult.cfm?query=#tag#">#tag#</a>
             </cfoutput>

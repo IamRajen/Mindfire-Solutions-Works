@@ -56,8 +56,8 @@ $(document).ready(function(){
                 timeout: 2000,
                 error: function(){
                     swal({
-                        title: "Failed to retrieve the batch details!!",
-                        text: "Some error occured. Please try after sometime",
+                        title: "Error",
+                        text: "Some server error occurred. Please try after sometimes while we fix it.",
                         icon: "error",
                         button: "Ok",
                     });
@@ -72,17 +72,17 @@ $(document).ready(function(){
                         "editBatchCapacity": $("#editBatchCapacity").val(),
                         "editBatchFee": $("#editBatchFee").val()
                     },
-                success: function(error) 
+                success: function(returnValue) 
                 {
-                    errorMsgs=JSON.parse(error);
-                    if(!errorMsgs.validatedSuccessfully)
+                    updateInfo=JSON.parse(returnValue);
+                    if(!updateInfo.validatedSuccessfully)
                     {
                         //validation error msg..
-                        for(var key in errorMsgs) 
+                        for(var key in updateInfo) 
                         {
-                            if(errorMsgs[key].hasOwnProperty("MSG"))
+                            if(updateInfo[key].hasOwnProperty("MSG"))
                             {
-                                inputOverview.get(key).errorMsg=errorMsgs[key]["MSG"];
+                                inputOverview.get(key).errorMsg=updateInfo[key]["MSG"];
                                 setErrorBorder(inputOverview.get(key));
                             } 
                         }
@@ -93,17 +93,17 @@ $(document).ready(function(){
                             button: "Ok",
                         });
                     }
-                    else if(errorMsgs.hasOwnProperty('error') && !errorMsgs.error)
+                    else if(updateInfo.hasOwnProperty('error'))
                     {
                         //some server error occurred msg..
                         swal({
                             title: "Failed to Update Batch!!",
-                            text: "Unable to update the batch. Please, try after sometime!!",
+                            text: updateInfo.error,
                             icon: "error",
                             button: "Ok",
                         });
                     }
-                    else if(errorMsgs.updatedSuccessfully)
+                    else if(updateInfo.updatedSuccessfully)
                     {
                         //updated successfully msg will be displayed...
                         swal({
@@ -167,8 +167,8 @@ $(document).ready(function(){
                 timeout: 2000,
                 error: function(){
                     swal({
-                        title: "Failed to retrieve the batch details!!",
-                        text: "Some error occured. Please try after sometime",
+                        title: "Error",
+                        text: "Some server error occurred. Please try after sometimes while we fix it.",
                         icon: "error",
                         button: "Ok",
                     });
@@ -213,7 +213,7 @@ $(document).ready(function(){
                         });
                     }
                     //if the validation is done successfully but failed to update the timing
-                    else if(!errorMsgs.COMMIT)
+                    else if(errorMsgs.hasOwnProperty("error"))
                     {
                         swal({
                             title: "Failed to update the BATCH Timing!!",
@@ -223,7 +223,7 @@ $(document).ready(function(){
                         });
                     }
                     // if successfully updated 
-                    else if(errorMsgs.COMMIT)
+                    else if(errorMsgs.hasOwnProperty("updatedSuccessfully"))
                     {
                         swal({
                             title: "Successfully Updated!!",
@@ -289,8 +289,8 @@ $(document).ready(function(){
                 timeout: 2000,
                 error: function(){
                     swal({
-                        title: "Failed to insert new notification!!",
-                        text: "Some error occured. Please try after sometime",
+                        title: "Error",
+                        text: "Some server error occurred. Please try after sometimes while we fix it.",
                         icon: "error",
                         button: "Ok",
                     });
@@ -302,8 +302,8 @@ $(document).ready(function(){
                     },
                 success: function(error) 
                 {
-                    var errorMsg = JSON.parse(error);
-                    if(!errorMsg["validatedSuccessfully"])
+                    var errorMsgs = JSON.parse(error);
+                    if(!errorMsgs["validatedSuccessfully"])
                     {
                         delete errorMsgs["validatedSuccessfully"];
                         for(var key in errorMsgs) 
@@ -315,30 +315,26 @@ $(document).ready(function(){
                             }
                         }
                     }
-                    else if(errorMsg.hasOwnProperty("insertion"))
+                    else if(errorMsgs.hasOwnProperty("insertion"))
                     {
-                        if(errorMsg["insertion"])
-                        {
-                            //if inserted successfully
-                            swal({
-                                title: "Created Successfully!!",
-                                text: "Notification has been successfully created",
-                                icon: "success",
-                                button: "Ok",
-                            });
-                            setTimeout(function(){window.location.reload(true)},2000); 
-                        }
-                        else 
-                        {
-                            //if inserted fails
-                            swal({
-                                title: "Failed!!",
-                                text: "Failed to create the notification.Some error occured. Please try after sometime",
-                                icon: "error",
-                                button: "Ok",
-                            });
-                        }
-
+                        //if inserted successfully
+                        swal({
+                            title: "Created Successfully!!",
+                            text: "Notification has been successfully created",
+                            icon: "success",
+                            button: "Ok",
+                        });
+                        setTimeout(function(){window.location.reload(true)},2000); 
+                    }
+                    else if(errorMsgs.hasOwnProperty("error"))
+                    {
+                        //if inserted fails
+                        swal({
+                            title: "Failed!!",
+                            text: errorMsgs.error,
+                            icon: "error",
+                            button: "Ok",
+                        });
                     }
                 }
             });
@@ -358,8 +354,8 @@ function loadBatchOverview()
         timeout: 2000,
         error: function(){
             swal({
-                title: "Failed to retrieve the batch details!!",
-                text: "Some error occured. Please try after sometime",
+                title: "Error",
+                text: "Some server error occurred. Please try after sometimes while we fix it.",
                 icon: "error",
                 button: "Ok",
             });
@@ -396,7 +392,7 @@ function loadBatchOverview()
                 $("#editBatchEndDate").val(endDate);
             }
             //else if some error occurred an alert will be displayed...
-            else if(batchOverView.hasOwnProperty("ERROR"))
+            else if(batchOverView.hasOwnProperty("error"))
             {
                 $("#editBatchOverviewModelBody").hide();
                 $("#editBatchOverviewfooter").hide();
@@ -444,8 +440,8 @@ function loadBatchTiming()
         timeout: 2000,
         error: function(){
             swal({
-                title: "Failed to retrieve the batch Timing!!",
-                text: "Some error occured. Please try after sometime",
+                title: "Error",
+                text: "Some server error occurred. Please try after sometimes while we fix it.",
                 icon: "error",
                 button: "Ok",
             });
@@ -504,8 +500,8 @@ function loadNotification(element)
         timeout: 2000,
         error: function(){
             swal({
-                title: "Failed to retrieve the Notification details!!",
-                text: "Some error occured. Please try after sometime",
+                title: "Error",
+                text: "Some server error occurred. Please try after sometimes while we fix it.",
                 icon: "error",
                 button: "Ok",
             });
@@ -543,8 +539,8 @@ function deleteNotification(element)
         timeout: 2000,
         error: function(){
             swal({
-                title: "Failed to delete the Notification!!",
-                text: "Some error occured. Please try after sometime",
+                title: "Error",
+                text: "Some server error occurred. Please try after sometimes while we fix it.",
                 icon: "error",
                 button: "Ok",
             });
@@ -578,7 +574,6 @@ function deleteNotification(element)
         }
     });
 }
-
 
 //border work
 function setErrorBorder(object)
@@ -735,7 +730,8 @@ function checkTime(element)
 
 function updateBatchAddress(id)
 {
-    if($("#batchType").text() == 'online')
+    console.log($("#batchType").text())
+    if($.trim($("#batchType").text()) == 'online')
     {
         if(!isValidPattern($("#addressLink").val(),patternLink))
         {
@@ -755,8 +751,8 @@ function updateBatchAddress(id)
             timeout: 2000,
             error: function(){
                 swal({
-                    title: "Failed to update the batch address!!",
-                    text: "Some error occured. Please try after sometime",
+                    title: "Error",
+                    text: "Some server error occurred. Please try after sometimes while we fix it.",
                     icon: "error",
                     button: "Ok",
                 });
@@ -768,6 +764,11 @@ function updateBatchAddress(id)
             success: function(error) 
             {
                 var updateInfo = JSON.parse(error);
+                if(!updateInfo.validatedSuccessfully)
+                {
+                    $("#addressLink").next().text("Invalid Link Address");
+                    $("#addressLink").css({"border-color": "#CD5C5C", "border-width":"2px"});
+                }
                 if(updateInfo.hasOwnProperty("error"))
                 {
                     swal({
@@ -789,7 +790,7 @@ function updateBatchAddress(id)
             }
         });
     }
-    else if($("#batchType").text() == 'coaching')
+    else if($.trim($("#batchType").text()) == 'coaching')
     {
         //ajax call be made for updating the database
         $.ajax({
@@ -799,8 +800,8 @@ function updateBatchAddress(id)
             timeout: 2000,
             error: function(){
                 swal({
-                    title: "Failed to update the batch address!!",
-                    text: "Some error occured. Please try after sometime",
+                    title: "Error",
+                    text: "Some server error occurred. Please try after sometimes while we fix it.",
                     icon: "error",
                     button: "Ok",
                 });
@@ -853,8 +854,8 @@ function updateRequest(id,element)
         timeout: 2000,
         error: function(){
             swal({
-                title: "Failed to retrieve the Batches",
-                text: "Some error occured. Please try after sometime.",
+                title: "Error",
+                text: "Some server error occurred. Please try after sometimes while we fix it.",
                 icon: "error",
                 button: "Ok",
             });
@@ -895,8 +896,8 @@ function enrollStudent(button)
         timeout: 2000,
         error: function(){
             swal({
-                title: "Failed to retrieve the Batches",
-                text: "Some error occured. Please try after sometime.",
+                title: "Error",
+                text: "Some server error occurred. Please try after sometimes while we fix it.",
                 icon: "error",
                 button: "Ok",
             });
@@ -941,8 +942,8 @@ function retrieveFeedback()
         timeout: 2000,
         error: function(){
             swal({
-                title: "Failed to retrieve the Feedbacks!!",
-                text: "Some error occured. Please try after sometime",
+                title: "Error",
+                text: "Some server error occurred. Please try after sometimes while we fix it.",
                 icon: "error",
                 button: "Ok",
             });
@@ -1015,8 +1016,8 @@ function addTag()
         timeout: 2000,
         error: function(){
             swal({
-                title: "Failed to add TAG!!",
-                text: "Some error occured. Please try after sometime",
+                title: "Error",
+                text: "Some server error occurred. Please try after sometimes while we fix it.",
                 icon: "error",
                 button: "Ok",
             });
@@ -1046,10 +1047,10 @@ function addTag()
                     button: "Ok",
                 });
             }
-            else
+            else if(insertTag.hasOwnProperty('key'))
             {
                 var divTag = '<div class="p-1 m-1 alert alert-info rounded d-inline-block tag">'+
-                                '<small id="'+insertTag.BATCHTAGID+'" class="text-info mx-1">'+$("#batchTag").val()+'</small>'+
+                                '<small id="'+insertTag.key+'" class="text-info mx-1">'+$("#batchTag").val()+'</small>'+
                                 '<button type="button" class="close mx-1" onclick="deleteTag(this)">&times;</button>'+
                             '</div>';
                 $("#batchTag").val('');
@@ -1071,8 +1072,8 @@ function deleteTag(button)
         timeout: 2000,
         error: function(){
             swal({
-                title: "Failed to delete the Tag!!",
-                text: "Some error occured. Please try after sometime",
+                title: "Error",
+                text: "Some server error occurred. Please try after sometimes while we fix it.",
                 icon: "error",
                 button: "Ok",
             });
@@ -1084,7 +1085,7 @@ function deleteTag(button)
         {   
             deleteTag = JSON.parse(deleteTag);
             //refresh the feedback column
-            if(deleteTag.hasOwnProperty('DELETED'))
+            if(deleteTag)
             {
                 $(button).parent().remove();
             }

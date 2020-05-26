@@ -10,7 +10,7 @@ Functionality: This page get first executed whenever a request comes to the webs
 	<cfset this.applicationTimeout = createtimespan(10,0,0,0) />
 	<cfset this.datasource = 'DBFindOnlineTutor' />
 	<cfset this.sessionManagement = true />
-	<cfset this.sessionTimeout = createTimespan(9,0,0,0) />
+	<cfset this.sessionTimeout = createTimespan(0,1,0,0) />
 
 	<!---OnApplicationStart() method--->
 	<cffunction name="onApplicationStart" returntype="boolean" >
@@ -32,7 +32,7 @@ Functionality: This page get first executed whenever a request comes to the webs
 		</cfif>
 		<cfreturn true />
 	</cffunction>
-
+<!---
 	<cffunction name="onError" returntype="void">
 		<cfargument name="exception" type="string" required=true/>
 		<cfargument name="eventname" type="string" required=true/>
@@ -48,7 +48,7 @@ Functionality: This page get first executed whenever a request comes to the webs
 		<cflocation url="customException.cfm">
 
 	</cffunction>
-
+--->
 	<cffunction name="onMissingTemplate" returntype="boolean">
 		<cfargument name="targetPage" type="string" required=true/>
 		<!--- Using a try block to catch errors. --->

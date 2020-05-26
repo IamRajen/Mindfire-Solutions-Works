@@ -23,27 +23,18 @@ Functionality: This page will be only displayed to students and visitors
     <div class="container">
         <cfif NOT structKeyExists(batchInfo, "error")>
             <!---if batch information is retrieved succesfully then this if block gets executed--->
-            <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student'>
-                <cfset myRequest = batchServiceObj.getMyRequests()/>
-                <!---if successfully batches are retrieved then those will be displayed here--->
-                <cfset requestIds = {}>
-                <!---looping through the requests and storing it into the structure for further use--->
-                <cfloop query="myRequest.Requests">
-                    <cfset requestIds['#batchId#'] = '#requestStatus#'>
-                </cfloop>
-            </cfif>
             <h4 class="text-secondary m-2">Batch Overview:</h4>
             <hr>
-            <cfoutput query="batchInfo.overview.batch">
+            <cfoutput query="batchInfo.overview">
                 <cfinclude  template="Include/batchOverview.cfm">
             </cfoutput>
              
 
             <h4 class="text-secondary m-2">Batch Address:</h4>
             <hr>
-            <div class="m-3 border p-4 rounded shadow">
-                <cfif isStruct(batchInfo.address)>
-                    <cfoutput query="batchInfo.Address.Address">
+           <div class="m-3 border p-4 rounded shadow">
+                <cfif isQuery(batchInfo.address)>
+                    <cfoutput query="batchInfo.Address">
                         <cfinclude  template="Include/address.cfm">
                     </cfoutput>
                 <cfelseif batchInfo.address EQ ''>
@@ -68,17 +59,14 @@ Functionality: This page will be only displayed to students and visitors
             <h4 class="text-secondary m-2">Batch Feedbacks:</h4>
             <hr>
             <div id="feedbackSection" class="row mt-3">
-                <cfif batchInfo.feedback.feedback.recordCount EQ 0>
+                <cfif batchInfo.feedback.recordCount EQ 0>
                     <p class="alert alert-secondary p-5 d-block w-100 text-center">This batch not have any feedback yet</p>
                 <cfelse>
-                    <cfoutput query="batchInfo.Feedback.feedback">
+                    <cfoutput query="batchInfo.Feedback">
                         <cfinclude  template="Include/batchFeedback.cfm">
                     </cfoutput>
                 </cfif>
             </div>
-        <!---if some error occurred then it will so some error msg---> 
-        <cfelseif structKeyExists(batchInfo, "error")>
-            <p class="m-5 py-5 text-center alert alert-danger w-100">batchInfo.error</p>
         </cfif>
         
     </div>
@@ -104,5 +92,5 @@ Functionality: This page will be only displayed to students and visitors
             </div>
         </div>
     </div>
-
+    
 </cf_header>

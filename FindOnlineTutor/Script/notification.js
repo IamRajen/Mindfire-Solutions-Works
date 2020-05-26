@@ -25,7 +25,10 @@ var tableFormat = '<table class="table border">'+
 
 $(document).ready(function()
 {
+    
     //an ajax call that will get all the notification...
+    $('.container').append(tableFormat);
+    
     $.ajax({
         type:"POST",
         url:"../Components/batchService.cfc?method=getMyNotification",
@@ -46,23 +49,18 @@ $(document).ready(function()
         success: function(notificationInfo) 
         {
             notificationInfo = JSON.parse(notificationInfo);
-            if(notificationInfo.hasOwnProperty("ERROR"))
+            if(notificationInfo.hasOwnProperty("error"))
             {
                 $(".container").empty();
-                //display error msg
-                $(errorMsg).appendTo($('.container'));
             } 
             else if(notificationInfo.hasOwnProperty("NOTIFICATIONS"))
             {
                 var notifications = notificationInfo.NOTIFICATIONS.DATA;
-                $(tableFormat).appendTo($('.container'));
-                var tbody = $(".container").find('tbody');
-                // console.log(tbody);
+                
                 for(let notification in notifications)
                 {
                     var tr = $('<tr></tr>');
-                    if(notifications[notification][5] == true)
-                    {
+                    if(notifications[notification][5] == true){
                         tr.addClass('font-weight-light');
                     }
                     else{
@@ -77,7 +75,7 @@ $(document).ready(function()
                     var tdViewButtonSection = $('<td>').append(tdViewButton);
                     
                     $(tr).append(tdNotificationNumber,tdNotificationTitle,tdbatchName,tdNotificationDate,tdNotificationTime,tdViewButtonSection);
-                    $(tr).appendTo($(tbody));
+                    $(tr).appendTo($(".container").find('#notifications'));
                 }
             }
         }
@@ -109,9 +107,16 @@ function getNotification(button)
         success: function(notification) 
         {
             notification = JSON.parse(notification);
-            if(notification.hasOwnProperty("ERROR"))
+            if(notification.hasOwnProperty("error"))
             {
                 //display some error msg
+                swal({
+                    title: "Error",
+                    text: notification.error,
+                    icon: "error",
+                    button: "Ok",
+                });
+
             }
             else if(notification.hasOwnProperty("NOTIFICATION"))
             {

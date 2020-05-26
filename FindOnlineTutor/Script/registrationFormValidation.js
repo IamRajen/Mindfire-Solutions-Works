@@ -150,51 +150,48 @@ $(document).ready(function()
                         "bio":$("#bio").val()=="" ? '': $("#bio").val()
 
                     },
-                success: function(error) {
-                    var errorMsgs=JSON.parse(error);
-                    //if everything goes fine then user if registered by giving a success message
-                    if(errorMsgs["validatedSuccessfully"] == true)
+                success: function(returnedValue) {
+                    var errorMsgs=JSON.parse(returnedValue);
+                    //else the error is been rectified and message been shown
+                    if(errorMsgs.hasOwnProperty("error"))
                     { 
                         swal({
-                            title: "Registration Successfull!!",
-                            text: "Thank you for Registering",
+                            title: "Registration Fails!!",
+                            text: "Registration fails due to some server problem. Please, try after some time!!",
+                            icon: "error",
+                            button: "Ok",
+                        });
+                        
+                    }
+                    //if everything goes fine then user if registered by giving a success message
+                    else if(errorMsgs.hasOwnProperty("key"))
+                    {
+                        swal({
+                            title: "Registration Success!!",
+                            text: "Successfully registered",
                             icon: "success",
                             buttons: false,
-                        })
+                        });
                         setTimeout(function(){self.submit()},3000);
                     }
-                    //else the error is been rectified and message been shown 
-                    else
+                    else if(!errorMsgs.validatedSuccessfully)
                     {
                         delete errorMsgs['validatedSuccessfully'];
-                        if(errorMsgs.hasOwnProperty("serverError"))
+                        for(var key in errorMsgs) 
                         {
-                            swal({
-                                title: "Registration Fails!!",
-                                text: "Registration fails due to some server problem. Please, try after some time!!",
-                                icon: "error",
-                                button: "Ok",
-                            });
-                        }
-                        else
-                        {
-                            delete errorMsgs['serverError'];
-                            for(var key in errorMsgs) 
+                            if(errorMsgs[key].hasOwnProperty("MSG"))
                             {
-                                if(errorMsgs[key].hasOwnProperty("MSG"))
-                                {
-                                    inputFields.get(key).errorMsg=errorMsgs[key]["MSG"];
-                                    setErrorBorder(inputFields.get(key));
-                                    showErrorModel=true;
-                                } 
-                            }
-                            swal({
-                                title: "Registration Fails!!",
-                                text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
-                                icon: "error",
-                                button: "Ok",
-                            });
+                                inputFields.get(key).errorMsg=errorMsgs[key]["MSG"];
+                                setErrorBorder(inputFields.get(key));
+                                showErrorModel=true;
+                            } 
                         }
+                        swal({
+                            title: "Registration Fails!!",
+                            text: "Some fields fails to validate they are marked red with respective reason's. Try to MODIFY and TRY AGAIN",
+                            icon: "error",
+                            button: "Ok",
+                        });
                     }
                 }
             });
@@ -365,7 +362,7 @@ function checkEmailId(element)
         },
         success: function(error) {
             error=JSON.parse(error);
-            if(error.hasOwnProperty("ERROR"))
+            if(error.hasOwnProperty("error"))
             {
                 swal({
                     title: "failed to validate Email address!!",
@@ -427,7 +424,7 @@ function checkPhoneNumber(element)
         },
         success: function(error) {
             error=JSON.parse(error);
-            if(error.hasOwnProperty("ERROR"))
+            if(error.hasOwnProperty("error"))
             {
                 swal({
                     title: "failed to validate Phone Number!!",
@@ -542,7 +539,7 @@ function checkUsername(element)
         },
         success: function(error) {
             error=JSON.parse(error);
-            if(error.hasOwnProperty("ERROR"))
+            if(error.hasOwnProperty("error"))
             {
                 swal({
                     title: "failed to validate username!!",

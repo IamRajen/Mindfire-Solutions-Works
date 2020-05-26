@@ -11,52 +11,51 @@
 
     
     <div class="container">
-        <cfif structKeyExists(batchInfo, "error")>
-            <p class="py-3 m-3 alert alert-danger tezt-center w-100">
-                <cfoutput>#batchInfo.ERROR#</cfoutput>
-            </p>
-        <cfelse>
-            <cfset myRequest = batchServiceObj.getMyRequests()/>
-            <!---if successfully batches are retrieved then those will be displayed here--->
-            <cfset requestIds = {}>
-            <!---looping through the requests and storing it into the structure for further use--->
-            <cfloop query="myRequest.Requests">
-                <cfset requestIds['#batchId#'] = '#requestStatus#'>
-            </cfloop>
-            <!---if batch information is retrieved succesfully then this if block gets executed--->
-            <h1 class="d-inline text-info"><cfoutput>#batchInfo.overview.batch.batchName#</cfoutput><span id="batchType" class="text-danger h6 ml-2"><cfoutput>#batchInfo.overview.batch.batchType#</cfoutput></span></h1>
-            <hr>
-            <cfoutput query="batchInfo.overview.batch">
-                <cfinclude  template="../Include/batchOverview.cfm">
-            </cfoutput>
-            
-            <div class="row m-3 mt-5">
-                <cfinclude  template="../Include/batchTiming.cfm">
-                <!---if the student is enrolled then only notification will display--->
-                <cfif  structKeyExists(requestIds, "#url.batch#") AND requestIds["#url.batch#"] EQ 'Approved'>           
-                    <cfinclude  template="../Include/batchNotification.cfm">   
-                </cfif>
-            </div>
-            
-            <!---if the student is enrolled then only feedback textarea will display--->
-            <cfif  structKeyExists(requestIds, "#url.batch#") AND requestIds["#url.batch#"] EQ 'Approved'>
-                <div class="container shadow p-3">
-                    <label class="control-label text-primary"  for="feedback">Feedback:</label>
-                    <textarea type="text" id="feedback" name="feedback" rows="5"  placeholder="Your feedback here...." class="form-control d-inline"></textarea>
-                    <span></span>
-                    <button id="submitFeedback" class="btn button-color shadow my-2">Submit</button>
-                </div>
+        
+        <cfset myRequest = batchServiceObj.getMyRequests()/>
+        <!---if successfully batches are retrieved then those will be displayed here--->
+        <cfset requestIds = {}>
+        <!---looping through the requests and storing it into the structure for further use--->
+        <cfloop query="myRequest.Requests">
+            <cfset requestIds['#batchId#'] = '#requestStatus#'>
+        </cfloop>
+        <!---if batch information is retrieved succesfully then this if block gets executed--->
+        <h1 class="d-inline text-info"><cfoutput>#batchInfo.overview.batchName#</cfoutput>
+            <span id="batchType" class="text-danger h6 ml-2">
+                <cfoutput>#batchInfo.overview.batchType#</cfoutput>
+            </span>
+        </h1>
+        <hr>
+        <cfoutput query="batchInfo.overview">
+            <cfinclude  template="../Include/batchOverview.cfm">
+        </cfoutput>
+        
+        <div class="row m-3 mt-5">
+            <cfinclude  template="../Include/batchTiming.cfm">
+            <!---if the student is enrolled then only notification will display--->
+            <cfif  structKeyExists(requestIds, "#url.batch#") AND requestIds["#url.batch#"] EQ 'Approved'>           
+                <cfinclude  template="../Include/batchNotification.cfm">   
             </cfif>
-
-            <!---batch feedback--->   
-            <h4 class="text-secondary m-2">Batch Feedbacks:</h4>
-            <hr>
-            <div id="feedbackSection" class="row mt-3">
-                <cfoutput query="batchInfo.feedback.feedback">
-                    <cfinclude  template="../Include/batchFeedback.cfm">
-                </cfoutput>
+        </div>
+        
+        <!---if the student is enrolled then only feedback textarea will display--->
+        <cfif  structKeyExists(requestIds, "#url.batch#") AND requestIds["#url.batch#"] EQ 'Approved'>
+            <div class="container shadow p-3">
+                <label class="control-label text-primary"  for="feedback">Feedback:</label>
+                <textarea type="text" id="feedback" name="feedback" rows="5"  placeholder="Your feedback here...." class="form-control d-inline"></textarea>
+                <span class="text-danger d-block"></span>
+                <button id="submitFeedback" class="btn button-color shadow my-2">Submit</button>
             </div>
         </cfif>
+
+        <!---batch feedback--->   
+        <h4 class="text-secondary m-2">Batch Feedbacks:</h4>
+        <hr>
+        <div id="feedbackSection" class="row mt-3">
+            <cfoutput query="batchInfo.feedback">
+                <cfinclude  template="../Include/batchFeedback.cfm">
+            </cfoutput>
+        </div>
     </div>
 
     <div class="modal fade" id="showNotification">

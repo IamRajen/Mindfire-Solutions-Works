@@ -19,15 +19,15 @@ var tagId = 1;
 $(document).ready(function()
 {
     //adding login button..
-    inputFields.set("batchName",{id:"batchName", errorMsg:"Enter your batch name", value:""});
-    inputFields.set("batchType",{id:"batchType", errorMsg:"", value:""});
-    inputFields.set("batchDetails",{id:"batchDetails", errorMsg:"Enter some details of this batch", value:""});
-    inputFields.set("batchStartDate",{id:"batchStartDate", errorMsg:"Select a start date", value:""});
-    inputFields.set("batchEndDate",{id:"batchEndDate", errorMsg:"Select a end date", value:""});
-    inputFields.set("batchCapacity",{id:"batchCapacity", errorMsg:"Enter the batch capacity", value:""});
-    inputFields.set("batchFee",{id:"batchFee", errorMsg:"Enter the batch fee", value:""});
-    inputFields.set("batchTag", {id:"batchTag", errorMsg:''})
-
+    inputFields.set("inputBatchName",{id:"inputBatchName", errorMsg:"Enter your batch name", value:""});
+    inputFields.set("inputBatchType",{id:"inputBatchType", errorMsg:"", value:""});
+    inputFields.set("inputBatchDetails",{id:"inputBatchDetails", errorMsg:"Enter some details of this batch", value:""});
+    inputFields.set("inputBatchStartDate",{id:"inputBatchStartDate", errorMsg:"Select a start date", value:""});
+    inputFields.set("inputBatchEndDate",{id:"inputBatchEndDate", errorMsg:"Select a end date", value:""});
+    inputFields.set("inputBatchCapacity",{id:"inputBatchCapacity", errorMsg:"Enter the batch capacity", value:""});
+    inputFields.set("inputBatchFee",{id:"inputBatchFee", errorMsg:"Enter the batch fee", value:""});
+    inputFields.set("inputBatchTag", {id:"inputBatchTag", errorMsg:''})
+    
     $("#newBatch").submit(function(e){
         e.preventDefault();
         var successfullyValidated=true;
@@ -39,8 +39,10 @@ $(document).ready(function()
             {
                 setErrorBorder(inputFields.get(key));
                 successfullyValidated=false;
+                console.log(inputFields.get(key).errorMsg)
             }
         }
+        console.log(successfullyValidated)
         //if successfully validated data is send to the server for creating batch
         if(successfullyValidated)
         {
@@ -52,25 +54,34 @@ $(document).ready(function()
                 timeout: 2000,
                 error: function(){
                     swal({
-                        title: "Failed to Create New Batch!!",
-                        text: "Some error occured. Please try after sometime",
+                        title: "Error",
+                        text: "Some server error occurred. Please try after sometimes while we fix it.",
                         icon: "error",
                         button: "Ok",
                     });
                 },
                 data:{
-                        "batchName":$("#batchName").val(),
-                        "batchType": $('input[name="batchType"]:checked').val(),
-                        "batchDetails": $("#batchDetails").val(),
-                        "batchStartDate": $("#batchStartDate").val(),
-                        "batchEndDate": $("#batchEndDate").val(),
-                        "batchCapacity": $("#batchCapacity").val(),
-                        "batchFee": $("#batchFee").val(),
+                        "batchName":$("#inputBatchName").val(),
+                        "batchType": $('input[name="inputBatchType"]:checked').val(),
+                        "batchDetails": $("#inputBatchDetails").val(),
+                        "batchStartDate": $("#inputBatchStartDate").val(),
+                        "batchEndDate": $("#inputBatchEndDate").val(),
+                        "batchCapacity": $("#inputBatchCapacity").val(),
+                        "batchFee": $("#inputBatchFee").val(),
                         "batchTag": JSON.stringify(batchTag)
                     },
                 success: function(error) {
                     errorMsgs=JSON.parse(error);
-                    if(errorMsgs.hasOwnProperty("createdSuccessfully"))
+                    if(errorMsgs.hasOwnProperty("error"))
+                    {
+                        swal({
+                            title: "Error",
+                            text: errorMsgs.error,
+                            icon: "error",
+                            button: "Ok",
+                        });
+                    }
+                    else if(errorMsgs.hasOwnProperty("key"))
                     {
                         swal({
                             title: "Successfully Created",
@@ -80,15 +91,6 @@ $(document).ready(function()
                         })
                         setTimeout(function(){window.location.reload(true)},2000)
                         
-                    }
-                    else if(errorMsgs.hasOwnProperty("error"))
-                    {
-                        swal({
-                            title: "Failed to Create Batch!!",
-                            text: "Unable to create the batch. Please, try after sometime!!",
-                            icon: "error",
-                            button: "Ok",
-                        });
                     }
                     else if(errorMsgs["validatedSuccessfully"]==false)
                     {
@@ -129,6 +131,7 @@ function setSuccessBorder(object)
 }
 function isEmpty(object)
 {
+    console.log($("#"+object.id).val(), object.id);
     if(!($.trim($("#"+object.id).val())))
     {
         object.errorMsg="Mandatory Fields";
@@ -254,8 +257,8 @@ function checkCapacityFee(element)
 
 function addTag()
 {
-    var tag = $.trim($("#batchTag").val());
-    var object = inputFields.get("batchTag");
+    var tag = $.trim($("#inputBatchTag").val());
+    var object = inputFields.get("inputBatchTag");
     if(isEmpty(object))
     {
         setSuccessBorder(object)
@@ -286,7 +289,7 @@ function addTag()
                         '<button type="button" class="close ml-1" onclick="deleteTag(this)">&times;</button>'+
                     '</div>'
     $("#tagDiv").append(displayTag);
-    $("#batchTag").val('');
+    $("#inputBatchTag").val('');
 }
 
 function deleteTag(button)

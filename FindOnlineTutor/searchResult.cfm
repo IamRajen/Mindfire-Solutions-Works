@@ -72,7 +72,6 @@ Functionality: This file show the search result of teachers for batches.
         <!---display the users near by batches--->
         <cfset batches = local.batchServiceObj.getNearByBatch(country='' , state='')/>
     </cfif>
-    
     <cfif structIsEmpty(batches) OR (structKeyExists(batches, 'batch') AND batches.batch.recordCount EQ 0)>
         <p class="alert alert-info py-3 text-center rounded">Sorry, We don't have any batches.</p>
     <cfelseif structKeyExists(batches, "batch") >
@@ -81,9 +80,6 @@ Functionality: This file show the search result of teachers for batches.
                 <cfinclude  template="Include/batchOverview.cfm">
             </cfoutput>
         </div>
-    <cfelseif structKeyExists(batches, "error") OR structKeyExists(batches.batch, "error")>
-        <!---if some error occurred while retrieving the data error msg will be displayed--->
-        <p class="alert alert-danger py-3 text-danger text-center rounded">Some error occured while retrieving your batches. Please, try after sometime.</p>
     </cfif>
 </div>
 

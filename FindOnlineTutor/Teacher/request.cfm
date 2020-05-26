@@ -10,14 +10,10 @@ Functionality: It is a request page which contains all the requests of the parti
     <!---creating a object of batch service and retriving the requests--->
     <cfset batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
     <cfset myRequests = batchServiceObj.getMyRequests()/>
-
+    
     <div class="container">
         <!---if any occurred--->
-        <cfif structKeyExists(myRequests, "error")>
-            <div class="alert alert-danger pt-3 pb-3 rounded-top">
-                <p class="text-danger text-center">Some error occured while retrieving your Requests. Please, try after sometime.</p>
-            </div>
-        <cfelseif myRequests.requests.recordCount EQ 0>
+        <cfif myRequests.requests.recordCount EQ 0>
             <div class="alert alert-secondary pt-5 pb-5 rounded-top">
                 <p class="text-secondary text-center">You don't have any Request yet.</p>
             </div>
@@ -67,6 +63,7 @@ Functionality: It is a request page which contains all the requests of the parti
                 </tbody>
             </table>
         </cfif>
+        
     </div>
 
 </cf_header>

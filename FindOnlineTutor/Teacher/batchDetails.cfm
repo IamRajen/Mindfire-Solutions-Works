@@ -7,25 +7,24 @@
     <cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
     <!---getting the information required for this page--->
     <cfset batchInfo = batchServiceObj.getBatchDetailsById(url.batch)/>
-    
     <!---all output processes start from here--->
 
     <cfif structIsEmpty(batchInfo)>
         <p class="alert alert-secondary py-5 w-100 m-5 text-center">Sorry, No such batch exixts</p>
-    <cfelseif structKeyExists(batchInfo, "error")>
-        <!---if failed to retrived the details an erro msg will displayed--->
-        <p class="alert alert-danger py-5 w-100 m-5 text-center"><cfoutput>#batchInfo.error#</cfoutput></p>
-    <cfelseif structKeyExists(batchInfo.overview, "batch")>
-
+    <cfelse>
         <!---if batch information is retrieved succesfully then this if block gets executed--->
-        <h1 class="d-inline text-info"><cfoutput>#batchInfo.overview.batch.batchName#</cfoutput><span id="batchType" class="text-danger h6 ml-2"><cfoutput>#batchInfo.overview.batch.batchType#</cfoutput></span></h1>
+        <h1 class="d-inline text-info"><cfoutput>#batchInfo.overview.batchName#</cfoutput>
+            <span id="batchType" class="text-danger h6 ml-2">
+                <cfoutput>#batchInfo.overview.batchType#</cfoutput>
+            </span>
+        </h1>
         <hr>
 
-        <cfoutput query="batchInfo.overview.batch">
+        <cfoutput query="batchInfo.overview">
             <cfinclude  template="../Include/batchOverview.cfm">
         </cfoutput>
 
-        <cfif session.stLoggedInUser.userId EQ batchInfo.overview.batch.batchOwnerId>
+        <cfif session.stLoggedInUser.userId EQ batchInfo.overview.batchOwnerId>
             <div class="row m-3 p-3 shadow rounded  text-center">
                 <div class="col-md-3">
                     <h3 class="text-dark">Batch Tag</h3>
@@ -38,16 +37,13 @@
                     <input type="button" class="btn btn-info px-4" value="Add" onClick="addTag()">
                 </div>
             </div>
-        </cfif>
-        
-        <cfif session.stLoggedInUser.userId EQ batchInfo.overview.batch.batchOwnerId>
             <cfinclude  template="../Include/batchAddress.cfm">
         <cfelse>
             <h4 class="text-secondary m-2">Batch Address:</h4>
             <hr>
             <div class="m-3 border p-4 rounded shadow">
-                <cfif isStruct(batchInfo.address)>
-                    <cfoutput query="batchInfo.Address.Address">
+                <cfif isQuery(batchInfo.address)>
+                    <cfoutput query="batchInfo.Address">
                         <cfinclude  template="../Include/address.cfm">
                     </cfoutput>
                 <cfelseif batchInfo.address EQ ''>
@@ -65,10 +61,11 @@
         </cfif>
         
         
+        
         <!---this div contains all the other batch deatils except the overview--->
         <div class="row m-3 mt-5">
             <cfinclude  template="../Include/batchTiming.cfm">
-            <cfif batchInfo.overview.batch.batchOwnerId EQ session.stLoggedInUser.userId>
+            <cfif batchInfo.overview.batchOwnerId EQ session.stLoggedInUser.userId>
                 <cfinclude  template="../Include/batchNotification.cfm">
                 <cfinclude  template="../Include/batchRequest.cfm">
                 <cfinclude  template="../Include/batchEnrolledStudent.cfm">
@@ -78,10 +75,10 @@
         <h4 class="text-secondary">Feedbacks</h4>
         <hr>
         <div class="row my-3">
-            <cfif batchInfo.feedback.feedback.recordCount EQ 0>
+            <cfif batchInfo.feedback.recordCount EQ 0>
                 <p class="alert alert-secondary p-5 d-block w-100 text-center">This batch not have any feedback yet</p>
             <cfelse>
-                <cfoutput query="batchInfo.feedback.feedback">
+                <cfoutput query="batchInfo.feedback">
                     <cfinclude  template="../Include/batchFeedback.cfm">
                 </cfoutput>
             </cfif>
@@ -99,7 +96,7 @@
                         <form id="editBatchTiming">
                             <!---model header--->
                             <div class="modal-header">
-                                <h5 class="modal-title"><cfoutput>#batchInfo.overview.batch.batchName#</cfoutput> Batch Time</h5>
+                                <h5 class="modal-title"><cfoutput>#batchInfo.overview.batchName#</cfoutput> Batch Time</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                                 </button>
@@ -153,10 +150,10 @@
                                     <div class="row m-3">
                                         <label class="text-info" class="control-label"  for="batchType">Batch Type:<span class="text-danger">*</span></label>
                                         <div class="col-md-12">
-                                            <label><input type="radio" name="editBatchType" value="otherLocation">Coaching Center</label>
+                                            <label><input type="radio" name="editBatchType" value="coaching">Coaching Center</label>
                                         </div>
                                         <div class="col-md-12">
-                                            <label><input type="radio" name="editBatchType" value="homeLocation">Student Home</label>
+                                            <label><input type="radio" name="editBatchType" value="home">Student Home</label>
                                         </div>
                                         <div class="col-md-12">
                                             <label><input type="radio" name="editBatchType" value="online">Online</label>
