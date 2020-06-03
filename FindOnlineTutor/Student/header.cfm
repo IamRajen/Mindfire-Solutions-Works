@@ -6,13 +6,13 @@ Created By: Rajendra Mishra.
 Functionality: It is a header file which is included probably in student section pages.
 --->
 
-<cfset batchServiceObject = createObject("component","FindOnlineTutor.Components.batchService")/>
-<cfset myNotification = batchServiceObject.getMyNotification()/>
-<cfset newNotification = 0/>
-<cfif NOT structKeyExists(myNotification, "error")>
-	<cfloop query="myNotification.Notifications">
+<cfset local.batchServiceObject = createObject("component","FindOnlineTutor.Components.batchService")/>
+<cfset local.myNotification = local.batchServiceObject.getMyNotification()/>
+<cfset local.newNotification = 0/>
+<cfif NOT structKeyExists(local.myNotification, "error")>
+	<cfloop query="#local.myNotification.Notifications#">
 		<cfif NOT #notificationStatus#>
-			<cfset newNotification = newNotification+1/>
+			<cfset local.newNotification = local.newNotification+1/>
 		</cfif>
 	</cfloop>
 </cfif>
@@ -50,8 +50,8 @@ Functionality: It is a header file which is included probably in student section
 							<a class="nav-link" href="batches.cfm">Your Batch</a>
 						</li>
 						<li class="nav-item mx-2">
-							<cfif newNotification GT 0>
-								<span class="notification-count float-right"><cfoutput>#newNotification#</cfoutput></span>
+							<cfif local.newNotification GT 0>
+								<span class="notification-count float-right"><cfoutput>#local.newNotification#</cfoutput></span>
 							</cfif>
 							<a class="nav-link d-inline-block pr-0" href="notification.cfm">Notification</a>
 						</li>

@@ -3,19 +3,19 @@
     <div class="p-3 shadow rounded">
         <!---displaying the batch notification--->
         <h3 class=" text-dark d-inline">Notification</h3>
-        <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.userId EQ batchInfo.overview.batchOwnerId>
+        <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.userId EQ local.batchInfo.overview.batchOwnerId>
             <button class="btn button-color shadow d-inline float-right px-3 py-1" data-toggle="modal" data-target="#addBatchNotificationModal">Add</button>
         </cfif>
         <hr>
         <!---if no available a blank msg while be diplayed--->
-        <cfif batchInfo.notification.recordCount EQ 0>
+        <cfif local.batchInfo.notification.recordCount EQ 0>
             <div  style="max-width: 500px; height: 409px;">
                 <p class="d-block text-dark m-2 alert alert-secondary">No notification is added yet. You can create one by clicking add button at the top-right corner.</p>
             </div>
         <cfelse>
         <!---display the notifications--->
         <div class="overflow-auto" style="max-width: 500px; height: 409px;">
-            <cfoutput query="batchInfo.NOTIFICATION">
+            <cfoutput query="local.batchInfo.NOTIFICATION">
                 <cfset notificationTime = #TimeFormat(dateTime,"h:mm:ss tt")#/>
                 <cfset notificationDate = #DateFormat(dateTime,"d mmm yyyy")#/>
                 <cfset today = #dateFormat(now(),"d mmm yyyy")#/>

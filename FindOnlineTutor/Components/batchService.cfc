@@ -164,10 +164,10 @@ Functionality: This file contains the functions which help to give required serv
                     <!---getting all enrolled students of this batch--->
                     <cfset local.enrolledStudents = databaseServiceObj.getEnrolledStudent(arguments.batchId)/>
                     <!---looping through the students--->
-                    <cfloop query="enrolledStudents">
+                    <cfloop query="#local.enrolledStudents#">
                         
                         <cfset local.insertedNotificationStatus = databaseServiceObj.insertNotificationStatus
-                                                    (local.batchNotificationId, local.batchEnrolledStudentId, 0)/>
+                                                    (local.batchNotificationId, batchEnrolledStudentId, 0)/>
                     </cfloop>
                     
                     <!---if every query get successfully executed then commit actoin get called--->

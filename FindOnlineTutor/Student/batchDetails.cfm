@@ -5,41 +5,41 @@
     </cfif>
     
     <!---creating object for getting the batch data--->
-    <cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
+    <cfset local.batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
     <!---getting the information required for this page--->
-    <cfset batchInfo = batchServiceObj.getBatchDetailsById(url.batch)/>
+    <cfset local.batchInfo = local.batchServiceObj.getBatchDetailsById(url.batch)/>
 
     
     <div class="container">
         
-        <cfset myRequest = batchServiceObj.getMyRequests()/>
+        <cfset local.myRequest = local.batchServiceObj.getMyRequests()/>
         <!---if successfully batches are retrieved then those will be displayed here--->
-        <cfset requestIds = {}>
+        <cfset local.requestIds = {}>
         <!---looping through the requests and storing it into the structure for further use--->
-        <cfloop query="myRequest.Requests">
-            <cfset requestIds['#batchId#'] = '#requestStatus#'>
+        <cfloop query="local.myRequest.Requests">
+            <cfset local.requestIds['#batchId#'] = '#requestStatus#'>
         </cfloop>
         <!---if batch information is retrieved succesfully then this if block gets executed--->
-        <h1 class="d-inline text-info"><cfoutput>#batchInfo.overview.batchName#</cfoutput>
+        <h1 class="d-inline text-info"><cfoutput>#local.batchInfo.overview.batchName#</cfoutput>
             <span id="batchType" class="text-danger h6 ml-2">
-                <cfoutput>#batchInfo.overview.batchType#</cfoutput>
+                <cfoutput>#local.batchInfo.overview.batchType#</cfoutput>
             </span>
         </h1>
         <hr>
-        <cfoutput query="batchInfo.overview">
+        <cfoutput query="local.batchInfo.overview">
             <cfinclude  template="../Include/batchOverview.cfm">
         </cfoutput>
         
         <div class="row m-3 mt-5">
             <cfinclude  template="../Include/batchTiming.cfm">
             <!---if the student is enrolled then only notification will display--->
-            <cfif  structKeyExists(requestIds, "#url.batch#") AND requestIds["#url.batch#"] EQ 'Approved'>           
+            <cfif  structKeyExists(local.requestIds, "#url.batch#") AND local.requestIds["#url.batch#"] EQ 'Approved'>           
                 <cfinclude  template="../Include/batchNotification.cfm">   
             </cfif>
         </div>
         
         <!---if the student is enrolled then only feedback textarea will display--->
-        <cfif  structKeyExists(requestIds, "#url.batch#") AND requestIds["#url.batch#"] EQ 'Approved'>
+        <cfif  structKeyExists(local.requestIds, "#url.batch#") AND local.requestIds["#url.batch#"] EQ 'Approved' AND local.batchInfo.overview.startDate LT now()>
             <div class="container shadow p-3">
                 <label class="control-label text-primary"  for="feedback">Feedback:</label>
                 <textarea type="text" id="feedback" name="feedback" rows="5"  placeholder="Your feedback here...." class="form-control d-inline"></textarea>
@@ -52,7 +52,7 @@
         <h4 class="text-secondary m-2">Batch Feedbacks:</h4>
         <hr>
         <div id="feedbackSection" class="row mt-3">
-            <cfoutput query="batchInfo.feedback">
+            <cfoutput query="local.batchInfo.feedback">
                 <cfinclude  template="../Include/batchFeedback.cfm">
             </cfoutput>
         </div>

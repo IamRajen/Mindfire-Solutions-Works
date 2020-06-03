@@ -7,13 +7,13 @@ Functionality: It is a batch page which contains all the related information for
 --->
 <cf_header homeLink="../index.cfm" logoPath="../Images/logo.png" stylePath="../Styles/style.css" scriptPath="../Script/batchValidation.js">
 
-<cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
+<cfset local.batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
 
 <!---Display the batches---> 
-    <cfset batchInfo = batchServiceObj.getMyBatch()/>
+    <cfset local.batchInfo = local.batchServiceObj.getMyBatch()/>
     
     <div id="batchDiv" class="m-3">
-        <cfif batchInfo.batch.recordCount EQ 0>
+        <cfif local.batchInfo.batch.recordCount EQ 0>
             <div class="alert alert-secondary pt-5 pb-5 rounded-top">
                 <p class="text-secondary text-center">You haven't created any batch. You can create it by clicking on "Add New Batch" button at top right side.</p>
             </div>
@@ -23,7 +23,7 @@ Functionality: It is a batch page which contains all the related information for
                 Add new Batch
             </button>
             <hr>
-            <cfoutput query="batchInfo.batch">
+            <cfoutput query="local.batchInfo.batch">
                 <cfinclude  template="../Include/batchOverview.cfm">
            </cfoutput>
         </cfif>

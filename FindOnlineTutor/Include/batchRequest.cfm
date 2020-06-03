@@ -18,7 +18,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <cfoutput query="batchInfo.request">
+                    <cfoutput query="local.batchInfo.request">
                         <tr>
                             <th>#batchRequestId#.</th>
                             <td>#dateFormat(requestDateTime)#</td>

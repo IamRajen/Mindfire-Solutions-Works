@@ -5,26 +5,26 @@ Created In: 28th Mar 2020
 Created By: Rajendra Mishra.
 Functionality: It is a header file which is included probably in every pages.
 --->
-<cfset batchServiceObject = createObject("component","FindOnlineTutor.Components.batchService")/>
+<cfset local.batchServiceObject = createObject("component","FindOnlineTutor.Components.batchService")/>
 <!---if user is a Teacher--->
 <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher'>
-	<cfset myRequests = batchServiceObject.getMyRequests()/>
-	<cfset pendingRequest = 0/>
-	<cfif NOT structKeyExists(myRequests, "error")>
-		<cfloop query="myRequests.requests">
+	<cfset local.myRequests = local.batchServiceObject.getMyRequests()/>
+	<cfset local.pendingRequest = 0/>
+	<cfif NOT structKeyExists(local.myRequests, "error")>
+		<cfloop query="#local.myRequests.requests#">
 			<cfif #requestStatus# EQ 'Pending'>
-				<cfset pendingRequest = pendingRequest+1/>
+				<cfset local.pendingRequest = local.pendingRequest+1/>
 			</cfif>
 		</cfloop>
 	</cfif>
 <!---if user is a student--->
 <cfelseif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student'>
-	<cfset myNotification = batchServiceObject.getMyNotification()/>
-	<cfset newNotification = 0/>
-	<cfif NOT structKeyExists(myNotification, "error")>
-		<cfloop query="myNotification.Notifications">
+	<cfset local.myNotification = local.batchServiceObject.getMyNotification()/>
+	<cfset local.newNotification = 0/>
+	<cfif NOT structKeyExists(local.myNotification, "error")>
+		<cfloop query="#local.myNotification.Notifications#">
 			<cfif NOT #notificationStatus#>
-				<cfset newNotification = newNotification+1/>
+				<cfset local.newNotification = local.newNotification+1/>
 			</cfif>
 		</cfloop>
 	</cfif>
@@ -75,8 +75,8 @@ Functionality: It is a header file which is included probably in every pages.
 							<!---teacher's facilities start here--->
 							<cfif session.stLoggedInUser.role EQ 'Teacher'>
 								<li class="nav-item mx-2">
-									<cfif pendingRequest GT 0>
-										<span class="notification-count float-right"><cfoutput>#pendingRequest#</cfoutput></span>
+									<cfif local.pendingRequest GT 0>
+										<span class="notification-count float-right"><cfoutput>#local.pendingRequest#</cfoutput></span>
 									</cfif>
 									<a class="nav-link d-inline-block pr-0" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/request.cfm">Requests</a>
 								</li>
@@ -90,8 +90,8 @@ Functionality: It is a header file which is included probably in every pages.
 							<!---student's faclities starts here--->
 							<cfif session.stLoggedInUser.role EQ 'Student'>
 								<li class="nav-item mx-2">
-									<cfif newNotification GT 0>
-										<span class="notification-count float-right"><cfoutput>#newNotification#</cfoutput></span>
+									<cfif local.newNotification GT 0>
+										<span class="notification-count float-right"><cfoutput>#local.newNotification#</cfoutput></span>
 									</cfif>
 									<a class="nav-link d-inline-block pr-0" href="<cfoutput>#session.stLoggedInUser.role#</cfoutput>/notification.cfm">Notification</a>
 								</li>

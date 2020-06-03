@@ -16,16 +16,16 @@ Functionality: This page will be only displayed to students and visitors
     </cfif>
 
     <!---creating object for getting the batch data--->
-    <cfset batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
+    <cfset local.batchServiceObj = createObject("component","FindOnlineTutor/Components/batchService")/>
     <!---getting the information required for this page--->
-    <cfset batchInfo = batchServiceObj.getBatchDetailsByID(url.batch)/>
+    <cfset local.batchInfo = local.batchServiceObj.getBatchDetailsByID(url.batch)/>
 
     <div class="container">
-        <cfif NOT structKeyExists(batchInfo, "error")>
+        <cfif NOT structKeyExists(local.batchInfo, "error")>
             <!---if batch information is retrieved succesfully then this if block gets executed--->
             <h4 class="text-secondary m-2">Batch Overview:</h4>
             <hr>
-            <cfoutput query="batchInfo.overview">
+            <cfoutput query="local.batchInfo.overview">
                 <cfinclude  template="Include/batchOverview.cfm">
             </cfoutput>
              
@@ -33,17 +33,17 @@ Functionality: This page will be only displayed to students and visitors
             <h4 class="text-secondary m-2">Batch Address:</h4>
             <hr>
            <div class="m-3 border p-4 rounded shadow">
-                <cfif isQuery(batchInfo.address)>
-                    <cfoutput query="batchInfo.Address">
+                <cfif isQuery(local.batchInfo.address)>
+                    <cfoutput query="local.batchInfo.Address">
                         <cfinclude  template="Include/address.cfm">
                     </cfoutput>
-                <cfelseif batchInfo.address EQ ''>
+                <cfelseif local.batchInfo.address EQ ''>
                     <p>No information is available</p>
-                <cfelseif batchInfo.address NEQ ''>
+                <cfelseif local.batchInfo.address NEQ ''>
                     <span>Link:-</span>
-                    <a href="<cfoutput>#batchInfo.address#</cfoutput>">
+                    <a href="<cfoutput>#local.batchInfo.address#</cfoutput>">
                         <cfoutput>
-                            #batchInfo.address#
+                            #local.batchInfo.address#
                         </cfoutput>
                     </a>
                 </cfif>
@@ -59,10 +59,10 @@ Functionality: This page will be only displayed to students and visitors
             <h4 class="text-secondary m-2">Batch Feedbacks:</h4>
             <hr>
             <div id="feedbackSection" class="row mt-3">
-                <cfif batchInfo.feedback.recordCount EQ 0>
+                <cfif local.batchInfo.feedback.recordCount EQ 0>
                     <p class="alert alert-secondary p-5 d-block w-100 text-center">This batch not have any feedback yet</p>
                 <cfelse>
-                    <cfoutput query="batchInfo.Feedback">
+                    <cfoutput query="local.batchInfo.Feedback">
                         <cfinclude  template="Include/batchFeedback.cfm">
                     </cfoutput>
                 </cfif>

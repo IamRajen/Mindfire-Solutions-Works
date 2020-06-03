@@ -15,7 +15,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <cfoutput query="batchInfo.enrolledStudent">
+                    <cfoutput query="local.batchInfo.enrolledStudent">
                         <tr>
                             <td>#dateFormat(enrolledDateTime)#</td>
                             <td>#timeFormat(enrolledDateTime)#</td>

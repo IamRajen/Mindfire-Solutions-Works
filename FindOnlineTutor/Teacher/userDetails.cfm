@@ -6,9 +6,9 @@ Created By: Rajendra Mishra.
 Functionality: A teacher page containing the detail information about the teacher
 --->
 
-<cfset profileServiceObj = createObject("component","FindOnlineTutor.Components.profileService")/>
-<cfset batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
-<cfset userDetails = profileServiceObj.getUserDetails(userId = url.user)>
+<cfset local.profileServiceObj = createObject("component","FindOnlineTutor.Components.profileService")/>
+<cfset local.batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
+<cfset local.userDetails = local.profileServiceObj.getUserDetails(userId = url.user)>
 
 
 <cf_header homeLink="../index.cfm" logoPath="../Images/logo.png" stylePath="../Styles/style.css">
@@ -17,7 +17,7 @@ Functionality: A teacher page containing the detail information about the teache
     
     <div class="p-5">
         <h3 class="text-secondary">Overview:</h3>
-        <cfoutput query="userDetails.overview">
+        <cfoutput query="local.userDetails.overview">
             <cfinclude  template="../Include/userOverview.cfm">
         </cfoutput>
     </div>
@@ -25,10 +25,10 @@ Functionality: A teacher page containing the detail information about the teache
     <div class="p-5">
         <h3 class="text-secondary">Address:</h3>
         <div class="container border shadow rounded p-4">
-            <cfset currentRow = 1/>
-            <cfoutput query="userDetails.address">
+            <cfset local.currentRow = 1/>
+            <cfoutput query="local.userDetails.address">
                 <small class="text-primary">
-                    <cfif currentRow == 1>
+                    <cfif local.currentRow == 1>
                         Current Address : 
                     <cfelse>
                         Alternative Address : 
@@ -41,7 +41,7 @@ Functionality: A teacher page containing the detail information about the teache
 
     <div class="p-5">
         <h3 class="text-secondary">Batches:</h3>
-        <cfoutput query="userDetails.batch">
+        <cfoutput query="local.userDetails.batch">
             <cfinclude  template="../Include/batchOverview.cfm">
         </cfoutput>
     </div>

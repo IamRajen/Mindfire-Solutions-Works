@@ -7,14 +7,14 @@ Functionality: It is a page that contains all the students list of the logged in
 --->
 <cf_header homeLink="../index.cfm" logoPath="../Images/logo.png" stylePath="../Styles/style.css">
 
-    <cfset batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
-    <cfset profileServiceObj = createObject("component","FindOnlineTutor.Components.profileService")/>
-    <cfset myStudents = batchServiceObj.getMyStudent()/>
+    <cfset local.batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
+    <cfset local.profileServiceObj = createObject("component","FindOnlineTutor.Components.profileService")/>
+    <cfset local.myStudents = local.batchServiceObj.getMyStudent()/>
     
     <div class="p-3 my-4 shadow rounded">
         <!---displaying the batch students--->
-        <cfif structKeyExists(myStudents, "students")>
-            <cfif myStudents.students.recordCount EQ 0>
+        <cfif structKeyExists(local.myStudents, "students")>
+            <cfif local.myStudents.students.recordCount EQ 0>
                 <p class="alert alert-info py-5 m-5 text-center w-100">You don't have any enrolled student yet</p>
             <cfelse>
                 <h3 class=" text-dark d-inline">Batch Students</h3>
@@ -29,16 +29,16 @@ Functionality: It is a page that contains all the students list of the logged in
                         </tr>
                     </thead>
                     <tbody>
-                        <cfset studentNumber = 1/>
-                        <cfoutput query="myStudents.students">
-                            <cfset userName = profileServiceObj.getName(studentId)/>
-                            <cfif NOT structKeyExists(userName, "error")>
+                        <cfset local.studentNumber = 1/>
+                        <cfoutput query="local.myStudents.students">
+                            <cfset local.userName = local.profileServiceObj.getName(studentId)/>
+                            <cfif NOT structKeyExists(local.userName, "error")>
                                 <tr class="border-bottom">
-                                    <td>#studentNumber#</td>
+                                    <td>#local.studentNumber#</td>
                                     <td><p class="text-dark">#numberOfBatches#</p></td>
-                                    <td><a class="text-dark" href="../userDetails.cfm?user=#studentId#">#userName.name.name#</a></td>
+                                    <td><a class="text-dark" href="../userDetails.cfm?user=#studentId#">#local.userName.name.name#</a></td>
                                 </tr>
-                                <cfset studentNumber = studentNumber+1/> 
+                                <cfset local.studentNumber = local.studentNumber+1/> 
                             </cfif>
                     </cfoutput>
                     </tbody>

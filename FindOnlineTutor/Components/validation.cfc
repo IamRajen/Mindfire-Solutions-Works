@@ -9,8 +9,8 @@ Functionality: This file has function that validated the registration form and i
 
 <cfcomponent output="false">
     <!---onsubmit validation--->
-    <cfset patternValidationObj = createObject("component","patternValidation")/>
-    <cfset databaseServiceObj = createObject("component","databaseService")/>
+    <cfset local.patternValidationObj = createObject("component","patternValidation")/>
+    <cfset local.databaseServiceObj = createObject("component","databaseService")/>
 
     <cffunction  name="validateForm" access="remote" output="false" returnformat="json" returntype="struct">
 
@@ -102,7 +102,7 @@ Functionality: This file has function that validated the registration form and i
         <cfif local.errorMsgs["validatedSuccessfully"]>
             <cftry>
                 <!---Do insertion operation--->
-                <cfset local.insertedUser = databaseServiceObj.insertUser(
+                <cfset local.insertedUser = local.databaseServiceObj.insertUser(
                 arguments.firstName, arguments.lastName, arguments.emailAddress, arguments.primaryPhoneNumber, 
                 arguments.alternativePhoneNumber, arguments.dob, arguments.username, arguments.password, arguments.isTeacher,
                 arguments.experience, arguments.currentAddress,arguments.currentCountry,arguments.currentState,arguments.currentCity,
@@ -130,9 +130,9 @@ Functionality: This file has function that validated the registration form and i
         <cfset local.name=trim(arguments.usrName)/>
 
         <!---validation work--->
-        <cfif patternValidationObj.isEmpty(local.name)>
+        <cfif local.patternValidationObj.isEmpty(local.name)>
             <cfset local.errorMsg.msg="Mandatory field!!"/>
-        <cfelseif NOT patternValidationObj.validName(local.name)>
+        <cfelseif NOT local.patternValidationObj.validName(local.name)>
             <cfset local.errorMsg.msg="Invalid Name.Only Alphabets allowed without spaces."/>
         <cfelseif len(local.name) GT 20>
             <cfset local.errorMsg.msg="Should be less than 20 characters!!"/>
@@ -150,13 +150,13 @@ Functionality: This file has function that validated the registration form and i
         <!---triming and initiazing a variable contains usrEmail--->
         <cfset local.email=trim(arguments.usrEmail) />
         <!---email validation starts here--->
-        <cfif patternValidationObj.isEmpty(local.email)>
+        <cfif local.patternValidationObj.isEmpty(local.email)>
             <cfset local.errorMsg.msg="Mandatory Field!!"/>
-        <cfelseif NOT patternValidationObj.validEmail(local.email)>
+        <cfelseif NOT local.patternValidationObj.validEmail(local.email)>
             <cfset local.errorMsg.msg="Invalid Email Address."/>
         <cfelse>    
             <cftry>
-                <cfset local.user = databaseServiceObj.getUser(emailAddress = local.email)/>
+                <cfset local.user = local.databaseServiceObj.getUser(emailAddress = local.email)/>
                 <cfif local.user.recordCount GT 0>
                     <cfset local.errorMsg.msg="Email address already present"/>
                 </cfif>
@@ -177,15 +177,15 @@ Functionality: This file has function that validated the registration form and i
         <!---declaring a strcuture for returning error msg--->
         <cfset local.errorMsg={}/>
         <!---phone Number validation starts here--->
-        <cfif patternValidationObj.isEmpty(local.phoneNumber)>
+        <cfif local.patternValidationObj.isEmpty(local.phoneNumber)>
             <cfset local.errorMsg.msg="Mandatory Field!!"/>
-        <cfelseif NOT patternValidationObj.validNumber(local.phoneNumber)>
+        <cfelseif NOT local.patternValidationObj.validNumber(local.phoneNumber)>
             <cfset local.errorMsg.msg="Invalid Phone Number!!Only number Allowed"/>
         <cfelseif len(local.phoneNumber) NEQ 10>
             <cfset local.errorMsg.msg="Invalid Phone Number!! Length should be of 10"/> 
         <cfelse>
             <cftry>
-                <cfset local.user = databaseServiceObj.getUser(phoneNumber=local.phoneNumber)/>
+                <cfset local.user = local.databaseServiceObj.getUser(phoneNumber=local.phoneNumber)/>
                 <cfif local.user.recordCount GT 0>
                     <cfset local.errorMsg.msg = 'Sorry this phone number has already been taken'/>
                 </cfif> 
@@ -206,15 +206,15 @@ Functionality: This file has function that validated the registration form and i
         <!---declaring a structure for error msgs--->
         <cfset local.errorMsg={}/>
         <!---validation starts here--->
-        <cfif patternValidationObj.isEmpty(local.username)>
+        <cfif local.patternValidationObj.isEmpty(local.username)>
             <cfset local.errorMsg.msg="Mandatory Field!!"/>
-        <cfelseif NOT patternValidationObj.validUsername(local.username)>
+        <cfelseif NOT local.patternValidationObj.validUsername(local.username)>
             <cfset local.errorMsg.msg="Username should contain only alphabets, numbers, (_ @ .)"/>
         <cfelseif len(local.username) GT 8>
             <cfset local.errorMsg.msg="Username should of length 8 characters long"/>
         <cfelse>
             <cftry>
-                <cfset local.isUsernamePresent = databaseServiceObj.isUserPresent(username)/>
+                <cfset local.isUsernamePresent = local.databaseServiceObj.isUserPresent(username)/>
                 <cfif local.isUsernamePresent>  
                     <cfset local.errorMsg.msg="Username already taken"/>
                 </cfif>
@@ -235,11 +235,11 @@ Functionality: This file has function that validated the registration form and i
         <!---declaring variable for error msg--->
         <cfset local.errorMsg={}/>
         <!---validation starts here--->
-        <cfif patternValidationObj.isEmpty(local.password)>
+        <cfif local.patternValidationObj.isEmpty(local.password)>
             <cfset local.errorMsg.msg="Please provide a password!!"/>
         <cfelseif len(local.password) GT 15 and len(local.password) LT 8 >
             <cfset local.errorMsg.msg="Password length must be within 8-15!!">
-        <cfelseif NOT patternValidationObj.validPassword(local.password)>
+        <cfelseif NOT local.patternValidationObj.validPassword(local.password)>
             <cfset local.errorMsg.msg="Must contain at least 1 UPPERCASE 1 LOWERCASE 1 SPECIAL CHARACTER.">
         </cfif>
 
@@ -276,9 +276,9 @@ Functionality: This file has function that validated the registration form and i
         <!---declaring variable for error msg--->
         <cfset local.errorMsg={}/>
         <!---validation starts here--->
-        <cfif patternValidationObj.isEmpty(local.text)>
+        <cfif local.patternValidationObj.isEmpty(local.text)>
             <cfset local.errorMsg.msg = "Mandatory Field!!"/>
-        <cfelseif NOT patternvalidationObj.ValidText(local.text)>
+        <cfelseif NOT local.patternvalidationObj.ValidText(local.text)>
             <cfset local.errorMsg.msg="Should contain only alphabets, number and ',''/''&' "/>
         </cfif>
 
@@ -294,9 +294,9 @@ Functionality: This file has function that validated the registration form and i
         <!---declaring variable for error msg--->
         <cfset local.errorMsg={}/>
         <!---validation starts here--->
-        <cfif patternValidationObj.isEmpty(local.pincode)>
+        <cfif local.patternValidationObj.isEmpty(local.pincode)>
             <cfset local.errorMsg.msg="Mandatory Field"/>
-        <cfelseif (NOT patternValidationObj.validNumber(local.pincode)) and (len(local.pincode) NEQ 6)>
+        <cfelseif (NOT local.patternValidationObj.validNumber(local.pincode)) and (len(local.pincode) NEQ 6)>
             <cfset local.errorMsg.msg="Invalid Pincode.Must be Number of 6 digit and should contain only Number">
         </cfif>
 
@@ -312,7 +312,7 @@ Functionality: This file has function that validated the registration form and i
         <!---declaring variable for error msg--->
         <cfset local.errorMsg ={}/>
         <!---validation starts here--->
-        <cfif NOT patternValidationObj.validNumber(local.experience)>
+        <cfif NOT local.patternValidationObj.validNumber(local.experience)>
             <cfset local.errorMsg.msg="Invalid Experience. Only Integer allowed."/>
         <cfelseif experience GT 99 and local.experience LT 0>
             <cfset local.errorMsg.msg="Experience must be within 0 to 99"/>

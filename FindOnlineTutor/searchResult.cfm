@@ -21,12 +21,12 @@ Functionality: This file show the search result of teachers for batches.
     <!---if user is a student then we will provide the additional information about enrollment--->
     <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Student'>
         <cfset isStudent = true/>
-        <cfset myRequest = local.batchServiceObj.getMyRequests()/>
+        <cfset local.myRequest = local.batchServiceObj.getMyRequests()/>
         <!---if successfully batches are retrieved then those will be displayed here--->
-        <cfset requestIds = {}>
+        <cfset local.requestIds = {}>
         <!---looping through the requests and storing it into the structure for further use--->
-        <cfloop query="myRequest.Requests">
-            <cfset requestIds['#batchId#'] = '#requestStatus#'>
+        <cfloop query="local.myRequest.Requests">
+            <cfset local.requestIds['#batchId#'] = '#requestStatus#'>
         </cfloop>
         
     </cfif>
@@ -67,16 +67,16 @@ Functionality: This file show the search result of teachers for batches.
 
     <!---if any search is performed then if condition will get executed else it will give the nearBy batches--->
 	<cfif structKeyExists(url, "query") AND url.query NEQ ''>
-		<cfset batches = local.batchServiceObj.getSearchBatches(url.query)>
+		<cfset local.batches = local.batchServiceObj.getSearchBatches(url.query)>
     <cfelse>
         <!---display the users near by batches--->
-        <cfset batches = local.batchServiceObj.getNearByBatch(country='' , state='')/>
+        <cfset local.batches = local.batchServiceObj.getNearByBatch(country='' , state='')/>
     </cfif>
-    <cfif structIsEmpty(batches) OR (structKeyExists(batches, 'batch') AND batches.batch.recordCount EQ 0)>
+    <cfif structIsEmpty(local.batches) OR (structKeyExists(local.batches, 'batch') AND local.batches.batch.recordCount EQ 0)>
         <p class="alert alert-info py-3 text-center rounded">Sorry, We don't have any batches.</p>
-    <cfelseif structKeyExists(batches, "batch") >
+    <cfelseif structKeyExists(local.batches, "batch") >
         <div id="batchesDiv">
-            <cfoutput query="batches.batch">
+            <cfoutput query="local.batches.batch">
                 <cfinclude  template="Include/batchOverview.cfm">
             </cfoutput>
         </div>

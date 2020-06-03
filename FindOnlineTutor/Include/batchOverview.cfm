@@ -18,14 +18,14 @@
 
             <!---if user not logged in  or visitor--->
             <cfelseif NOT structKeyExists(session, "stLoggedInUser")>
-                <button type="submit" class="btn button-color px-3 float-right shadow rounded disabled">Enroll</a>
+                <a href="login.cfm" class="btn button-color px-3 float-right shadow rounded">Enroll</a>
                 
             <!---if user is a student or any user details having having is been displayed--->
             <cfelseif structKeyExists(url, "user") OR 
                     (structKeyExists(session, "stLoggedInUser") AND (session.stLoggedInUser.role EQ 'Student') )>
-                <cfif structKeyExists(requestIds, "#batchId#") AND requestIds["#batchId#"] EQ 'Pending'>
+                <cfif structKeyExists(local.requestIds, "#batchId#") AND local.requestIds["#batchId#"] EQ 'Pending'>
                     <button class="btn button-color float-right d-inline rounded text-light shadow mx-1 disabled">Pending...</button> 
-                <cfelseif structKeyExists(requestIds, "#batchId#") AND requestIds["#batchId#"] EQ 'Approved'>
+                <cfelseif structKeyExists(local.requestIds, "#batchId#") AND local.requestIds["#batchId#"] EQ 'Approved'>
                     <small class="alert alert-success mt-2 text-success d-inline float-right p-1 px-2">Enrolled</small> 
                 <cfelse>
                     <button class="btn button-color float-right d-inline rounded text-light shadow mx-1" onclick="enrollStudent(this)">Enroll</button> 
@@ -79,11 +79,11 @@
     </cfif>
 
     <cfif structKeyExists(session, "stLoggedInUser") AND batchOwnerId EQ session.stLoggedInUser.userId>
-        <cfset batchTag = batchServiceObj.getBatchTag(batchId)/>
+        <cfset local.batchTag = local.batchServiceObj.getBatchTag(batchId)/>
         <!---display tag --->
         <div id="batchTagDiv" class="col-md-12 my-2">
             <h6 class="d-inline mx-3">Tags:</h6>
-            <cfoutput query="batchTag.tags">
+            <cfoutput query="local.batchTag.tags">
                 <cfinclude  template="batchTag.cfm">
             </cfoutput>
         </div>

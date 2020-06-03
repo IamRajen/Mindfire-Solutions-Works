@@ -18,9 +18,9 @@ Functionality: This file show the profile data to user and allows to modify it.
             </noscript>
         
             <!---creating a databaseService object for retriving user profile--->
-            <cfset databaseServiceObj = createObject("Component","FindOnlineTutor/Components/databaseService")/>
+            <cfset local.databaseServiceObj = createObject("Component","FindOnlineTutor/Components/databaseService")/>
             <!---calling the function for profile data--->
-            <cfset profileInfo = databaseServiceObj.getMyProfile(#session.stloggedinuser.userID#)/>
+            <cfset local.profileInfo = local.databaseServiceObj.getMyProfile(#session.stloggedinuser.userID#)/>
             
             <!---container containing all required user details data--->
             <div class="container-fuild w-100 mx-auto mb-5 shadow rounded bg-light">
@@ -44,11 +44,11 @@ Functionality: This file show the profile data to user and allows to modify it.
                             <label class="control-label"  for="firstName">Fullname<span class="text-danger">*</span></label>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" id="firstName" name="firstName" placeholder="First Name" class="form-control d-block" onblur="checkName(this)" value="<cfoutput>#profileInfo.firstName#</cfoutput>">
+                            <input type="text" id="firstName" name="firstName" placeholder="First Name" class="form-control d-block" onblur="checkName(this)" value="<cfoutput>#local.profileInfo.firstName#</cfoutput>">
                             <span class="text-danger small float-left"></span>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" id="lastName" name="lastName" placeholder="Last Name" class="form-control d-block" onblur="checkName(this)" value="<cfoutput>#profileInfo.lastName#</cfoutput>">
+                            <input type="text" id="lastName" name="lastName" placeholder="Last Name" class="form-control d-block" onblur="checkName(this)" value="<cfoutput>#local.profileInfo.lastName#</cfoutput>">
                             <span class="text-danger small float-left"></span>
                         </div>
                     </div>
@@ -60,7 +60,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                             <label class="control-label"  for="emailAddress">Email ID:<span class="text-danger">*</span></label>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" id="emailAddress" name="emailAddress" placeholder="Email Address" class="form-control d-block" onblur="checkEmailId(this)" value="<cfoutput>#profileInfo.emailId#</cfoutput>">
+                            <input type="text" id="emailAddress" name="emailAddress" placeholder="Email Address" class="form-control d-block" onblur="checkEmailId(this)" value="<cfoutput>#local.profileInfo.emailId#</cfoutput>">
                             
                             <span class="text-danger small float-left"></span>
                         </div>
@@ -72,7 +72,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                             <label class="control-label"  for="dob">D.O.B:<span class="text-danger">*</span></label>
                         </div>
                         <div class="col-md-4">
-                            <input type="date" id="dob" name="dob" placeholder="Create Password" class="form-control d-block" onblur="checkDOB(this)" value="<cfoutput>#profileInfo.dob#</cfoutput>">
+                            <input type="date" id="dob" name="dob" placeholder="Create Password" class="form-control d-block" onblur="checkDOB(this)" value="<cfoutput>#local.profileInfo.dob#</cfoutput>">
                             <span class="text-danger small float-left"></span>
                         </div>
                     </div>
@@ -83,7 +83,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                             <label class="control-label"  for="bio">Bio (optional):</label>
                         </div>
                         <div class="col-md-8">
-                            <textarea type="text" id="bio" name="bio" placeholder="" class="form-control d-block" rows="4" onblur="checkBio(this)"><cfoutput>#profileInfo.bio#</cfoutput></textarea>
+                            <textarea type="text" id="bio" name="bio" placeholder="" class="form-control d-block" rows="4" onblur="checkBio(this)"><cfoutput>#local.profileInfo.bio#</cfoutput></textarea>
                             <span class="text-danger small float-left"></span>
                         </div>
                     </div>
@@ -124,7 +124,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                                     <label class="control-label"  for="primaryPhoneNumber">Primary Phone Number:<span class="text-danger">*</span></label>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" id="primaryPhoneNumber" name="primaryPhoneNumber" placeholder="Primary Phone Number" class="form-control d-block" onblur="checkPhoneNumber(this)" value="<cfoutput>#profileInfo.phoneNumber[1]#</cfoutput>">
+                                    <input type="text" id="primaryPhoneNumber" name="primaryPhoneNumber" placeholder="Primary Phone Number" class="form-control d-block" onblur="checkPhoneNumber(this)" value="<cfoutput>#local.profileInfo.phoneNumber[1]#</cfoutput>">
                                     <span class="text-danger small float-left"></span>
                                 </div>
                             </div>
@@ -133,7 +133,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                                     <label class="control-label"  for="primaryPhoneNumber">Alternative Phone Number:<span class="text-danger">*</span></label>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" id="alternativePhoneNumber" name="alternativePhoneNumber" placeholder="Alternative Phone Number" class="form-control d-block" onblur="checkPhoneNumber(this)" value="<cfoutput>#profileInfo.phoneNumber[2]#</cfoutput>">
+                                    <input type="text" id="alternativePhoneNumber" name="alternativePhoneNumber" placeholder="Alternative Phone Number" class="form-control d-block" onblur="checkPhoneNumber(this)" value="<cfoutput>#local.profileInfo.phoneNumber[2]#</cfoutput>">
                                     <span class="text-danger small float-left"></span>
                                 </div>
                             </div>
@@ -167,17 +167,17 @@ Functionality: This file show the profile data to user and allows to modify it.
                         </div>
                         <!---Form contains all Interest or teaching details--->
                         <form id="formUserInterestDetail" class="disabledbutton pb-5 mb-5" id="form-update" method="POST" action="profile.cfm">
-                            <cfset homeLocationExists = ''/>
-                            <cfset otherLocationExists = ''/>
-                            <cfset onlineLocationExists = ''/>
-                            <cfif profileInfo.homeLocation EQ 1>
-                                <cfset homeLocationExists = 'checked'/>
+                            <cfset local.homeLocationExists = ''/>
+                            <cfset local.otherLocationExists = ''/>
+                            <cfset local.onlineLocationExists = ''/>
+                            <cfif local.profileInfo.homeLocation EQ 1>
+                                <cfset local.homeLocationExists = 'checked'/>
                             </cfif>
-                            <cfif profileInfo.otherLocation EQ 1>
-                                <cfset otherLocationExists = 'checked'/>
+                            <cfif local.profileInfo.otherLocation EQ 1>
+                                <cfset local.otherLocationExists = 'checked'/>
                             </cfif>
-                            <cfif profileInfo.online EQ 1>
-                                <cfset onlineLocationExists = 'checked'/>
+                            <cfif local.profileInfo.online EQ 1>
+                                <cfset local.onlineLocationExists = 'checked'/>
                             </cfif>
                             <div class="alert alert-info pt-3">
                                 <p class="text-info text-center">
@@ -186,7 +186,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                             </div>
                             <div class="form-check ml-5 mb-2 mt-4">
                                 <label class="form-check-label">
-                                    <input id="otherLocation" type="checkbox" class="form-check-input" <cfoutput>#otherLocationExists#</cfoutput> >
+                                    <input id="otherLocation" type="checkbox" class="form-check-input" <cfoutput>#local.otherLocationExists#</cfoutput> >
                                     <cfif session.stLoggedinUser.role EQ 'Teacher'>
                                         <cfoutput>Having a Coaching Center</cfoutput>
                                     <cfelseif session.stLoggedinUser.role EQ 'Student'>
@@ -196,7 +196,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                             </div>
                             <div class="form-check ml-5 mb-2">
                                 <label class="form-check-label">
-                                    <input id="homeLocation" type="checkbox" class="form-check-input" <cfoutput>#homeLocationExists#</cfoutput>>
+                                    <input id="homeLocation" type="checkbox" class="form-check-input" <cfoutput>#local.homeLocationExists#</cfoutput>>
                                     <cfif session.stLoggedinUser.role EQ 'Teacher'>
                                         <cfoutput>Can Teach Student at Home</cfoutput>
                                     <cfelseif session.stLoggedinUser.role EQ 'Student'>
@@ -206,7 +206,7 @@ Functionality: This file show the profile data to user and allows to modify it.
                             </div>
                             <div class="form-check ml-5 mb-2">
                                 <label class="form-check-label">
-                                    <input id="online" type="checkbox" class="form-check-input" <cfoutput>#onlineLocationExists#</cfoutput>>
+                                    <input id="online" type="checkbox" class="form-check-input" <cfoutput>#local.onlineLocationExists#</cfoutput>>
                                     <cfif session.stLoggedinUser.role EQ 'Teacher'>
                                         <cfoutput>Having a Online Teaching Facility</cfoutput>
                                     <cfelseif session.stLoggedinUser.role EQ 'Student'>

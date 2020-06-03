@@ -8,12 +8,12 @@ Functionality: It is a request page which contains all the requests of the parti
 <cf_header homeLink="../index.cfm" logoPath="../Images/logo.png" stylePath="../Styles/style.css" scriptPath="../Script/processRequest.js">
 
     <!---creating a object of batch service and retriving the requests--->
-    <cfset batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
-    <cfset myRequests = batchServiceObj.getMyRequests()/>
+    <cfset local.batchServiceObj = createObject("component","FindOnlineTutor.Components.batchService")/>
+    <cfset local.myRequests = local.batchServiceObj.getMyRequests()/>
     
     <div class="container">
         <!---if any occurred--->
-        <cfif myRequests.requests.recordCount EQ 0>
+        <cfif local.myRequests.requests.recordCount EQ 0>
             <div class="alert alert-secondary pt-5 pb-5 rounded-top">
                 <p class="text-secondary text-center">You don't have any Request yet.</p>
             </div>
@@ -31,7 +31,7 @@ Functionality: It is a request page which contains all the requests of the parti
                     </tr>
                 </thead>
                 <tbody>
-                    <cfoutput query="myRequests.requests">
+                    <cfoutput query="local.myRequests.requests">
                         <tr>
                             <th>#batchRequestId#.</th>
                             <td>#dateFormat(requestDateTime)#</td>

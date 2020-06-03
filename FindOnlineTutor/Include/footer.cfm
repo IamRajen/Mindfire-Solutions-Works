@@ -12,18 +12,18 @@
                 <img  src="<cfoutput>#attributes.logoPath#</cfoutput>" class="img-fluid mr-2" alt="logo"/>
                 <a class="navbar-brand text-dark" width="187" href="<cfoutput>#attributes.homeLink#</cfoutput>"><b>FindOnlineTutor</b></a>						
             </div>
-            <cfset folderUp = ''/>
+            <cfset local.folderUp = ''/>
             <cfif listFind(cgi.script_name,'Teacher', '/') OR listFind(cgi.script_name,'Student', '/')>
-                <cfset folderUp = '../'>
+                <cfset local.folderUp = '../'>
             </cfif>
             <div class="col-md-6 mt-3">
                 <!-- contact -->
-                <img class="my-1 mx-2 float-right" src="<cfoutput>#folderUp#</cfoutput>Images/facebook.png">
-                <img class="my-1 mx-2 float-right" src="<cfoutput>#folderUp#</cfoutput>Images/instagram.png">
-                <img class="my-1 mx-2 float-right" src="<cfoutput>#folderUp#</cfoutput>Images/linkedIn.png">
-                <img class="my-1 mx-2 float-right" src="<cfoutput>#folderUp#</cfoutput>Images/skype.png">
-                <img class="my-1 mx-2 float-right" src="<cfoutput>#folderUp#</cfoutput>Images/twitter.png">
-                <img class="my-1 mx-2 float-right" src="<cfoutput>#folderUp#</cfoutput>Images/whatsapp.png">		
+                <img class="my-1 mx-2 float-right" src="<cfoutput>#local.folderUp#</cfoutput>Images/facebook.png">
+                <img class="my-1 mx-2 float-right" src="<cfoutput>#local.folderUp#</cfoutput>Images/instagram.png">
+                <img class="my-1 mx-2 float-right" src="<cfoutput>#local.folderUp#</cfoutput>Images/linkedIn.png">
+                <img class="my-1 mx-2 float-right" src="<cfoutput>#local.folderUp#</cfoutput>Images/skype.png">
+                <img class="my-1 mx-2 float-right" src="<cfoutput>#local.folderUp#</cfoutput>Images/twitter.png">
+                <img class="my-1 mx-2 float-right" src="<cfoutput>#local.folderUp#</cfoutput>Images/whatsapp.png">		
             </div>
             <div class="col-md-12 mt-3 px-5 text-center">
                 <p class="p-4 text-secondary w-50 m-auto">

@@ -6,13 +6,13 @@ Created By: Rajendra Mishra.
 Functionality: It is a header file which is included probably in Teacher section pages.
 --->
 
-<cfset batchServiceObject = createObject("component","FindOnlineTutor.Components.batchService")/>
-<cfset myRequests = batchServiceObject.getMyRequests()/>
-<cfset pendingRequest = 0/>
-<cfif NOT structKeyExists(myRequests, "error")>
-	<cfloop query="myRequests.requests">
+<cfset local.batchServiceObject = createObject("component","FindOnlineTutor.Components.batchService")/>
+<cfset local.myRequests = local.batchServiceObject.getMyRequests()/>
+<cfset local.pendingRequest = 0/>
+<cfif NOT structKeyExists(local.myRequests, "error")>
+	<cfloop query="#local.myRequests.requests#">
 		<cfif #requestStatus# EQ 'Pending'>
-			<cfset pendingRequest = pendingRequest+1/>
+			<cfset local.pendingRequest = local.pendingRequest+1/>
 		</cfif>
 	</cfloop>
 </cfif>
@@ -49,8 +49,8 @@ Functionality: It is a header file which is included probably in Teacher section
 							</li>
 
 							<li class="nav-item mx-2">
-								<cfif pendingRequest GT 0>
-									<span class="notification-count float-right"><cfoutput>#pendingRequest#</cfoutput></span>
+								<cfif local.pendingRequest GT 0>
+									<span class="notification-count float-right"><cfoutput>#local.pendingRequest#</cfoutput></span>
 								</cfif>
 								<a class="nav-link d-inline-block pr-0" href="request.cfm">Requests</a>
 							</li>

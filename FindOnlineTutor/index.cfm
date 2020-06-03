@@ -12,14 +12,14 @@ Functionality: This is the homepage.
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css" profilePath="profile.cfm">
 	<div class="container-fuild">
 		
-		<div class="w-100 text-center my-3">
+		<div class="w-100 text-center my-5">
 			<cfif structKeyExists(session, "stloggedinUser") AND session.stloggedinUser.role EQ 'Teacher'>
 				<cfset local.teacherInfo = local.profileServiceObj.getTeacherInfo()>
-
-				<cf_card title="Batch" description="Number of batches you created" data="#local.teacherInfo.batchCount.value#" link="">
-				<cf_card title="Student" description="Number of students you have" data="#local.teacherInfo.studentCount.recordCount#" link="">
-				<cf_card title="Request" description="Number of request you got till now" data="#local.teacherInfo.requestCount.recordCount#" link="">
-
+				<div class="mt-5">
+					<cf_card title="Batch" description="Number of batches you created" data="#local.teacherInfo.batchCount.value#" link="">
+					<cf_card title="Student" description="Number of students you have" data="#local.teacherInfo.studentCount.recordCount#" link="">
+					<cf_card title="Request" description="Number of request you got till now" data="#local.teacherInfo.requestCount.recordCount#" link="">
+				</div>
 			<cfelse>
 				<!---including the search bar with trending words--->
 				<cfinclude  template="Include/searchForm.cfm">

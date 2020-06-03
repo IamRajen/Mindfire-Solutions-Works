@@ -69,8 +69,9 @@ $(document).ready(function()
                     var tdNotificationNumber =  $('<td>').addClass('text-capitalize').text(1+parseInt(notification)+'.');
                     var tdNotificationTitle = $('<td>').attr('id',notifications[notification][0]).addClass('text-capitalize').text(notifications[notification][2]);
                     var tdbatchName =  $('<td>').addClass('text-capitalize').text(notifications[notification][3]);
-                    var tdNotificationDate =  $('<td>').text(notifications[notification][1]);
-                    var tdNotificationTime =  $('<td>').text(notifications[notification][1]);
+                    var notificationDateTime = new Date(notifications[notification][1]);
+                    var tdNotificationDate =  $('<td>').text(("0"+notificationDateTime.getDate()).slice(-2)+"/"+("0"+notificationDateTime.getMonth()).slice(-2)+"/"+notificationDateTime.getFullYear());
+                    var tdNotificationTime =  $('<td>').text(("0"+notificationDateTime.getHours()).slice(-2)+":"+("0"+notificationDateTime.getMinutes()).slice(-2)+":"+("0"+notificationDateTime.getSeconds()).slice(-2));
                     var tdViewButton =  $('<button/>').attr({'id':notifications[notification][4], 'onClick':'getNotification(this)'}).addClass('btn button-color shadow rounded px-3 py-1').html("View");
                     var tdViewButtonSection = $('<td>').append(tdViewButton);
                     

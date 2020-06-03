@@ -4,9 +4,9 @@
     </div>
     
     <!---if the batch type is online--->
-    <cfif batchInfo.overview.batchType EQ 'online'>
+    <cfif local.batchInfo.overview.batchType EQ 'online'>
         <div class="col-md-6">
-            <input type="text" id="addressLink" name="addressLink" placeholder="Batch link address" class="form-control d-block" value="<cfoutput>#batchInfo.overview.addressLink#</cfoutput>">
+            <input type="text" id="addressLink" name="addressLink" placeholder="Batch link address" class="form-control d-block" value="<cfoutput>#local.batchInfo.overview.addressLink#</cfoutput>">
             <span></span>
         </div>
         <cfif structKeyExists(session, "stLoggedInUser") AND session.stLoggedInUser.role EQ 'Teacher'>
@@ -17,23 +17,23 @@
     </cfif>
 
     <!---if the batch type is home--->
-    <cfif batchInfo.overview.batchType EQ 'home'>
+    <cfif local.batchInfo.overview.batchType EQ 'home'>
         <!---display the user current address here--->
         <p class="p-3 bg-white">
-            <cfoutput>#batchInfo.address.Address[1]#, #batchInfo.address.city[1]#, #batchInfo.Address.state[1]#,
-                #batchInfo.address.country[1]#, #batchInfo.address.pincode[1]#
+            <cfoutput>#local.batchInfo.address.Address[1]#, #local.batchInfo.address.city[1]#, #local.batchInfo.Address.state[1]#,
+                #local.batchInfo.address.country[1]#, #local.batchInfo.address.pincode[1]#
             </cfoutput>
         </p>
     </cfif>
 
     <!---if the batch type is coaching--->
-    <cfif batchInfo.overview.batchType EQ 'coaching'>
+    <cfif local.batchInfo.overview.batchType EQ 'coaching'>
         <!---populating the options address field of user--->
         <div class="col-md-6">
             <select id="addressId" name="addressId" class="form-control d-block">
-                <cfoutput query="batchInfo.address">
+                <cfoutput query="local.batchInfo.address">
                     <option value="#userAddressId#" 
-                    <cfif batchInfo.overview.addressId EQ userAddressId> 
+                    <cfif local.batchInfo.overview.addressId EQ userAddressId> 
                         selected="selected"
                     </cfif>>#address#, #city#, #state#, #country# - #pincode#
                     </option>

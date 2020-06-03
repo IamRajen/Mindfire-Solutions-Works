@@ -6,8 +6,8 @@ Created By: Rajendra Mishra.
 Functionality: A teacher page containing the teacher overview and a link for teacher's details
 --->
 
-<cfset databaseServiceObj = createObject("component","FindOnlineTutor.Components.databaseService")/>
-<cfset local.getUserInfo = databaseServiceObj.getUser(isTeacher = 1)/>
+<cfset local.databaseServiceObj = createObject("component","FindOnlineTutor.Components.databaseService")/>
+<cfset local.getUserInfo = local.databaseServiceObj.getUser(isTeacher = 1)/>
 
 <cf_header homeLink="index.cfm" logoPath="Images/logo.png" stylePath="Styles/style.css">
 <div class="container">
